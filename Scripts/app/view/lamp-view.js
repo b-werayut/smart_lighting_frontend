@@ -1836,10 +1836,9 @@
     });
 
     $('#controlAllRelayState').click(function () {
-        const endpoint = "http://85.204.247.82:3002/api/getalldevices";
-        // const btnControl = $('#controlAllRelayStatebtn')
+        const endpoint = "http://85.204.247.82:3002/api/getalldevices"
         const table = $('#alldevice');
-        const tableBody = document.querySelector("#alldevice tbody");
+        const tableBody = document.querySelector("#alldevice tbody")
         let statarr = []
 
         tableBody.innerHTML = "";
@@ -1867,25 +1866,6 @@
                         timer: 1500
                     })
 
-                    // if (!btnControl.prop('checked')) {
-                    //     const btn = $('#control-send-all')
-                    //     btn.attr('disabled', true);
-                    //     btn.removeClass('btn-success');
-                    //     btn.addClass('btn-secondary');
-                    //     $(".mn3").fadeOut();
-                    //     btnControl.bootstrapToggle('off');
-                    //     firstloadall = true
-                    // } else {
-                    //     const btn = $('#control-send-all')
-                    //     btn.removeClass('btn-secondary');
-                    //     btn.addClass('btn-success');
-                    //     btn.removeAttr('disabled');
-                    //     $(".mn3").fadeIn();
-                    //     btnControl.bootstrapToggle('on');
-                    //     firstloadall = true
-                    // }
-
-
                     setTimeout(() => {
                         obj.devices.forEach(item => {
                             if (item.relay === "ON") {
@@ -1907,9 +1887,6 @@
                         table.find("tbody").empty();
 
                         obj.devices.forEach(item => {
-                            if (item.relay === "ON") {
-                                statarr.push(item.relay);
-                            }
                             const row = $("<tr>");
                             row.append(`<td>${item.macAddress}</td>`);
                             row.append(`<td>${item.tag}</td>`);
@@ -1932,7 +1909,10 @@
 
                         $('#controlAllRelayStateModal').modal('show');
 
-                        if (parseInt(statarr.length) < 3) {
+                        console.log('statarr.length:=', statarr.length)
+                        console.log('obj.devices.length:=', obj.devices.length)
+                        if (parseInt(statarr.length) !== parseInt(obj.devices.length)) {
+                            console.log('if')
                             firstloadall = true
                             $('#controlAllRelayStatebtn').bootstrapToggle('off')
                             const btn = $('#control-send-all')
@@ -1941,7 +1921,8 @@
                             btn.addClass('btn-secondary');
                             $(".mn3").fadeOut()
                             // console.log('statarr.lenght < 3', statarr.length)
-                        } else {
+                        } else{
+                            console.log('else')
                             firstloadall = true
                             $('#controlAllRelayStatebtn').bootstrapToggle('on')
                             const btn = $('#control-send-all')
@@ -2085,10 +2066,10 @@
                                     btn.removeClass('btn-secondary');
                                     btn.addClass('btn-success');
                                     $(".mn3").fadeIn();
-                                        setTimeout(() => {
-                                            $(this).prop('disabled', false);
-                                        }, 5000);
-                                 
+                                    setTimeout(() => {
+                                        $(this).prop('disabled', false);
+                                    }, 5000);
+
                                 }
                             })
                             .catch(err => {
@@ -2244,5 +2225,18 @@
     });
 
     updateBulbStatus(toggle.checked);
+
+    $('#controllerCode').on('change', function () {
+        const alldevicesbtn = $('#controlAllRelayState')
+        let value = $(this).val();
+        let text = $(this).find('option:selected').text();
+        if (value !== 'CTL25-00002') {
+            alldevicesbtn.addClass('d-none')
+            alldevicesbtn.removeClass('d-flex')
+        } else {
+            alldevicesbtn.fadeIn()
+            alldevicesbtn.addClass('d-flex')
+        }
+    });
 
 })
