@@ -1909,10 +1909,7 @@
 
                         $('#controlAllRelayStateModal').modal('show');
 
-                        console.log('statarr.length:=', statarr.length)
-                        console.log('obj.devices.length:=', obj.devices.length)
                         if (parseInt(statarr.length) !== parseInt(obj.devices.length)) {
-                            console.log('if')
                             firstloadall = true
                             $('#controlAllRelayStatebtn').bootstrapToggle('off')
                             const btn = $('#control-send-all')
@@ -1920,9 +1917,7 @@
                             btn.removeClass('btn-success');
                             btn.addClass('btn-secondary');
                             $(".mn3").fadeOut()
-                            // console.log('statarr.lenght < 3', statarr.length)
                         } else{
-                            console.log('else')
                             firstloadall = true
                             $('#controlAllRelayStatebtn').bootstrapToggle('on')
                             const btn = $('#control-send-all')
@@ -1930,7 +1925,6 @@
                             btn.addClass('btn-success');
                             btn.removeAttr('disabled');
                             $(".mn3").fadeIn()
-                            // console.log('statarr.lenght > 3', statarr.length)
                         }
 
                     }, 1500);
