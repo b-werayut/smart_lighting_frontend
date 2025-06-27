@@ -1,0 +1,54 @@
+﻿<nav class="sidebar sidebar-offcanvas" id="sidebar">
+    <ul class="nav">
+        <li class="nav-item nav-search d-sm-block d-lg-none disabled">
+            <div class="nav-link">
+                @((Session[NWL_AdAm_SPL.Variables.USER_PROFILE] as NWL_AdAm_DML.Model.SessionModel).customerName)
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="~/Home">
+                <i class="mdi mdi-view-dashboard menu-icon"></i>
+                <span class="menu-title">ภาพรวม</span>
+            </a>
+        </li>
+        @if ((Session[NWL_AdAm_SPL.Variables.USER_PROFILE] as NWL_AdAm_DML.Model.SessionModel).role != "3")
+        {
+            <li class="nav-item">
+                <a class="nav-link" href="~/User">
+                    <i class="mdi mdi-account menu-icon"></i>
+                    <span class="menu-title">ผู้ใช้</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="~/Project">
+                    <i class="mdi mdi-folder menu-icon"></i>
+                    <span class="menu-title">โครงการ</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="~/Device">
+                    <i class="mdi mdi-remote menu-icon"></i>
+                    <span class="menu-title">กล่องควบคุม</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="~/Lamp">
+                    <i class="mdi mdi-lightbulb-on menu-icon"></i>
+                    <span class="menu-title">หลอดไฟ</span>
+                </a>
+            </li>
+        }
+        <li class="nav-item">
+            <a class="nav-link" href="~/Job">
+                <i class="mdi mdi-wrench menu-icon"></i>
+                <span class="menu-title">แจ้งซ่อม</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="~/Maps">
+                <i class="mdi mdi-map-marker-radius menu-icon"></i>
+                <span class="menu-title">แผนที่</span>
+            </a>
+        </li>
+    </ul>
+</nav>

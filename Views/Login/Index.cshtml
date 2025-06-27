@@ -1,0 +1,82 @@
+﻿@model NWL_AdAm_DML.ViewModel.LoginViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>NWL AdAM - Login</title>
+    <link rel="shortcut icon" href="~/images/nwl-logo.jpg" />
+    @Styles.Render("~/Content/css")
+</head>
+<body>
+    <div class="container-scroller">
+        <div class="container-fluid page-body-wrapper full-page-wrapper">
+            <div class="content-wrapper d-flex auth auth-img-bg">
+                <div class="row flex-grow">
+                    <div class="col-lg-12 login-half-bg d-flex flex-row">
+                        <p class="text-white font-weight-medium text-center flex-grow align-self-end">Powered by NetworkLink&nbsp;&nbsp;|&nbsp;&nbsp;Version @typeof(NWL_AdAm.MvcApplication).Assembly.GetName().Version</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered auth" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="p-3">
+
+                        <div class="brand-logo text-center">
+                            <img src="~/images/LoginLogo.jpg" alt="logo">
+                        </div>
+
+                        <div class="pt-3">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-prepend bg-transparent">
+                                        <span class="input-group-text bg-transparent border-right-0">
+                                            <i class="mdi mdi-account-outline text-primary"></i>
+                                        </span>
+                                    </div>
+                                    <input type="text" class="form-control form-control-lg border-left-0" id="usercode" placeholder="Username">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-prepend bg-transparent">
+                                        <span class="input-group-text bg-transparent border-right-0">
+                                            <i class="mdi mdi-lock-outline text-primary"></i>
+                                        </span>
+                                    </div>
+                                    <input type="password" class="form-control form-control-lg border-left-0" id="password" placeholder="Password">
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <button type="button"
+                                        class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn"
+                                        id="loginButton">
+                                    LOGIN
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script src="~/Scripts/app/base/sweetalert2.min.js"></script>
+    <script src="~/Scripts/app/base/loadingoverlay.min.js"></script>
+    <script src="~/Scripts/app/base-app.js"></script>
+    <script src="~/Scripts/app/view/login-view.js"></script>
+</body>
+</html>

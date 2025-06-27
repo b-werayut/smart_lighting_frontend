@@ -1,0 +1,189 @@
+﻿@*@model NWL_AdAm_DML.ViewModel.DeviceViewModel*@
+
+@{
+    ViewBag.Title = "NWL AdAM - กล่องควบคุม";
+}
+
+<div class="row">
+    <div class="col-md-12 grid-margin">
+        <div class="d-flex justify-content-start flex-wrap">
+            <div class="d-flex align-items-end flex-wrap">
+                <div class="mr-md-5 mr-xl-5">
+                    <h2>กล่องควบคุม</h2>
+                    <p class="mb-md-0">
+                        <i class="mdi mdi-home text-muted hover-cursor"></i>
+                        <a class="text-muted mb-0" href="~/Home">&nbsp;/&nbsp;&nbsp;ภาพรวม&nbsp;&nbsp;/</a>
+                        <a class="text-primary mb-0" href="~/Device">&nbsp;กล่องควบคุม</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <div class="card-title">
+                    <div class="d-flex justify-content-between flex-fill">
+                        <button id="buttonNewController" class="btn btn-success btn-sm modal-state-create invisible" data-toggle="modal" data-target="#deviceInfoModal"><i class="mdi mdi-plus"></i></button>
+
+                        <div>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="searchText" placeholder="Search" autocomplete="off" />
+                                <div class="input-group-append">
+                                    <button id="searchSubmit" class="btn btn-sm btn-primary" type="button"><i class="mdi mdi-magnify"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <label class="form-group has-float-label" for="projectCode">
+                    <select id="projectCode" class="form-control">
+                    </select>
+                    <span>โครงการ</span>
+                </label>
+
+                <div id="NBNodeProjectWarning" class="alert alert-danger d-none" role="alert">
+                    เนื่องจากโครงการนี้ใช้กล่องควบคุมประเภท NB Node จึงไม่สามารถเพิ่มกล่องควบคุมใหม่ หรือลบกล่องควบคุมที่มีอยู่แล้วได้
+                </div>
+
+                <div id="no-more-tables" class="table-responsive grid-margin d-none">
+                    <table id="dataTable" class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th class="col-md-2">
+                                    S/N
+                                </th>
+                                <th class="col-md-4">
+                                    ชื่อกล่องควบคุม
+                                </th>
+                                <th id="controllerStatus" class="d-none col-md-3">
+                                    สถานะ
+                                </th>
+                                <th class="col-md-3"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="bottomPagination" class="d-flex justify-content-end flex-wrap">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deviceInfoModal" tabindex="-1" role="dialog" aria-labelledby="deviceInfoModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-sm-down" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deviceInfoModalLongTitle">Modal Title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+                    <label class="form-group col-md-12 has-float-label" for="controllerSerialNo">
+                        <input type="text" class="form-control" id="controllerSerialNo" autocomplete="off" />
+                        <span>S/N</span>
+                    </label>
+                </div>
+                <div class="row">
+                    <label class="form-group col-md-12 has-float-label" for="controllerName">
+                        <input type="text" class="form-control" id="controllerName" autocomplete="off" />
+                        <span>ชื่อกล่องควบคุม</span>
+                    </label>
+                </div>
+                <div class="row">
+                    <label class="form-group col-md-12 has-float-label" for="controllerDescription">
+                        <input type="text" class="form-control" id="controllerDescription" autocomplete="off" />
+                        <span>รายละเอียด</span>
+                    </label>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-group has-float-label" for="controllerLat">
+                            <input type="text" class="form-control" id="controllerLat" autocomplete="off" />
+                            <span>ละติจูด</span>
+                        </label>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-group has-float-label" for="controllerLong">
+                            <input type="text" class="form-control" id="controllerLong" autocomplete="off" />
+                            <span>ลองจิจูด</span>
+                        </label>
+                    </div>
+                </div>
+
+
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-group has-float-label" for="controllerPhone">
+                            <input type="text" class="form-control" id="controllerPhone" autocomplete="off" />
+                            <span>เบอร์โทรศัพท์</span>
+                        </label>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-group has-float-label" for="lampQty">
+                            <input type="text" class="form-control" id="lampQty" autocomplete="off" />
+                            <span>จำนวนหลอดไฟ</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-group has-float-label" for="ampMin">
+                            <input type="text" class="form-control" id="ampMin" autocomplete="off" />
+                            <span>กระแสต่ำสุด</span>
+                        </label>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-group has-float-label" for="ampMax">
+                            <input type="text" class="form-control" id="ampMax" autocomplete="off" />
+                            <span>กระแสสูงสุด</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-group col-md-12 has-float-label" for="boxNo">
+                        <input type="text" class="form-control" id="boxNo" autocomplete="off" />
+                        <span>หมายเลขกล่อง</span>
+                    </label>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-group has-float-label" for="boxKmFrom">
+                            <input type="text" class="form-control" id="boxKmFrom" autocomplete="off" />
+                            <span>จาก กม.</span>
+                        </label>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-group has-float-label" for="boxKmTo">
+                            <input type="text" class="form-control" id="boxKmTo" autocomplete="off" />
+                            <span>ถึง กม.</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-end flex-wrap">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">
+                        <i class="mdi mdi-close"></i>
+                    </button>
+                    <button id="modal-save-button" type="button" class="btn btn-success btn-sm">
+                        <i class="mdi mdi-content-save"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/app/view/device-view.js"></script>
+}

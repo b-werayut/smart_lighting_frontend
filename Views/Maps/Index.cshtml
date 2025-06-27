@@ -1,0 +1,372 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutMap.cshtml";
+    ViewBag.Title = "NWL AdAM - แผนที่";
+}
+
+@section css {
+    <link href="~/Content/app/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+}
+
+<div id="map-container">
+    <div id="locations-panel" class="m-1">
+        <p class="d-flex justify-content-left">
+            <a class="btn btn-dark" data-toggle="collapse" href="#filterPanel" role="button" aria-expanded="false" aria-controls="filterPanel">
+                แผงควบคุม
+            </a>
+            <a id="refreshButton" class="btn btn-dark ml-2" href="#" role="button">
+                โหลดข้อมูลใหม่
+            </a>
+            <br />
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="checkbox" class="form-check-input" id="isAutoRefresh" checked>
+                    โหลดข้อมูลใหม่อัตโนมัติ
+                    <i class="input-helper"></i>
+                </label>
+            </div>
+        </p>
+        <div class="collapse" id="filterPanel">
+            <div class="card card-body overflow-auto" style="overflow:auto; max-height:500px;" id="filterProject">
+            </div>
+        </div>
+    </div>
+    <div id="map"></div>
+</div>
+
+<div class="modal fade" id="controlInfoModal" tabindex="-1" role="dialog" aria-labelledby="controlInfoModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-sm-down" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="controlInfoModalLongTitle">แผงควบคุม</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body" id="controlEndpoint">
+                <div class="row d-none">
+                    <input type="text" class="form-control" id="controlMode" disabled />
+                    <input type="text" class="form-control" id="controlProjectType" disabled />
+                    <input type="text" class="form-control" id="controlControllerCode" disabled />
+                </div>
+                <div class="row">
+                    <label class="form-group col-md-12 has-float-label" for="controlLampSerialNo">
+                        <input type="text" class="form-control" id="controlLampSerialNo" disabled />
+                        <span>S/N</span>
+                    </label>
+                </div>
+                <div class="row">
+                    <label class="form-group col-md-12 has-float-label" for="controlLampName">
+                        <input type="text" class="form-control" id="controlLampName" disabled />
+                        <span>ชื่อหลอดไฟ</span>
+                    </label>
+                </div>
+                <div class="row">
+                    <label class="form-group col-md-6 has-float-label" for="controlStaRelay">
+                        <input type="text" class="form-control" id="controlStaRelay" disabled />
+                        <span>สถานะ</span>
+                    </label>
+                    <label class="form-group col-md-6 has-float-label" for="controlStaMode">
+                        <input type="text" class="form-control" id="controlStaMode" disabled />
+                        <span>โหมดการทำงาน</span>
+                    </label>
+                </div>
+                <div class="row">
+                    <label class="form-group col-md-6 has-float-label" for="controlStaCurrent">
+                        <input type="text" class="form-control" id="controlStaCurrent" disabled />
+                        <span>ค่ากระแส</span>
+                    </label>
+                    <label class="form-group col-md-6 has-float-label" for="controlStaAmLight">
+                        <input type="text" class="form-control" id="controlStaAmLight" disabled />
+                        <span>Ambient</span>
+                    </label>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="controlStaPWM1_rangeWarm">ค่าแสงอุ่น</label> <span id="controlStaPWM1_Text">0</span>
+                        <input type="range" class="form-control-range" id="controlStaPWM1_rangeWarm" disabled>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="controlStaPWM2_rangeCool">ค่าแสงเย็น</label> <span id="controlStaPWM2_Text">0</span>
+                        <input type="range" class="form-control-range" id="controlStaPWM2_rangeCool" disabled>
+                    </div>
+                </div>
+                <hr />
+                <br />
+                <div class="row" id="controlActionPanel">
+                    <label class="form-group col-md-12 has-float-label" for="controlActionList">
+                        <select id="controlActionList" class="form-control">
+                            <option selected disabled value="">...</option>
+                            <option value="MODE_CHANGE">เปลี่ยนโหมดการทำงาน</option>
+                            <option value="MANUAL">กำหนดการทำงานด้วยตนเอง</option>
+                            <option value="SET_SCHEDULE">ตั้งเวลาทำงานอัตโนมัติ</option>
+                        </select>
+                        <span>คำสั่ง</span>
+                    </label>
+                </div>
+
+                <div id="controlActionModeChange" class="d-none">
+                    <div class="row">
+                        <label class="form-group col-md-12 has-float-label" for="controlChangeModeList">
+                            <select id="controlChangeModeList" class="form-control">
+                                <option selected disabled value="">...</option>
+                            </select>
+                            <span>โหมดการทำงาน</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="controlActionManual" class="d-none">
+                    <div class="row">
+                        <label class="form-group col-md-12 has-float-label" for="controlRelayState">
+                            <select id="controlRelayState" class="form-control">
+                                <option selected disabled value="">...</option>
+                                <option value="0">ปิดไฟ</option>
+                                <option value="1">เปิดไฟ</option>
+                            </select>
+                            <span>สถานะหลอดไฟ</span>
+                        </label>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label for="controlRangeWarm">ค่าแสงอุ่น</label> <span id="rangeWarm">50</span>
+                            <input type="range" class="form-control-range" id="controlRangeWarm" onInput="$('#rangeWarm').html($(this).val())" disabled>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label for="controlRangeCool">ค่าแสงเย็น</label> <span id="rangeCool">50</span>
+                            <input type="range" class="form-control-range" id="controlRangeCool" onInput="$('#rangeCool').html($(this).val())" disabled>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="controlActionSchedule" class="d-none">
+                    <div class="row">
+                        <label class="form-group col-md-12 has-float-label" for="schedule_1_no">
+                            <input type="text" class="form-control" id="schedule_1_no" value="1" disabled />
+                            <span>ลำดับ</span>
+                        </label>
+                    </div>
+                    <div class="row">
+                        <label class="form-group col-md-6 has-float-label" for="schedule_1_start">
+                            <input type="text" class="form-control datetimepicker-input" id="schedule_1_start" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_1_start" />
+                            <span>ตั้งแต่เวลา</span>
+                        </label>
+
+                        <label class="form-group col-md-3 has-float-label" for="schedule_1_duration_h">
+                            <input type="text" class="form-control numberInputValidate" id="schedule_1_duration_h" autocomplete="off" maxlength="2" />
+                            <span>ระยะเวลา - ชั่วโมง</span>
+                        </label>
+
+                        <label class="form-group col-md-3 has-float-label" for="schedule_1_duration_m">
+                            <input type="text" class="form-control numberInputValidate" id="schedule_1_duration_m" autocomplete="off" maxlength="2" />
+                            <span>นาที</span>
+                        </label>
+
+                        @*<label class="form-group col-md-6 has-float-label" for="schedule_1_duration">
+                            <input type="text" class="form-control datetimepicker-input" id="schedule_1_duration" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_1_duration" />
+                            <span>ระยะเวลา (ชั่วโมง:นาที)</span>
+                        </label>*@
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="schedule_1_controlRangeWarm">ค่าแสงอุ่น</label> <span id="schedule_1_rangeWarm">50</span>
+                            <input type="range" class="form-control-range" id="schedule_1_controlRangeWarm" onInput="$('#schedule_1_rangeWarm').html($(this).val())">
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="schedule_1_controlRangeCool">ค่าแสงเย็น</label> <span id="schedule_1_rangeCool">50</span>
+                            <input type="range" class="form-control-range" id="schedule_1_controlRangeCool" onInput="$('#schedule_1_rangeCool').html($(this).val())">
+                        </div>
+                    </div>
+
+                    <hr />
+                    <br />
+                    <div class="row">
+                        <label class="form-group col-md-12 has-float-label" for="schedule_2_no">
+                            <input type="text" class="form-control" id="schedule_2_no" value="2" disabled />
+                            <span>ลำดับ</span>
+                        </label>
+                    </div>
+                    <div class="row">
+                        <label class="form-group col-md-6 has-float-label" for="schedule_2_start">
+                            <input type="text" class="form-control datetimepicker-input" id="schedule_2_start" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_2_start" />
+                            <span>ตั้งแต่เวลา</span>
+                        </label>
+
+                        <label class="form-group col-md-3 has-float-label" for="schedule_2_duration_h">
+                            <input type="text" class="form-control numberInputValidate" id="schedule_2_duration_h" autocomplete="off" maxlength="2" />
+                            <span>ระยะเวลา - ชั่วโมง</span>
+                        </label>
+
+                        <label class="form-group col-md-3 has-float-label" for="schedule_2_duration_m">
+                            <input type="text" class="form-control numberInputValidate" id="schedule_2_duration_m" autocomplete="off" maxlength="2" />
+                            <span>นาที</span>
+                        </label>
+
+                        @*<label class="form-group col-md-6 has-float-label" for="schedule_2_duration">
+                            <input type="text" class="form-control datetimepicker-input" id="schedule_2_duration" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_2_duration" />
+                            <span>ระยะเวลา (ชั่วโมง:นาที)</span>
+                        </label>*@
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="schedule_2_controlRangeWarm">ค่าแสงอุ่น</label> <span id="schedule_2_rangeWarm">50</span>
+                            <input type="range" class="form-control-range" id="schedule_2_controlRangeWarm" onInput="$('#schedule_2_rangeWarm').html($(this).val())">
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="schedule_2_controlRangeCool">ค่าแสงเย็น</label> <span id="schedule_2_rangeCool">50</span>
+                            <input type="range" class="form-control-range" id="schedule_2_controlRangeCool" onInput="$('#schedule_2_rangeCool').html($(this).val())">
+                        </div>
+                    </div>
+
+                    <hr />
+                    <br />
+                    <div class="row">
+                        <label class="form-group col-md-12 has-float-label" for="schedule_3_no">
+                            <input type="text" class="form-control" id="schedule_3_no" value="3" disabled />
+                            <span>ลำดับ</span>
+                        </label>
+                    </div>
+                    <div class="row">
+                        <label class="form-group col-md-6 has-float-label" for="schedule_3_start">
+                            <input type="text" class="form-control datetimepicker-input" id="schedule_3_start" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_3_start" />
+                            <span>ตั้งแต่เวลา</span>
+                        </label>
+
+                        <label class="form-group col-md-3 has-float-label" for="schedule_3_duration_h">
+                            <input type="text" class="form-control numberInputValidate" id="schedule_3_duration_h" autocomplete="off" maxlength="2" />
+                            <span>ระยะเวลา - ชั่วโมง</span>
+                        </label>
+
+                        <label class="form-group col-md-3 has-float-label" for="schedule_3_duration_m">
+                            <input type="text" class="form-control numberInputValidate" id="schedule_3_duration_m" autocomplete="off" maxlength="2" />
+                            <span>นาที</span>
+                        </label>
+
+                        @*<label class="form-group col-md-6 has-float-label" for="schedule_3_duration">
+                            <input type="text" class="form-control datetimepicker-input" id="schedule_3_duration" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_3_duration" />
+                            <span>ระยะเวลา (ชั่วโมง:นาที)</span>
+                        </label>*@
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="schedule_3_controlRangeWarm">ค่าแสงอุ่น</label> <span id="schedule_3_rangeWarm">50</span>
+                            <input type="range" class="form-control-range" id="schedule_3_controlRangeWarm" onInput="$('#schedule_3_rangeWarm').html($(this).val())">
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="schedule_3_controlRangeCool">ค่าแสงเย็น</label> <span id="schedule_3_rangeCool">50</span>
+                            <input type="range" class="form-control-range" id="schedule_3_controlRangeCool" onInput="$('#schedule_3_rangeCool').html($(this).val())">
+                        </div>
+                    </div>
+
+                    <hr />
+                    <br />
+                    <div class="row">
+                        <label class="form-group col-md-12 has-float-label" for="schedule_4_no">
+                            <input type="text" class="form-control" id="schedule_4_no" value="4" disabled />
+                            <span>ลำดับ</span>
+                        </label>
+                    </div>
+                    <div class="row">
+                        <label class="form-group col-md-6 has-float-label" for="schedule_4_start">
+                            <input type="text" class="form-control datetimepicker-input" id="schedule_4_start" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_4_start" />
+                            <span>ตั้งแต่เวลา</span>
+                        </label>
+
+                        <label class="form-group col-md-3 has-float-label" for="schedule_4_duration_h">
+                            <input type="text" class="form-control numberInputValidate" id="schedule_4_duration_h" autocomplete="off" maxlength="2" />
+                            <span>ระยะเวลา - ชั่วโมง</span>
+                        </label>
+
+                        <label class="form-group col-md-3 has-float-label" for="schedule_4_duration_m">
+                            <input type="text" class="form-control numberInputValidate" id="schedule_4_duration_m" autocomplete="off" maxlength="2" />
+                            <span>นาที</span>
+                        </label>
+
+                        @*<label class="form-group col-md-6 has-float-label" for="schedule_4_duration">
+                            <input type="text" class="form-control datetimepicker-input" id="schedule_4_duration" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_4_duration" />
+                            <span>ระยะเวลา (ชั่วโมง:นาที)</span>
+                        </label>*@
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="schedule_4_controlRangeWarm">ค่าแสงอุ่น</label> <span id="schedule_4_rangeWarm">50</span>
+                            <input type="range" class="form-control-range" id="schedule_4_controlRangeWarm" onInput="$('#schedule_4_rangeWarm').html($(this).val())">
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="schedule_4_controlRangeCool">ค่าแสงเย็น</label> <span id="schedule_4_rangeCool">50</span>
+                            <input type="range" class="form-control-range" id="schedule_4_controlRangeCool" onInput="$('#schedule_4_rangeCool').html($(this).val())">
+                        </div>
+                    </div>
+
+                    <hr />
+                    <br />
+                    <div class="row">
+                        <label class="form-group col-md-12 has-float-label" for="schedule_5_no">
+                            <input type="text" class="form-control" id="schedule_5_no" value="5" disabled />
+                            <span>ลำดับ</span>
+                        </label>
+                    </div>
+                    <div class="row">
+                        <label class="form-group col-md-6 has-float-label" for="schedule_5_start">
+                            <input type="text" class="form-control datetimepicker-input" id="schedule_5_start" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_5_start" />
+                            <span>ตั้งแต่เวลา</span>
+                        </label>
+
+                        <label class="form-group col-md-3 has-float-label" for="schedule_5_duration_h">
+                            <input type="text" class="form-control numberInputValidate" id="schedule_5_duration_h" autocomplete="off" maxlength="2" />
+                            <span>ระยะเวลา - ชั่วโมง</span>
+                        </label>
+
+                        <label class="form-group col-md-3 has-float-label" for="schedule_5_duration_m">
+                            <input type="text" class="form-control numberInputValidate" id="schedule_5_duration_m" autocomplete="off" maxlength="2" />
+                            <span>นาที</span>
+                        </label>
+
+                        @*<label class="form-group col-md-6 has-float-label" for="schedule_5_duration">
+                            <input type="text" class="form-control datetimepicker-input" id="schedule_5_duration" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_5_duration" />
+                            <span>ระยะเวลา (ชั่วโมง:นาที)</span>
+                        </label>*@
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="schedule_5_controlRangeWarm">ค่าแสงอุ่น</label> <span id="schedule_5_rangeWarm">50</span>
+                            <input type="range" class="form-control-range" id="schedule_5_controlRangeWarm" onInput="$('#schedule_5_rangeWarm').html($(this).val())">
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="schedule_5_controlRangeCool">ค่าแสงเย็น</label> <span id="schedule_5_rangeCool">50</span>
+                            <input type="range" class="form-control-range" id="schedule_5_controlRangeCool" onInput="$('#schedule_5_rangeCool').html($(this).val())">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer d-flex justify-content-end flex-wrap">
+                    <div class="flex-fill">
+                        <p id="controlUpdatedAt" class="text-secondary d-none">ข้อมูลล่าสุดเมื่อ :</p>
+                    </div>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">
+                        <i class="mdi mdi-close"></i>
+                    </button>
+                    <button id="control-send-button" type="button" class="btn btn-success btn-sm">
+                        <i class="mdi mdi-content-save"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/app/base/moment-with-locales.min.js"></script>
+    <script src="~/Scripts/app/base/tempusdominus-bootstrap-4.min.js"></script>
+    <script src="~/Scripts/app/view/maps-view.js"></script>
+    @*<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdnE3rRU1dEs_x_APSdXiPIM28-3ng2dA&v=weekly" async></script>*@
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdnE3rRU1dEs_x_APSdXiPIM28-3ng2dA&callback=initMap&v=weekly" async></script>
+}

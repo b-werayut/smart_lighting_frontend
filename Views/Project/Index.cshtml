@@ -1,0 +1,180 @@
+﻿@{
+    ViewBag.Title = "NWL AdAM - โครงการ";
+}
+
+<div class="row">
+    <div class="col-md-12 grid-margin">
+        <div class="d-flex justify-content-start flex-wrap">
+            <div class="d-flex align-items-end flex-wrap">
+                <div class="mr-md-5 mr-xl-5">
+                    <h2>โครงการ</h2>
+                    <p class="mb-md-0">
+                        <i class="mdi mdi-home text-muted hover-cursor"></i>
+                        <a class="text-muted mb-0" href="~/Home">&nbsp;/&nbsp;&nbsp;ภาพรวม&nbsp;&nbsp;/</a>
+                        <a class="text-primary mb-0" href="~/Project">&nbsp;โครงการ</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <div class="card-title">
+                    <div class="d-flex justify-content-between flex-fill">
+                        <button id="buttonNewProject" class="btn btn-success btn-sm modal-state-create" data-toggle="modal" data-target="#projectInfoModal"><i class="mdi mdi-plus"></i></button>
+
+                        <div>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="searchText" placeholder="Search" autocomplete="off" />
+                                <div class="input-group-append">
+                                    <button id="searchSubmit" class="btn btn-sm btn-primary" type="button"><i class="mdi mdi-magnify"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <label class="form-group has-float-label" for="projectCode">
+                    <select id="filterProjectType" class="form-control">
+                        <option selected value="">ทุกประเภท</option>
+                        <option value="1">LoRa</option>
+                        <option value="2">EMM</option>
+                        <option value="3">NB Node</option>
+                    </select>
+                    <span>ประเภทโครงการ</span>
+                </label>
+
+                <div id="no-more-tables" class="table-responsive grid-margin">
+                    <table id="dataTable" class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th class="col-md-2">
+                                    รหัสโครงการ
+                                </th>
+                                <th class="col-md-4">
+                                    ชื่อโครงการ
+                                </th>
+                                <th class="col-md-3">
+                                    ประเภทกล่องควบคุม
+                                </th>
+                                <th class="col-md-3"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="bottomPagination" class="d-flex justify-content-end flex-wrap">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="projectInfoModal" tabindex="-1" role="dialog" aria-labelledby="projectInfoModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-sm-down" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="projectInfoModalLongTitle">Modal Title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+                    <label class="form-group col-md-12 has-float-label" for="projectCode">
+                        <input type="text" class="form-control" id="projectCode" placeholder="รหัสโครงการ" autocomplete="off" disabled />
+                        <span>รหัสโครงการ</span>
+                    </label>
+                </div>
+                <div class="row">
+                    <label class="form-group col-md-12 has-float-label" for="projectName">
+                        <input type="text" class="form-control" id="projectName" placeholder="ชื่อโครงการ" autocomplete="off" />
+                        <span>ชื่อโครงการ</span>
+                    </label>
+                </div>
+                <div class="row">
+                    <label class="form-group col-md-12 has-float-label" for="projectAddress">
+                        <input type="text" class="form-control" id="projectAddress" placeholder="ที่อยู่" autocomplete="off" />
+                        <span>ที่อยู่</span>
+                    </label>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-group has-float-label" for="province">
+                            <select id="province" class="form-control">
+                                <option selected disabled value="">...</option>
+                            </select>
+                            <span>จังหวัด</span>
+                        </label>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-group has-float-label" for="district">
+                            <select id="district" class="form-control">
+                                <option selected disabled value="">...</option>
+                            </select>
+                            <span>เขต/อำเภอ</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-group has-float-label" for="subdistrict">
+                            <select id="subdistrict" class="form-control">
+                                <option selected disabled value="">...</option>
+                            </select>
+                            <span>แขวง/ตำบล</span>
+                        </label>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-group has-float-label" for="postCode">
+                            <input type="text" class="form-control" id="postCode" placeholder="รหัสไปรษณีย์" value="..." disabled />
+                            <span>รหัสไปรษณีย์</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-group col-md-12 has-float-label" for="projectType">
+                        <select id="projectType" class="form-control">
+                            <option selected disabled value="">...</option>
+                            <option value="1">LoRa</option>
+                            <option value="2">EMM</option>
+                            <option value="3">NB Node</option>
+                        </select>
+                        <span>ประเภทกล่องควบคุม</span>
+                    </label>
+                </div>
+                <div class="row">
+                    <label class="form-group col-md-12 has-float-label" for="lineToken_1">
+                        <input type="text" class="form-control" id="lineToken_1" placeholder="LINE Token #1" autocomplete="off" />
+                        <span>LINE Token #1</span>
+                    </label>
+                </div>
+                <div class="row">
+                    <label class="form-group col-md-12 has-float-label" for="lineToken_2">
+                        <input type="text" class="form-control" id="lineToken_2" placeholder="LINE Token #2" autocomplete="off" />
+                        <span>LINE Token #2</span>
+                    </label>
+                </div>
+                <div class="modal-footer d-flex justify-content-end flex-wrap">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">
+                        <i class="mdi mdi-close"></i>
+                    </button>
+                    <button id="modal-save-button" type="button" class="btn btn-success btn-sm">
+                        <i class="mdi mdi-content-save"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/app/view/project-view.js"></script>
+}

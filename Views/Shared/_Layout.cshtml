@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>NWL AdAM</title>
+    <link rel="shortcut icon" href="~/images/nwl-logo.jpg" />
+    @Styles.Render("~/Content/css")
+    @RenderSection("css", required: false)
+</head>
+<body>
+    <div class="container-scroller">
+        @Html.Partial("_Navbar")
+        <div class="container-fluid page-body-wrapper">
+            @Html.Partial("_Sidebar")
+            <div id="parentRole" class="main-panel" data-valkey="@((Session[NWL_AdAm_SPL.Variables.USER_PROFILE] as NWL_AdAm_DML.Model.SessionModel).role)">
+                <div class="content-wrapper">
+                    @RenderBody()
+                </div>
+                @Html.Partial("_Footer")
+            </div>
+        </div>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/app")
+    @Scripts.Render("~/bundles/MajesticAdmin")
+    @RenderSection("scripts", required: false)
+</body>
+
+</html>
+

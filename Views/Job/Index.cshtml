@@ -1,0 +1,228 @@
+﻿@{
+    ViewBag.Title = "NWL AdAM - แจ้งซ่อม";
+}
+
+@section css {
+    <link href="~/Content/app/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+
+
+}
+
+
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.print.min.js"></script>
+
+
+<div class="row">
+    <div class="col-md-12 grid-margin">
+        <div class="d-flex justify-content-start flex-wrap">
+            <div class="d-flex align-items-end flex-wrap">
+                <div class="mr-md-5 mr-xl-5">
+                    <h2>แจ้งซ่อม</h2>
+                    <p class="mb-md-0">
+                        <i class="mdi mdi-home text-muted hover-cursor"></i>
+                        <a class="text-muted mb-0" href="~/Home">&nbsp;/&nbsp;&nbsp;ภาพรวม&nbsp;&nbsp;/</a>
+                        <a class="text-primary mb-0" href="~/Job">&nbsp;แจ้งซ่อม</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <div class="card-title">
+                    <div class="d-flex justify-content-between flex-fill">
+                        <button id="buttonNewJob" class="btn btn-success btn-sm modal-state-create" data-toggle="modal" data-target="#jobInfoModal"><i class="mdi mdi-plus"></i></button>
+
+                        <div>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="searchText" placeholder="Search" autocomplete="off" />
+                                <div class="input-group-append">
+                                    <button id="searchSubmit" class="btn btn-sm btn-primary" type="button"><i class="mdi mdi-magnify"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <label class="form-group has-float-label" for="projectCode">
+                    <select id="filterProjectCode" class="form-control">
+                        <option selected value="">ทุกโครงการ</option>
+                    </select>
+                    <span>โครงการ</span>
+                </label>
+              
+                <div id="no-more-tables" class="table-responsive grid-margin">
+                    <button id="btn-export"><b>ส่งออก Excel</b></button>
+                    <table id="dataTable" class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th class="col-md-2">
+                                    เลขที่งาน
+                                </th>
+                                <th class="col-md-2">
+                                    วันที่แจ้งงาน
+                                </th>
+                                <th class="col-md-2">
+                                    โครงการ
+                                </th>
+                                <th class="col-md-4">
+                                    รายละเอียดปัญหา
+                                </th>
+                                <th class="col-md-4">
+                                    วิธีแก้ไข
+                                </th>
+                                <th class="col-md-1">
+                                    สถานะ
+                                </th>
+                                <th class="col-md-1">
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="bottomPagination" class="d-flex justify-content-end flex-wrap">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="jobInfoModal" tabindex="-1" role="dialog" aria-labelledby="jobInfoModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-sm-down" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="jobInfoModalLongTitle">Modal Title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-group has-float-label" for="jobDocNo">
+                            <input type="text" class="form-control" id="jobDocNo" disabled />
+                            <span>เลขที่งาน</span>
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-group has-float-label" for="problemTime">
+                            <input type="text" class="form-control" id="problemTime" data-toggle="datetimepicker" data-target="#problemTime" disabled />
+                            <span>วันที่แจ้งงาน</span>
+                        </label>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-group has-float-label" for="docStatus">
+                            <input type="button" class="form-control btn btn-outline-secondary" id="docStatus" disabled />
+                            <span>สถานะ</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-group col-md-12 has-float-label" for="projectCode">
+                        <select id="projectCode" class="form-control">
+                            <option selected disabled value="">...</option>
+                        </select>
+                        <span>โครงการ</span>
+                    </label>
+                </div>
+                <div class="row">
+                    <label class="form-group col-md-12 has-float-label" for="controllerCode">
+                        <select id="controllerCode" class="form-control">
+                            <option selected disabled value="">...</option>
+                        </select>
+                        <span>กล่องควบคุม</span>
+                    </label>
+                </div>
+                <div class="row">
+                    <label class="form-group col-md-12 has-float-label" for="lampCode">
+                        <select id="lampCode" class="form-control">
+                            <option selected disabled value="">...</option>
+                        </select>
+                        <span>หลอดไฟ</span>
+                    </label>
+                </div>
+                <div class="row">
+                    <label class="form-group col-md-12 has-float-label" for="jobProblem">
+                        <textarea class="form-control" id="jobProblem" rows="4"></textarea>
+                        <span>รายละเอียด</span>
+                    </label>
+                </div>
+
+                <div id="resolveSection" class="d-none" data-valkey="@((Session[NWL_AdAm_SPL.Variables.USER_PROFILE] as NWL_AdAm_DML.Model.SessionModel).role)">
+                    <hr />
+                    <br />
+                    <div class="row">
+                        <label class="form-group col-md-12 has-float-label" for="jobResolve">
+                            <textarea class="form-control" id="jobResolve" rows="4"></textarea>
+                            <span>วิธีการแก้ไข</span>
+                        </label>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-group has-float-label" for="engineerName">
+                                <input type="text" class="form-control" id="engineerName" disabled />
+                                <span>ผู้รับผิดชอบ</span>
+                            </label>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-group has-float-label" for="resolveTime">
+                                <input type="text" class="form-control" id="resolveTime" disabled />
+                                <span>วันที่แก้ไข</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-group col-md-12 has-float-label" for="isComplete">
+                            <select id="isComplete" class="form-control">
+                                <option selected disabled value="">...</option>
+                                <option value="false">ซ่อมไม่สำเร็จ</option>
+                                <option value="true">ซ่อมสำเร็จ</option>
+                            </select>
+                            <span>สถานะการซ่อม</span>
+                        </label>
+                    </div>
+                </div>
+                @*---------------------------------------*@
+
+                <div class="modal-footer d-flex justify-content-end flex-wrap">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">
+                        <i class="mdi mdi-close"></i>
+                    </button>
+                    <button id="modal-save-button" type="button" class="btn btn-success btn-sm">
+                        <i class="mdi mdi-content-save"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/app/view/job-view.js"></script>
+    <script src="~/Scripts/app/base/moment-with-locales.min.js"></script>
+    <script src="~/Scripts/app/base/tempusdominus-bootstrap-4.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const exportButton = document.getElementById('btn-export');
+            const table = document.getElementById('dataTable');
+            exportButton.addEventListener('click', () => {
+                /* Create worksheet from HTML DOM TABLE */
+                const wb = XLSX.utils.table_to_book(table, { sheet: 'sheet-1' });
+                const currentDate = new Date().toDateString();
+                var fname = 'Job_' + currentDate + '.xlsx'; 
+                /* Export to file (start a download) */
+                XLSX.writeFile(wb, fname);
+            });
+        });
+    </script>
+}

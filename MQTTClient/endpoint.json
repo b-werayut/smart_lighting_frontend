@@ -1,0 +1,5 @@
+{
+    "MANUAL": "https://203.159.92.211:2001/api/Publisher/mqttManual",
+    "MODE_CHANGE": "https://203.159.92.211:2001/api/Publisher/mqttModeChange",
+    "SET_SCHEDULE": "https://203.159.92.211:2001/api/Publisher/mqttSetSchedule"
+}
