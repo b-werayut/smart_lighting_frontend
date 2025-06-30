@@ -1,5 +1,6 @@
 ﻿$(document).ready(function () {
-    let firstload = true;
+    let firstloadmanual = true;
+    let firstloadauto = true;
     let firstloadall = true
     let isInternalChange = false;
     let isInitializing = false;
@@ -431,8 +432,8 @@
     // }
 
     function showControlModal() {
-        firstLoad = true;
-        firstload = true;
+        firstloadmanual = true
+        firstloadauto = true
         const macaddress = $(this).attr("data-valkey")
         const endpoint = `http://85.204.247.82:3002/api/getmacdatas/${macaddress}`
         const options = {
@@ -442,37 +443,53 @@
         if ($(this).attr("data-status") == "2") {
             Swal.fire({
                 title: "เกิดข้อผิดพลาด",
-                text: "ไม่สามารถเชื่อมต่อหลอดไฟ \"" + $(this).attr("data-valkey") + "\"",
+                html: `ไม่สามารถเชื่อมต่อหลอดไฟ <strong>"${$(this).attr("data-valkey")}"</strong> ได้`,
                 icon: "error"
             });
             return;
         }
 
         Swal.fire({
-            title: "Loading...",
-            html: `กำลังดึงข้อมูลอุปกรณ์ ${macaddress}`,
-            timerProgressBar: true,
+            title: '🔄 กำลังดึงข้อมูล...',
+            html: `
+        <div style="font-size: 16px; color: #555;">
+            กำลังดึงข้อมูลอุปกรณ์ <strong>${macaddress}</strong><br>
+            กรุณารอสักครู่...
+        </div>
+    `,
             allowOutsideClick: false,
             allowEscapeKey: false,
+            showConfirmButton: false,
+            timerProgressBar: true,
             didOpen: () => {
                 Swal.showLoading();
             }
         });
 
         setTimeout(() => {
-            swal.close()
-            // $("#controlInfoModal").modal("show");
-            // $("#controlInfoModal").LoadingOverlay("show");
             fetch(endpoint, options)
                 .then(res => {
                     $("#controlInfoModal").LoadingOverlay("hide");
+                    Swal.fire({
+                        position: "center",
+                        icon: 'success',
+                        title: "สำเร็จ",
+                        html: `<div style="padding: 12px; background-color: #e6f4ea; border: 1px solid #a3d9a5; border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2e7d32;">
+  ✅ ดึงข้อมูลอุปกรณ์ <strong style="color: #1b5e20;">${macaddress}</strong> สำเร็จ
+</div>`,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                     return res.json();
                 }).then(result => {
                     let obj = result
 
                     clearControlModalInput();
                     bindControlPanelViewModelToModal(obj);
-                    $("#controlInfoModal").modal("show");
+
+                    setTimeout(() => {
+                        $("#controlInfoModal").modal("show");
+                    }, 1500);
 
                     // if (viewModel.state == "success") {
                     //     clearControlModalInput();
@@ -483,7 +500,14 @@
                     // }
                 }).catch(error => {
                     console.log(error.message);
-                    Swal.fire("เกิดข้อผิดพลาด", "ไม่สามารถส่งข้อมูลได้", "error");
+                    Swal.fire({
+                        position: "center",
+                        icon: 'error',
+                        title: "ผิดพลาด!",
+                        html: `ดึงข้อมูลอุปกรณ์ <b>${macaddress}</b> ไม่สำเร็จ`,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                 });
         }, 5000)
     }
@@ -833,8 +857,10 @@
         toggleStatus2(obj.data[0]?.relay)
 
 
-
+        firstloadmanual = false
+        firstloadauto = false
         isInitializing = false;
+
         // $("#rangeWarm").text(viewModel.pwm1);
         // $("#controlRangeWarm").val(viewModel.pwm1);
         // $("#rangeCool").text(viewModel.pwm2);
@@ -1176,6 +1202,8 @@
         const btnswitchmanual = $('#controlRelayState')
         const btnswitchauto = $('#controlRelayState2')
         let mode = $(this).val();
+        $('.mn').fadeOut()
+        $('.mn2').fadeOut()
 
         if (mode === "SET_SCHEDULE") {
             mode = "SCHEDULE";
@@ -1189,12 +1217,13 @@
             macAddress,
             mode
         }
-        // console.log('data', data)
+
+
 
         if ($(this).val() === "MANUAL") {
             Swal.fire({
-                title: "เปลี่ยน Mode ?",
-                text: `เปลี่ยน ${macAddress} เป็น Mode MANUAL ใช่ไหม?`,
+                title: "เปลี่ยน Mode?",
+                html: `ต้องการเปลี่ยน <strong>${macAddress}</strong> เป็น <strong>Mode Manual</strong> ใช่หรือไม่?`,
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
@@ -1204,15 +1233,21 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
-                        title: "เปลี่ยน Mode",
-                        html: `กำลังส่งคำสั่งเปลี่ยน Mode ${macAddress}`,
+                        title: "🔄 กำลังเปลี่ยน Mode",
+                        html: `
+        <div style="font-size: 16px; color: #555;">
+            กำลังส่งคำสั่งเปลี่ยน Mode สำหรับ <strong>${macAddress}</strong><br>
+            กรุณารอสักครู่...
+        </div>
+    `,
                         timerProgressBar: true,
                         allowOutsideClick: false,
                         allowEscapeKey: false,
+                        showConfirmButton: false,
                         didOpen: () => {
                             Swal.showLoading();
                         }
-                    })
+                    });
 
                     setTimeout(() => {
                         fetch(endpoint_off, {
@@ -1222,10 +1257,30 @@
                             },
                             body: JSON.stringify(dataoff)
                         }).then(response => {
+                            firstloadmanual = true
+                            btnswitchmanual.bootstrapToggle('off')
+                            if (!btnswitchmanual.prop('checked')) {
+                                console.log('!btnswitchmanual.prop(checked)')
+                                $('.mn').fadeOut()
+                            }
                             return response.json();
                         }).then(result => {
                             console.log('result', result)
-                        }).catch(err => console.log(err))
+                        }).catch(err => {
+                            console.error("เกิดข้อผิดพลาด:", err);
+                            Swal.fire({
+                                position: "center",
+                                icon: 'error',
+                                title: "❌ ผิดพลาด!",
+                                html: `
+        <div style="font-size: 16px; color: #b71c1c;">
+            🚫 <strong>เกิดข้อผิดพลาด กรุณาติดต่อผู้ดูแลระบบ</strong>
+        </div>
+    `,
+                                showConfirmButton: false,
+                                timer: 2000
+                            })
+                        })
                     }, 1000);
 
                     setTimeout(() => {
@@ -1241,17 +1296,26 @@
                             let res = JSON.parse(JSON.stringify(result));
                             if (res.msg === "OK") {
                                 Swal.fire({
-                                    title: "สำเร็จ!",
-                                    text: `เปลี่ยน ${macAddress} เป็น Mode MANUAL สำเร็จ`,
-                                    icon: "success"
+                                    icon: "success",
+                                    title: "🎉 สำเร็จ!",
+                                    html: `
+        <div style="font-size: 16px; color: #2e7d32;">
+            เปลี่ยน <strong>${macAddress}</strong> เป็น <strong>Mode Manual</strong> สำเร็จ
+        </div>
+    `,
+                                    showConfirmButton: false,
+                                    timer: 2000
                                 });
-                                btnswitchmanual.bootstrapToggle('on')
                             } else if (res.msg === "Error") {
                                 Swal.fire({
-                                    title: "ไม่สำเร็จ!",
-                                    text: `เปลี่ยน ${macAddress}  เป็น Mode MANUAL ไม่สำเร็จ`,
-                                    icon: "error"
-                                });
+                                    icon: "error",
+                                    title: "❌ ไม่สำเร็จ!",
+                                    html: `
+        <div style="font-size: 16px; color: #b71c1c;">
+            ไม่สามารถเปลี่ยน <strong>${macAddress}</strong> เป็น <strong>Mode Manual</strong> ได้
+        </div>
+    `
+                                })
                             }
                             $('#control-send-manual').removeClass('d-none')
                             $('#control-send-auto').addClass('d-none')
@@ -1266,8 +1330,19 @@
                             $("#manual-tab").addClass("active")
                             $(".n-pills").removeClass("d-none")
                         }).catch(error => {
-                            console.log(error.message);
-                            showDialog("error", "ข้อผิดพลาด", "ต่อต่อระบบ");
+                            console.error("เกิดข้อผิดพลาด:", err);
+                            Swal.fire({
+                                position: "center",
+                                icon: 'error',
+                                title: "❌ ผิดพลาด!",
+                                html: `
+        <div style="font-size: 16px; color: #b71c1c;">
+            🚫 <strong>เกิดข้อผิดพลาด กรุณาติดต่อผู้ดูแลระบบ</strong>
+        </div>
+    `,
+                                showConfirmButton: false,
+                                timer: 2000
+                            })
                         })
                     }, 2000)
                 } else {
@@ -1276,8 +1351,8 @@
             });
         } else if ($(this).val() === "SET_SCHEDULE") {
             Swal.fire({
-                title: "เปลี่ยนMode ?",
-                text: `เปลี่ยน ${macAddress}  เป็น Mode Schedule ใช่ไหม?`,
+                title: "เปลี่ยน Mode?",
+                html: `ต้องการเปลี่ยน <strong>${macAddress}</strong> เป็น <strong>Mode Schedule</strong> ใช่หรือไม่?`,
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
@@ -1287,15 +1362,21 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
-                        title: "เปลี่ยน Mode",
-                        html: `กำลังส่งคำสั่งเปลี่ยน Mode ${macAddress}`,
+                        title: "🔄 กำลังเปลี่ยน Mode",
+                        html: `
+        <div style="font-size: 16px; color: #555;">
+            กำลังส่งคำสั่งเปลี่ยน Mode สำหรับ <strong>${macAddress}</strong><br>
+            กรุณารอสักครู่...
+        </div>
+    `,
                         timerProgressBar: true,
                         allowOutsideClick: false,
                         allowEscapeKey: false,
+                        showConfirmButton: false,
                         didOpen: () => {
                             Swal.showLoading();
                         }
-                    })
+                    });
 
                     setTimeout(() => {
                         fetch(endpoint_off, {
@@ -1305,10 +1386,30 @@
                             },
                             body: JSON.stringify(dataoff)
                         }).then(response => {
+                            firstloadauto = true
+                            btnswitchauto.bootstrapToggle('off')
+                            if (!btnswitchauto.prop('checked')) {
+                                console.log('!btnswitchauto.prop(checked)')
+                                $('.mn2').fadeOut()
+                            }
                             return response.json();
                         }).then(result => {
                             console.log('result', result)
-                        }).catch(err => console.log(err))
+                        }).catch(err => {
+                            console.error("เกิดข้อผิดพลาด:", err);
+                            Swal.fire({
+                                position: "center",
+                                icon: 'error',
+                                title: "❌ ผิดพลาด!",
+                                html: `
+        <div style="font-size: 16px; color: #b71c1c;">
+            🚫 <strong>เกิดข้อผิดพลาด กรุณาติดต่อผู้ดูแลระบบ</strong>
+        </div>
+    `,
+                                showConfirmButton: false,
+                                timer: 2000
+                            })
+                        })
                     }, 1000);
 
                     setTimeout(() => {
@@ -1325,17 +1426,28 @@
 
                             if (res.msg === "OK") {
                                 Swal.fire({
-                                    title: "สำเร็จ!",
-                                    text: `เปลี่ยน ${macAddress} เป็น Mode Schedule สำเร็จ`,
-                                    icon: "success"
+                                    icon: "success",
+                                    title: "🎉 สำเร็จ!",
+                                    html: `
+        <div style="font-size: 16px; color: #2e7d32;">
+            เปลี่ยน <strong>${macAddress}</strong> เป็น <strong>Mode Schedule</strong> สำเร็จ
+        </div>
+    `,
+                                    showConfirmButton: false,
+                                    timer: 1800
                                 });
-                                btnswitchauto.bootstrapToggle('on')
+                                // btnswitchauto.bootstrapToggle('on')
                             } else if (res.msg === "Error") {
                                 Swal.fire({
-                                    title: "ไม่สำเร็จ!",
-                                    text: `ปลี่ยน ${macAddress} เป็น Mode Schedule ไม่สำเร็จ`,
-                                    icon: "error"
+                                    icon: "error",
+                                    title: "❌ ไม่สำเร็จ!",
+                                    html: `
+        <div style="font-size: 16px; color: #b71c1c;">
+            ไม่สามารถเปลี่ยน <strong>${macAddress}</strong> เป็น <strong>Mode Schedule</strong> ได้
+        </div>
+    `
                                 });
+
                             }
                             $('#control-send-auto').removeClass('d-none')
                             $('#control-send-manual').addClass('d-none')
@@ -1351,7 +1463,19 @@
                             $(".n-pills").removeClass("d-none")
                         }).catch(error => {
                             console.log(error.message);
-                            showDialog("error", "ข้อผิดพลาด", "ต่อต่อระบบ");
+                            console.error("เกิดข้อผิดพลาด:", err);
+                            Swal.fire({
+                                position: "center",
+                                icon: 'error',
+                                title: "❌ ผิดพลาด!",
+                                html: `
+        <div style="font-size: 16px; color: #b71c1c;">
+            🚫 <strong>เกิดข้อผิดพลาด กรุณาติดต่อผู้ดูแลระบบ</strong>
+        </div>
+    `,
+                                showConfirmButton: false,
+                                timer: 2000
+                            })
                         })
                     }, 2000)
                 } else {
@@ -1360,21 +1484,13 @@
             })
         } else if ($(this).val() === "0") {
             Swal.fire({
-                title: "คุณไม่ได้เลือก Mode",
+                title: "⚠️ คุณไม่ได้เลือก Mode",
                 text: "กรุณาเลือก Mode การทำงาน",
                 icon: "warning",
-                showCancelButton: true,
                 confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "ตกลง",
-                showCancelButton: false,
+                confirmButtonText: "ตกลง"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Swal.fire({
-                    //     title: "สำเร็จ!",
-                    //     text: "Your file has been deleted.",
-                    //     icon: "success"
-                    // });
                     $("#pills-tabContent").fadeOut()
                     $("#manual-tab").addClass("disabled")
                     $("#auto-tab").addClass("disabled")
@@ -1388,8 +1504,8 @@
     });
 
     $('#controlRelayState').on('change', function () {
-        if (firstLoad) {
-            firstLoad = false;
+        if (firstloadmanual) {
+            firstloadmanual = false;
             return;
         }
 
@@ -1415,22 +1531,28 @@
 
         if ($(this).is(":checked")) {
             Swal.fire({
-                title: "ต้องการส่งคำสั่งเปิดไฟ?",
-                text: `ต้องการเปิดไฟอุปกรณ์ ${macAddress}`,
+                title: "⚠️ ต้องการส่งคำสั่ง?",
+                html: `<div style="font-size: 16px;">ต้องการเปิดไฟอุปกรณ์ <strong>${macAddress}</strong> ใช่หรือไม่?</div>`,
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "ตกลง",
-                cancelButtonText: "ยกเลิก"
+                confirmButtonText: "✅ ตกลง",
+                cancelButtonText: "❌ ยกเลิก"
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
-                        title: "Loading...",
-                        html: `กำลังส่งคำสั่งเปิดไฟอุปกรณ์ ${macAddress}`,
-                        timerProgressBar: true,
+                        title: '🔄 กำลังส่งคำสั่ง...',
+                        html: `
+        <div style="font-size: 16px; color: #555;">
+            กำลังส่งคำสั่งเปิดไฟอุปกรณ์ <strong>${macAddress}</strong><br>
+            กรุณารอสักครู่...
+        </div>
+    `,
                         allowOutsideClick: false,
                         allowEscapeKey: false,
+                        showConfirmButton: false,
+                        timerProgressBar: true,
                         didOpen: () => {
                             Swal.showLoading();
                         }
@@ -1445,10 +1567,13 @@
                                 Swal.fire({
                                     position: "center",
                                     icon: 'success',
-                                    title: 'เปิดไฟสำเร็จ',
+                                    title: "สำเร็จ",
+                                    html: `<div style="padding: 12px; background-color: #e6f4ea; border: 1px solid #a3d9a5; border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2e7d32;">
+  ✅ เปิดไฟอุปกรณ์ <strong style="color: #1b5e20;">${macAddress}</strong> สำเร็จ
+</div>`,
                                     showConfirmButton: false,
                                     timer: 1500
-                                });
+                                })
                                 $(this).prop('disabled', true);
                                 const btn = $('#control-send-manual')
                                 btn.removeAttr('disabled');
@@ -1461,10 +1586,17 @@
                             .catch(err => {
                                 console.error("เกิดข้อผิดพลาด:", err);
                                 Swal.fire({
+                                    position: "center",
                                     icon: 'error',
-                                    title: 'เกิดข้อผิดพลาด',
-                                    text: err.message
-                                });
+                                    title: "❌ ผิดพลาด!",
+                                    html: `
+        <div style="font-size: 16px; color: #b71c1c;">
+            🚫 <strong>เปิดไฟไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
+        </div>
+    `,
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                })
                             });
                     }, 3000);
                 } else {
@@ -1480,41 +1612,48 @@
 
         } else {
             Swal.fire({
-                title: "ต้องการส่งคำสั่งปิดไฟ?",
-                text: `ต้องการปิดไฟอุปกรณ์ ${macAddress}`,
+                title: "⚠️ ต้องการส่งคำสั่ง?",
+                html: `<div style="font-size: 16px;">ต้องการปิดไฟอุปกรณ์ <strong>${macAddress}</strong> ใช่หรือไม่?</div>`,
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "ตกลง",
-                cancelButtonText: "ยกเลิก"
+                confirmButtonText: "✅ ตกลง",
+                cancelButtonText: "❌ ยกเลิก"
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
-                        title: "Loading...",
-                        html: `กำลังส่งคำสั่งปิดไฟอุปกรณ์ ${macAddress}`,
-                        timerProgressBar: true,
+                        title: '🔄 กำลังส่งคำสั่ง...',
+                        html: `
+        <div style="font-size: 16px; color: #555;">
+            กำลังส่งคำสั่งปิดไฟอุปกรณ์ <strong>${macAddress}</strong><br>
+            กรุณารอสักครู่...
+        </div>
+    `,
                         allowOutsideClick: false,
                         allowEscapeKey: false,
+                        showConfirmButton: false,
+                        timerProgressBar: true,
                         didOpen: () => {
                             Swal.showLoading();
                         }
                     });
-
                     setTimeout(() => {
                         fetch(endpointoff, options)
                             .then(res => res.json())
                             .then(obj => {
-                                // console.log("obj", obj.status);
                                 Swal.close();
                                 $(".mn").fadeOut();
                                 Swal.fire({
                                     position: "center",
                                     icon: 'success',
-                                    title: 'ปิดไฟสำเร็จ',
+                                    title: "สำเร็จ",
+                                    html: `<div style="padding: 12px; background-color: #e6f4ea; border: 1px solid #a3d9a5; border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2e7d32;">
+  ✅ ปิดไฟอุปกรณ์ <strong style="color: #1b5e20;">${macAddress}</strong> สำเร็จ
+</div>`,
                                     showConfirmButton: false,
                                     timer: 1500
-                                });
+                                })
                                 $(this).prop('disabled', true);
                                 const btn = $('#control-send-manual')
                                 btn.attr('disabled', true);
@@ -1527,10 +1666,17 @@
                             .catch(err => {
                                 console.error("เกิดข้อผิดพลาด:", err);
                                 Swal.fire({
+                                    position: "center",
                                     icon: 'error',
-                                    title: 'เกิดข้อผิดพลาด',
-                                    text: err.message
-                                });
+                                    title: "❌ ผิดพลาด!",
+                                    html: `
+        <div style="font-size: 16px; color: #b71c1c;">
+            🚫 <strong>ปิดไฟไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
+        </div>
+    `,
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                })
                             });
                     }, 1000);
                 } else {
@@ -1542,8 +1688,8 @@
     });
 
     $('#controlRelayState2').on('change', function () {
-        if (firstload) {
-            firstload = false;
+        if (firstloadauto) {
+            firstloadauto = false;
             return;
         }
 
@@ -1570,27 +1716,32 @@
         if ($(this).is(":checked")) {
 
             Swal.fire({
-                title: "ส่งคำสั่งเปิดไฟ?",
-                text: `ต้องการเปิดไฟอุปกรณ์ ${macAddress}`,
+                title: "⚠️ ต้องการส่งคำสั่ง?",
+                html: `<div style="font-size: 16px;">ต้องการเปิดไฟอุปกรณ์ <strong>${macAddress}</strong> ใช่หรือไม่?</div>`,
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "ตกลง",
-                cancelButtonText: "ยกเลิก"
+                confirmButtonText: "✅ ตกลง",
+                cancelButtonText: "❌ ยกเลิก"
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
-                        title: "Loading...",
-                        html: `กำลังส่งคำสั่งเปิดไฟอุปกรณ์ ${macAddress}`,
-                        timerProgressBar: true,
+                        title: '🔄 กำลังส่งคำสั่ง...',
+                        html: `
+        <div style="font-size: 16px; color: #555;">
+            กำลังส่งคำสั่งเปิดไฟอุปกรณ์ <strong>${macAddress}</strong><br>
+            กรุณารอสักครู่...
+        </div>
+    `,
                         allowOutsideClick: false,
                         allowEscapeKey: false,
+                        showConfirmButton: false,
+                        timerProgressBar: true,
                         didOpen: () => {
                             Swal.showLoading();
                         }
                     });
-
                     setTimeout(() => {
                         fetch(endpointon, options)
                             .then(res => res.json())
@@ -1601,10 +1752,13 @@
                                 Swal.fire({
                                     position: "center",
                                     icon: 'success',
-                                    title: 'เปิดไฟสำเร็จ',
+                                    title: "สำเร็จ",
+                                    html: `<div style="padding: 12px; background-color: #e6f4ea; border: 1px solid #a3d9a5; border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2e7d32;">
+  ✅ เปิดไฟอุปกรณ์ <strong style="color: #1b5e20;">${macAddress}</strong> สำเร็จ
+</div>`,
                                     showConfirmButton: false,
                                     timer: 1500
-                                });
+                                })
                                 $(this).prop('disabled', true);
                                 const btn = $('#control-send-auto')
                                 btn.removeAttr('disabled');
@@ -1617,10 +1771,17 @@
                             .catch(err => {
                                 console.error("เกิดข้อผิดพลาด:", err);
                                 Swal.fire({
+                                    position: "center",
                                     icon: 'error',
-                                    title: 'เกิดข้อผิดพลาด',
-                                    text: err.message
-                                });
+                                    title: "❌ ผิดพลาด!",
+                                    html: `
+        <div style="font-size: 16px; color: #b71c1c;">
+            🚫 <strong>เปิดไฟไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
+        </div>
+    `,
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                })
                             });
                     }, 3000);
                     // showControlModal()
@@ -1638,27 +1799,32 @@
         } else {
 
             Swal.fire({
-                title: "ส่งคำสั่งปิดไฟ?",
-                text: `ต้องการปิดไฟอุปกรณ์ ${macAddress}`,
+                title: "⚠️ ต้องการส่งคำสั่ง?",
+                html: `<div style="font-size: 16px;">ต้องการปิดไฟอุปกรณ์ <strong>${macAddress}</strong> ใช่หรือไม่?</div>`,
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "ตกลง",
-                cancelButtonText: "ยกเลิก"
+                confirmButtonText: "✅ ตกลง",
+                cancelButtonText: "❌ ยกเลิก"
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
-                        title: "Loading...",
-                        html: `กำลังส่งคำสั่งปิดไฟอุปกรณ์ ${macAddress}`,
-                        timerProgressBar: true,
+                        title: '🔄 กำลังส่งคำสั่ง...',
+                        html: `
+        <div style="font-size: 16px; color: #555;">
+            กำลังส่งคำสั่งปิดไฟอุปกรณ์ <strong>${macAddress}</strong><br>
+            กรุณารอสักครู่...
+        </div>
+    `,
                         allowOutsideClick: false,
                         allowEscapeKey: false,
+                        showConfirmButton: false,
+                        timerProgressBar: true,
                         didOpen: () => {
                             Swal.showLoading();
                         }
                     });
-
                     setTimeout(() => {
                         fetch(endpointoff, options)
                             .then(res => res.json())
@@ -1673,6 +1839,16 @@
                                     showConfirmButton: false,
                                     timer: 1500
                                 });
+                                Swal.fire({
+                                    position: "center",
+                                    icon: 'success',
+                                    title: "สำเร็จ",
+                                    html: `<div style="padding: 12px; background-color: #e6f4ea; border: 1px solid #a3d9a5; border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2e7d32;">
+  ✅ ปิดไฟอุปกรณ์ <strong style="color: #1b5e20;">${macAddress}</strong> สำเร็จ
+</div>`,
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
                                 $(this).prop('disabled', true);
                                 const btn = $('#control-send-auto')
                                 btn.attr('disabled', true);
@@ -1685,9 +1861,16 @@
                             .catch(err => {
                                 console.error("เกิดข้อผิดพลาด:", err);
                                 Swal.fire({
+                                    position: "center",
                                     icon: 'error',
-                                    title: 'เกิดข้อผิดพลาด',
-                                    text: err.message
+                                    title: "❌ ผิดพลาด!",
+                                    html: `
+        <div style="font-size: 16px; color: #b71c1c;">
+            🚫 <strong>ปิดไฟไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
+        </div>
+    `,
+                                    showConfirmButton: false,
+                                    timer: 2000
                                 });
                             });
                     }, 1000);
@@ -1718,15 +1901,21 @@
         }
 
         Swal.fire({
-            title: "Loading...",
-            html: `กำลังส่งคำสั่งให้อุปกรณ์ ${macAddress}`,
-            timerProgressBar: true,
+            title: '🔄 กำลังส่งคำสั่ง...',
+            html: `
+        <div style="font-size: 16px; color: #555;">
+            กำลังส่งคำสั่งให้อุปกรณ์ <strong>${macAddress}</strong><br>
+            กรุณารอสักครู่...
+        </div>
+    `,
             allowOutsideClick: false,
             allowEscapeKey: false,
+            showConfirmButton: false,
+            timerProgressBar: true,
             didOpen: () => {
                 Swal.showLoading();
             }
-        })
+        });
 
         setTimeout(() => {
             fetch(endpoint, options)
@@ -1735,10 +1924,13 @@
                     Swal.fire({
                         position: "center",
                         icon: 'success',
-                        title: 'ส่งคำสั่งสำเร็จ',
+                        title: "สำเร็จ",
+                        html: `<div style="padding: 12px; background-color: #e6f4ea; border: 1px solid #a3d9a5; border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2e7d32;">
+  ✅ ส่งคำสั่งอุปกรณ์ <strong style="color: #1b5e20;">${macAddress}</strong> สำเร็จ
+</div>`,
                         showConfirmButton: false,
                         timer: 1500
-                    });
+                    })
                     setTimeout(() => {
                         $('#controlInfoModal').modal('hide')
                     }, 1500);
@@ -1748,17 +1940,22 @@
                     }, 5000);
                 })
                 .catch(err => {
+                    console.error("เกิดข้อผิดพลาด:", err);
                     Swal.fire({
                         position: "center",
-                        icon: 'danger',
-                        title: 'ส่งคำสั่งไม่สำเร็จ',
+                        icon: 'error',
+                        title: "❌ ผิดพลาด!",
+                        html: `
+        <div style="font-size: 16px; color: #b71c1c;">
+            🚫 <strong>ส่งคำสั่งไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
+        </div>
+    `,
                         showConfirmButton: false,
                         timer: 1500
                     });
-                    console.log('Send Command Error', err)
                     $('#controlInfoModal').modal('hide')
                 })
-        }, 5000)
+        }, 1000)
     })
 
 
@@ -1792,18 +1989,24 @@
         };
 
         Swal.fire({
-            title: "Loading...",
-            html: `กำลังส่งคำสั่งให้อุปกรณ์ ${macAddress}`,
-            timerProgressBar: true,
+            title: '🔄 กำลังส่งคำสั่ง...',
+            html: `
+        <div style="font-size: 16px; color: #555;">
+            กำลังส่งคำสั่งให้อุปกรณ์ <strong>${macAddress}</strong><br>
+            กรุณารอสักครู่...
+        </div>
+    `,
             allowOutsideClick: false,
             allowEscapeKey: false,
+            showConfirmButton: false,
+            timerProgressBar: true,
             didOpen: () => {
                 Swal.showLoading();
             }
         });
 
         try {
-            await new Promise(resolve => setTimeout(resolve, 3000));
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
             const resp = await fetch(endpoint, options);
             const obj = await resp.json();
@@ -1811,10 +2014,13 @@
             Swal.fire({
                 position: "center",
                 icon: 'success',
-                title: 'ส่งคำสั่งสำเร็จ',
+                title: "สำเร็จ",
+                html: `<div style="padding: 12px; background-color: #e6f4ea; border: 1px solid #a3d9a5; border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2e7d32;">
+  ✅ ส่งคำสั่งสำเร็จ <strong style="color: #1b5e20;">${macAddress}</strong> สำเร็จ
+</div>`,
                 showConfirmButton: false,
                 timer: 1500
-            });
+            })
             setTimeout(() => {
                 $('#controlInfoModal').modal('hide')
             }, 1500);
@@ -1824,14 +2030,19 @@
             }, 5000);
 
         } catch (err) {
+            console.error("เกิดข้อผิดพลาด:", err);
             Swal.fire({
                 position: "center",
                 icon: 'error',
-                title: 'ส่งคำสั่งไม่สำเร็จ',
+                title: "❌ ผิดพลาด!",
+                html: `
+        <div style="font-size: 16px; color: #b71c1c;">
+            🚫 <strong>ส่งคำสั่งไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
+        </div>
+    `,
                 showConfirmButton: false,
                 timer: 1500
             });
-            console.log('Send Command Error', err);
         }
     });
 
@@ -1844,15 +2055,22 @@
         tableBody.innerHTML = "";
 
         Swal.fire({
-            title: "Loading...",
-            html: `กำลังดึงข้อมูลอุปกรณ์ทั้งหมด`,
-            timerProgressBar: true,
+            title: '🔄 กำลังดึงข้อมูล...',
+            html: `
+        <div style="font-size: 16px; color: #555;">
+            กำลังดึงข้อมูลอุปกรณ์ทั้งหมด<br>
+            กรุณารอสักครู่...
+        </div>
+    `,
             allowOutsideClick: false,
             allowEscapeKey: false,
+            showConfirmButton: false,
+            timerProgressBar: true,
             didOpen: () => {
                 Swal.showLoading();
             }
         });
+
 
         setTimeout(() => {
             fetch(endpoint)
@@ -1861,10 +2079,16 @@
                     Swal.fire({
                         position: "center",
                         icon: 'success',
-                        title: 'ดึงข้อมูลอุปกรณ์สำเร็จ',
+                        title: '✅ สำเร็จ!',
+                        html: `
+        <div style="padding: 12px; background-color: #e6f4ea; border: 1px solid #a3d9a5; border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2e7d32;">
+            ระบบดึงข้อมูลอุปกรณ์ เรียบร้อยแล้ว
+        </div>
+    `,
                         showConfirmButton: false,
-                        timer: 1500
-                    })
+                        timer: 2000
+                    });
+
 
                     setTimeout(() => {
                         obj.devices.forEach(item => {
@@ -1876,7 +2100,7 @@
                             row.insertCell().textContent = item.tag;
                             row.insertCell().textContent = item.relay;
                             row.insertCell().textContent = item.pwm_freq;
-                            row.insertCell().textContent = item.lightmode;
+                            row.insertCell().textContent = item.workmode;
                         });
 
 
@@ -1892,7 +2116,7 @@
                             row.append(`<td>${item.tag}</td>`);
                             row.append(`<td>${item.relay}</td>`);
                             row.append(`<td>${item.pwm_freq}</td>`);
-                            row.append(`<td>${item.lightmode}</td>`);
+                            row.append(`<td>${item.workmode}</td>`);
                             table.find("tbody").append(row);
                         });
 
@@ -1917,7 +2141,7 @@
                             btn.removeClass('btn-success');
                             btn.addClass('btn-secondary');
                             $(".mn3").fadeOut()
-                        } else{
+                        } else {
                             firstloadall = true
                             $('#controlAllRelayStatebtn').bootstrapToggle('on')
                             const btn = $('#control-send-all')
@@ -1930,8 +2154,21 @@
                     }, 1500);
                 })
                 .catch(err => {
-                    console.log('errfetch:', err);
-                    Swal.fire("เกิดข้อผิดพลาด", "ไม่สามารถดึงข้อมูลได้", "error");
+                    console.error("เกิดข้อผิดพลาด:", err);
+                    Swal.fire({
+                        position: "center",
+                        icon: 'error',
+                        title: "❌ ผิดพลาด!",
+                        html: `
+        <div style="font-size: 16px; color: #b71c1c;">
+            🚫 ไม่สามารถดึงข้อมูลได้ในขณะนี้<br>
+            กรุณาติดต่อ <strong>ผู้ดูแลระบบ</strong>
+        </div>
+    `,
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+
                 });
         }, 5000);
     });
@@ -1957,22 +2194,28 @@
         if (!controlRelay.prop('checked')) {
 
             Swal.fire({
-                title: "ต้องการส่งคำสั่งปิดไฟทุกอุปกรณ์?",
-                text: `ต้องการปิดไฟอุปกรณ์`,
+                title: "⚠️ ยืนยันการปิดไฟ?",
+                html: `<div style="font-size: 16px;">คุณต้องการ <strong>ปิดไฟทุกอุปกรณ์</strong> ใช่หรือไม่?</div>`,
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "ตกลง",
-                cancelButtonText: "ยกเลิก"
+                confirmButtonText: "✅ ตกลง",
+                cancelButtonText: "❌ ยกเลิก"
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
-                        title: "Loading...",
-                        html: `กำลังส่งคำสั่งปิดไฟทุกอุปกรณ์`,
+                        title: '<span>🔄 กำลังดำเนินการ...</span>',
+                        html: `
+        <div style="font-size: 16px; color: #555;">
+            กำลังส่งคำสั่ง <strong>ปิดไฟทุกอุปกรณ์</strong><br>
+            กรุณารอสักครู่...
+        </div>
+    `,
                         timerProgressBar: true,
                         allowOutsideClick: false,
                         allowEscapeKey: false,
+                        showConfirmButton: false,
                         didOpen: () => {
                             Swal.showLoading();
                         }
@@ -1988,10 +2231,16 @@
                                     Swal.fire({
                                         position: "center",
                                         icon: 'success',
-                                        title: 'ปิดไฟทุกอุปกรณ์สำเร็จ',
+                                        title: '✅ สำเร็จ!',
+                                        html: `
+        <div style="padding: 12px; background-color: #e6f4ea; border: 1px solid #a3d9a5; border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2e7d32;">
+            ปิดไฟให้กับ <strong style="color: #1b5e20;">ทุกอุปกรณ์</strong> เรียบร้อยแล้ว
+        </div>
+    `,
                                         showConfirmButton: false,
-                                        timer: 1500
+                                        timer: 2000
                                     });
+
                                     $(this).prop('disabled', true)
                                     const btn = $('#control-send-all')
                                     btn.attr('disabled', true);
@@ -2004,7 +2253,21 @@
                                 }
                             })
                             .catch(err => {
-                                Swal.fire("เกิดข้อผิดพลาด", "ไม่สามารถส่งข้อมูลได้", "error");
+                                console.error("เกิดข้อผิดพลาด:", err);
+                                Swal.fire({
+                                    position: "center",
+                                    icon: 'error',
+                                    title: "❌ ผิดพลาด!",
+                                    html: `
+        <div style="font-size: 16px; color: #b71c1c;">
+            🚫 ไม่สามารถ <strong>ปิดไฟทุกอุปกรณ์</strong> ได้<br>
+            กรุณาติดต่อผู้ดูแลระบบ
+        </div>
+    `,
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                });
+
                             });
                     }, 3000);
                 } else {
@@ -2019,19 +2282,23 @@
             })
         } else {
             Swal.fire({
-                title: "ต้องการส่งคำสั่งเปิดไฟทุกอุปกรณ์?",
-                text: `ต้องการเปิดไฟทุกอุปกรณ์`,
+                title: "⚠️ ต้องการส่งคำสั่ง?",
+                html: `<div style="font-size: 16px;">คุณต้องการ <strong>เปิดไฟทุกอุปกรณ์</strong> ใช่หรือไม่?</div>`,
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "ตกลง",
-                cancelButtonText: "ยกเลิก"
+                confirmButtonText: "✅ ตกลง",
+                cancelButtonText: "❌ ยกเลิก"
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
-                        title: "Loading...",
-                        html: `กำลังส่งคำสั่งเปิดไฟทุกอุปกรณ์`,
+                        title: '<span style="font-size: 18px;">🔄 Loading...</span>',
+                        html: `
+        <div style="font-size: 16px; color: #555;">
+            กำลังส่งคำสั่งเพื่อเปิดไฟ <strong>ทุกอุปกรณ์</strong><br>กรุณารอสักครู่...
+        </div>
+    `,
                         timerProgressBar: true,
                         allowOutsideClick: false,
                         allowEscapeKey: false,
@@ -2044,16 +2311,21 @@
                         fetch(endpointon, options)
                             .then(res => res.json())
                             .then(obj => {
-                                // console.log("obj", obj.status)
                                 if (obj.status === "Success") {
                                     Swal.close();
                                     Swal.fire({
                                         position: "center",
                                         icon: 'success',
-                                        title: 'เปิดไฟทุกอุปกรณ์สำเร็จ',
+                                        title: '✅ สำเร็จ!',
+                                        html: `
+        <div style="padding: 12px; background-color: #e6f4ea; border: 1px solid #a3d9a5; border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2e7d32;">
+            เปิดไฟให้กับ <strong>ทุกอุปกรณ์</strong> เรียบร้อยแล้ว
+        </div>
+    `,
                                         showConfirmButton: false,
-                                        timer: 1500
+                                        timer: 2000
                                     });
+
                                     $(this).prop('disabled', true)
                                     const btn = $('#control-send-all')
                                     btn.attr('disabled', false);
@@ -2067,8 +2339,21 @@
                                 }
                             })
                             .catch(err => {
-                                console.log('errfetch:', err);
-                                Swal.fire("เกิดข้อผิดพลาด", "ไม่สามารถส่งข้อมูลได้", "error");
+                                console.error("เกิดข้อผิดพลาด:", err);
+                                Swal.fire({
+                                    position: "center",
+                                    icon: 'error',
+                                    title: "❌ ผิดพลาด!",
+                                    html: `
+        <div style="font-size: 16px; color: #b71c1c;">
+            🚫 ไม่สามารถ <strong>เปิดไฟ</strong> ให้กับทุกอุปกรณ์ได้<br>
+            กรุณาติดต่อผู้ดูแลระบบ
+        </div>
+    `,
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                });
+
                             });
                     }, 3000);
                 } else {
@@ -2102,7 +2387,7 @@
 
         Swal.fire({
             title: "Loading...",
-            html: `กำลังส่งคำสั่งให้ทุกอุปกรณ์`,
+            html: `กำลังส่งคำสั่งทุกอุปกรณ์`,
             timerProgressBar: true,
             allowOutsideClick: false,
             allowEscapeKey: false,
@@ -2118,10 +2403,16 @@
                     Swal.fire({
                         position: "center",
                         icon: 'success',
-                        title: 'ส่งคำสั่งสำเร็จ',
+                        title: '✅ สำเร็จ!',
+                        html: `
+        <div style="font-size: 16px; color: #2e7d32;">
+            ส่งคำสั่งไปยังทุกอุปกรณ์ <strong>สำเร็จ</strong>
+        </div>
+    `,
                         showConfirmButton: false,
-                        timer: 1500
+                        timer: 2000
                     });
+
                     setTimeout(() => {
                         $('#controlAllRelayStateModal').modal('hide')
                     }, 1500);
@@ -2131,14 +2422,21 @@
                     }, 5000);
                 })
                 .catch(err => {
+                    console.error("เกิดข้อผิดพลาด:", err);
                     Swal.fire({
                         position: "center",
-                        icon: 'danger',
-                        title: 'ส่งคำสั่งไม่สำเร็จ',
+                        icon: 'error',
+                        title: "❌ ผิดพลาด!",
+                        html: `
+        <div style="font-size: 16px; color: #b71c1c;">
+            🚫 <strong>ส่งคำสั่งไปยังทุกอุปกรณ์ไม่สำเร็จ</strong><br>
+            โปรดลองใหม่อีกครั้งในภายหลัง
+        </div>
+    `,
                         showConfirmButton: false,
-                        timer: 1500
+                        timer: 2000
                     });
-                    console.log('Send Command Error', err)
+
                     $('#controlAllRelayStateModal').modal('hide')
                 })
         }, 5000)
