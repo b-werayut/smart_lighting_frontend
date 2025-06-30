@@ -1537,8 +1537,8 @@
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "✅ ตกลง",
-                cancelButtonText: "❌ ยกเลิก"
+                confirmButtonText: "ตกลง",
+                cancelButtonText: "ยกเลิก"
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
@@ -1618,8 +1618,8 @@
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "✅ ตกลง",
-                cancelButtonText: "❌ ยกเลิก"
+                confirmButtonText: "ตกลง",
+                cancelButtonText: "ยกเลิก"
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
@@ -1722,8 +1722,8 @@
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "✅ ตกลง",
-                cancelButtonText: "❌ ยกเลิก"
+                confirmButtonText: "ตกลง",
+                cancelButtonText: "ยกเลิก"
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
@@ -1805,8 +1805,8 @@
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "✅ ตกลง",
-                cancelButtonText: "❌ ยกเลิก"
+                confirmButtonText: "ตกลง",
+                cancelButtonText: "ยกเลิก"
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
@@ -2200,8 +2200,8 @@
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "✅ ตกลง",
-                cancelButtonText: "❌ ยกเลิก"
+                confirmButtonText: "ตกลง",
+                cancelButtonText: "ยกเลิก"
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
@@ -2288,8 +2288,8 @@
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "✅ ตกลง",
-                cancelButtonText: "❌ ยกเลิก"
+                confirmButtonText: "ตกลง",
+                cancelButtonText: "ยกเลิก"
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
