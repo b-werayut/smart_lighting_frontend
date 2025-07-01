@@ -2134,6 +2134,34 @@
                         $('#controlAllRelayStateModal').modal('show');
 
                         if (parseInt(statarr.length) !== parseInt(obj.devices.length)) {
+                            const endpointoff = "http://85.204.247.82:3002/api/turnoffalllight"
+                            const options = {
+                                method: "POST"
+                            }
+                            setTimeout(() => {
+                                fetch(endpointoff, options)
+                                    .then(res => res.json())
+                                    .then(obj => {
+                                        console.log("Turn off all Devices Status: ", obj.status)
+                                    })
+                                    .catch(err => {
+                                        console.error("เกิดข้อผิดพลาด:", err);
+                                        Swal.fire({
+                                            position: "center",
+                                            icon: 'error',
+                                            title: "❌ ผิดพลาด!",
+                                            html: `
+        <div style="font-size: 16px; color: #b71c1c;">
+            🚫 ไม่สามารถ <strong>ปิดไฟทุกอุปกรณ์</strong> ได้<br>
+            กรุณาติดต่อผู้ดูแลระบบ
+        </div>
+    `,
+                                            showConfirmButton: false,
+                                            timer: 2000
+                                        });
+
+                                    });
+                            }, 1000);
                             firstloadall = true
                             $('#controlAllRelayStatebtn').bootstrapToggle('off')
                             const btn = $('#control-send-all')
@@ -2205,7 +2233,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
-                        title: '<span>🔄 กำลังดำเนินการ...</span>',
+                        title: '🔄 กำลังดำเนินการ...',
                         html: `
         <div style="font-size: 16px; color: #555;">
             กำลังส่งคำสั่ง <strong>ปิดไฟทุกอุปกรณ์</strong><br>
@@ -2293,15 +2321,17 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
-                        title: '<span style="font-size: 18px;">🔄 Loading...</span>',
+                        title: '🔄 กำลังดำเนินการ...',
                         html: `
         <div style="font-size: 16px; color: #555;">
-            กำลังส่งคำสั่งเพื่อเปิดไฟ <strong>ทุกอุปกรณ์</strong><br>กรุณารอสักครู่...
+            กำลังส่งคำสั่ง <strong>ปิดไฟทุกอุปกรณ์</strong><br>
+            กรุณารอสักครู่...
         </div>
     `,
                         timerProgressBar: true,
                         allowOutsideClick: false,
                         allowEscapeKey: false,
+                        showConfirmButton: false,
                         didOpen: () => {
                             Swal.showLoading();
                         }
@@ -2386,15 +2416,21 @@
         }
 
         Swal.fire({
-            title: "Loading...",
-            html: `กำลังส่งคำสั่งทุกอุปกรณ์`,
+            title: '<span>🔄 กำลังดำเนินการ...</span>',
+            html: `
+        <div style="font-size: 16px; color: #555;">
+            กำลังส่งคำสั่งทุกอุปกรณ์<br>
+            กรุณารอสักครู่...
+        </div>
+    `,
             timerProgressBar: true,
             allowOutsideClick: false,
             allowEscapeKey: false,
+            showConfirmButton: false,
             didOpen: () => {
                 Swal.showLoading();
             }
-        })
+        });
 
         setTimeout(() => {
             fetch(endpoint, options)
