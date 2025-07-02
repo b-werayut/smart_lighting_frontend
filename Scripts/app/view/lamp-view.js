@@ -2450,7 +2450,7 @@
                     });
 
                     setTimeout(() => {
-                        $('#controlAllRelayStateModal').modal('hide')
+                        // $('#controlAllRelayStateModal').modal('hide')
                     }, 1500);
                     $(this).prop('disabled', true);
                     setTimeout(() => {

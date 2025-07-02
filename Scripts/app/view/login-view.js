@@ -20,6 +20,7 @@
     });
 
     $("#loginButton").on("click", function (e) {
+
         if (!validateLoginData()) {
             showDialog("warning", "แจ้งเตือน", "กรุณากรอกข้อมูลให้ครบถ้วน");
             return;
