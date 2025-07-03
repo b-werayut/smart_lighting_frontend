@@ -379,8 +379,8 @@
                         <select id="controlActionList" class="form-control">
                             <option value="0">เลือกโหมดการทำงาน</option>
                             <!-- <option value="MODE_CHANGE">เปลี่ยนโหมดการทำงาน</option> -->
-                            <option value="MANUAL">กำหนดการทำงานด้วยตนเอง</option>
-                            <option value="SET_SCHEDULE">ตั้งเวลาทำงานอัตโนมัติ</option>
+                            <option value="MANUAL">กำหนดการทำงานด้วยตนเอง(Manual)</option>
+                            <option value="SET_SCHEDULE">ตั้งเวลาทำงานอัตโนมัติ(Schedule)</option>
                         </select>
                         <span>คำสั่ง</span>
                     </label>
@@ -408,10 +408,10 @@
                 <div class="n-pills d-none">
                     <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link active" id="manual-tab" data-toggle="pill" data-target="#manual" type="button" role="tab" aria-controls="manual" aria-selected="true">กำหนดการทำงานด้วยตนเอง (Manual)</a>
+                            <a class="nav-link active" id="manual-tab" data-toggle="pill" data-target="#manual" type="button" role="tab" aria-controls="manual" aria-selected="true">กำหนดการทำงานด้วยตนเอง(Manual)</a>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link" id="auto-tab" data-toggle="pill" data-target="#auto" type="button" role="tab" aria-controls="auto" aria-selected="false">ตั้งเวลาทำงานอัตโนมัติ (Schedule)</a>
+                            <a class="nav-link" id="auto-tab" data-toggle="pill" data-target="#auto" type="button" role="tab" aria-controls="auto" aria-selected="false">ตั้งเวลาทำงานอัตโนมัติ(Schedule)</a>
                         </li>
                     </ul>
                     <hr>
@@ -419,11 +419,11 @@
 
                 <div class="tab-content p-0 d-none" id="pills-tabContent">
                     <div class="tab-pane fade show active" id="manual" role="tabpanel" aria-labelledby="manual-tab">
-                        <div class="">
+                        <div id="transbox" class="row" style="padding: 1rem;">
                             <!-- Checked switch -->
-                            <div class="form-check col-md-12 light-status-wrapper">
-                                <div id="bulbIcon" class="light-icon light-on">💡</div>
-                                <label for="controlRelayState" class="light-status-label">สถานะหลอดไฟ</label>
+                            <div id="subtransbox" class="form-check col-md-3 light-status-wrapper m-0 py-3">
+                                <div id="bulbIconmanual" class="light-icon light-on">💡</div>
+                                <label class="light-status-label">สถานะหลอดไฟ</label>
                                 <input type="checkbox"
                                        data-toggle="toggle"
                                        data-style="ios"
@@ -449,14 +449,14 @@
                                                 </div> -->
 
 
-                            <div class="mn">
-                                <div class="row py-3">
+                            <div class="mn col-md-6">
+                                <div>
                                     <!-- <div class="form-group col-md-12">
                                         <label for="controlRangeWarm" class="slider-label">ค่าแสงอุ่น</label> <span id="rangeWarm">50</span>
                                         <input type="range" class="form-control-range" id="controlRangeWarm" onInput="$('#rangeWarm').html($(this).val())" disabled>
                                     </div> -->
 
-                                    <div class="form-group col-md-12 px-3">
+                                    <div class="form-group px-3">
                                         <!-- <label for="controlRangeWarm" class="slider-label">ค่าแสงอุ่น</label> <span id="rangeWarm">50</span> -->
                                         <input type="range" min="0" max="100" value="50" class="brightness-slider-warm" id="controlRangeWarm" onInput="$('#rangeWarm').html($(this).val())">
 
@@ -521,22 +521,19 @@
                                         </ul>
                                     </div>
                                 </div>
+                                </div>
 
-                                <div class="row">
-                                    <div class="light-info-box-warm text-center col-md-4 light-info-box shadow-custom ">
+                                <div class="mn col-md-3 flex flex-column" style="gap: 15px; display: flex; flex-direction: column;">
+                                    <div class="light-info-box-warm text-center shadow-custom">
                                         <p class="label">ค่าแสงอุ่น</p>
                                         <p class="value" id="rangeWarm"></p> <!-- แสดงค่าจริง -->
                                     </div>
 
-                                    <div class="light-info-box-cool col-md-4 light-info-box text-center shadow-custom">
+                                    <div class="light-info-box-cool text-center shadow-custom">
                                         <p class="label">ค่าแสงเย็น</p>
                                         <p class="value" id="rangeCool"></p> <!-- แสดงค่าจริง -->
                                     </div>
-                                </div>
-
-                            </div>
                         </div>
-
 
                         <div class="row pb-5">
                             <!-- <div class="form-group col-md-12">
@@ -547,12 +544,13 @@
                     </div>
                     <!-- shadow -->
                 </div>
+                </div>
                 <div class="tab-pane fade" id="auto" role="tabpanel" aria-labelledby="auto-tab">
                     <div id="controlActionSchedule" class="">
 
                         <div class="form-check col-md-12 light-status-wrapper mb-3">
                             <div id="bulbIcon2" class="light-icon light-on">💡</div>
-                            <label for="controlRelayState2" class="light-status-label">สถานะหลอดไฟ</label>
+                            <label class="light-status-label">สถานะหลอดไฟ</label>
                             <input type="checkbox"
                                    data-toggle="toggle"
                                    data-style="ios"

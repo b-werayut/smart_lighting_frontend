@@ -544,6 +544,7 @@
     };
 
     function promptDeleteLamp() {
+        const mac = $(this).attr("data-valkey");
         Swal.fire({
             title: "ยืนยันรายการ",
             text: "ลบหลอดไฟ \"" + $(this).attr("data-valkey") + "\" ออกจากระบบ?",
@@ -570,6 +571,7 @@
                     let viewModel = JSON.parse(JSON.stringify(result));
 
                     if (viewModel.state == "success") {
+                        deleteDevices(mac)
                         Swal.fire({
                             title: viewModel.title,
                             text: viewModel.message,
@@ -1581,7 +1583,7 @@
                                 btn.addClass('btn-success');
                                 setTimeout(() => {
                                     $(this).prop('disabled', false);
-                                }, 3000);
+                                }, 5000);
                             })
                             .catch(err => {
                                 console.error("เกิดข้อผิดพลาด:", err);
@@ -1598,7 +1600,7 @@
                                     timer: 2000
                                 })
                             });
-                    }, 3000);
+                    }, 1000);
                 } else {
                     isInternalChange = true;
                     controlRelay.bootstrapToggle('off');
@@ -1766,7 +1768,7 @@
                                 btn.addClass('btn-success');
                                 setTimeout(() => {
                                     $(this).prop('disabled', false);
-                                }, 1000);
+                                }, 5000);
                             })
                             .catch(err => {
                                 console.error("เกิดข้อผิดพลาด:", err);
@@ -1783,7 +1785,7 @@
                                     timer: 2000
                                 })
                             });
-                    }, 3000);
+                    }, 1000);
                     // showControlModal()
                 } else {
                     isInternalChange = true;
@@ -1878,170 +1880,6 @@
                     isInternalChange = true;
                     controlRelay.bootstrapToggle('on');
                 }
-            });
-        }
-    });
-
-    $('#control-send-manual').click(function () {
-        const macAddress = $('#controlLampSerialNo').val()
-        const endpoint = "http://85.204.247.82:3002/api/turnonlightval"
-        const warmVal = $('#controlRangeWarm').val()
-        const coolVal = $('#controlRangeCool').val()
-        const datas = {
-            macAddress,
-            warmVal,
-            coolVal
-        }
-        const options = {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json; charset=utf-8"
-            },
-            body: JSON.stringify(datas)
-        }
-
-        Swal.fire({
-            title: '🔄 กำลังส่งคำสั่ง...',
-            html: `
-        <div style="font-size: 16px; color: #555;">
-            กำลังส่งคำสั่งให้อุปกรณ์ <strong>${macAddress}</strong><br>
-            กรุณารอสักครู่...
-        </div>
-    `,
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            showConfirmButton: false,
-            timerProgressBar: true,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
-
-        setTimeout(() => {
-            fetch(endpoint, options)
-                .then(resp => resp.json())
-                .then(obj => {
-                    Swal.fire({
-                        position: "center",
-                        icon: 'success',
-                        title: "สำเร็จ",
-                        html: `<div style="padding: 12px; background-color: #e6f4ea; border: 1px solid #a3d9a5; border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2e7d32;">
-  ✅ ส่งคำสั่งอุปกรณ์ <strong style="color: #1b5e20;">${macAddress}</strong> สำเร็จ
-</div>`,
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        $('#controlInfoModal').modal('hide')
-                    }, 1500);
-                    $(this).prop('disabled', true);
-                    setTimeout(() => {
-                        $(this).prop('disabled', false);
-                    }, 5000);
-                })
-                .catch(err => {
-                    console.error("เกิดข้อผิดพลาด:", err);
-                    Swal.fire({
-                        position: "center",
-                        icon: 'error',
-                        title: "❌ ผิดพลาด!",
-                        html: `
-        <div style="font-size: 16px; color: #b71c1c;">
-            🚫 <strong>ส่งคำสั่งไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
-        </div>
-    `,
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                    $('#controlInfoModal').modal('hide')
-                })
-        }, 1000)
-    })
-
-
-    $('#control-send-auto').click(async function () {
-        const macAddress = $('#controlLampSerialNo').val();
-        const endpoint = "http://85.204.247.82:3002/api/setschedule";
-        let datasarr = [];
-
-        for (let i = 1; i <= 5; i++) {
-            const no = $(`#schedule_${i}_no`).val();
-            const start = $(`#schedule_${i}_start`).val();
-            const end = $(`#schedule_${i}_end`).val();
-            if (no && start && end) {
-                datasarr.push({
-                    macAddress: macAddress,
-                    no: no,
-                    starttime: start,
-                    endtime: end,
-                    warmval: $(`#schedule_${i}_controlRangeWarm`).val(),
-                    coolval: $(`#schedule_${i}_controlRangeCool`).val()
-                });
-            }
-        }
-
-        const options = {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json; charset=utf-8"
-            },
-            body: JSON.stringify(datasarr)
-        };
-
-        Swal.fire({
-            title: '🔄 กำลังส่งคำสั่ง...',
-            html: `
-        <div style="font-size: 16px; color: #555;">
-            กำลังส่งคำสั่งให้อุปกรณ์ <strong>${macAddress}</strong><br>
-            กรุณารอสักครู่...
-        </div>
-    `,
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            showConfirmButton: false,
-            timerProgressBar: true,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
-
-        try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            const resp = await fetch(endpoint, options);
-            const obj = await resp.json();
-
-            Swal.fire({
-                position: "center",
-                icon: 'success',
-                title: "สำเร็จ",
-                html: `<div style="padding: 12px; background-color: #e6f4ea; border: 1px solid #a3d9a5; border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2e7d32;">
-  ✅ ส่งคำสั่งสำเร็จ <strong style="color: #1b5e20;">${macAddress}</strong> สำเร็จ
-</div>`,
-                showConfirmButton: false,
-                timer: 1500
-            })
-            setTimeout(() => {
-                $('#controlInfoModal').modal('hide')
-            }, 1500);
-            $(this).prop('disabled', true);
-            setTimeout(() => {
-                $(this).prop('disabled', false);
-            }, 5000);
-
-        } catch (err) {
-            console.error("เกิดข้อผิดพลาด:", err);
-            Swal.fire({
-                position: "center",
-                icon: 'error',
-                title: "❌ ผิดพลาด!",
-                html: `
-        <div style="font-size: 16px; color: #b71c1c;">
-            🚫 <strong>ส่งคำสั่งไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
-        </div>
-    `,
-                showConfirmButton: false,
-                timer: 1500
             });
         }
     });
@@ -2300,8 +2138,7 @@
                     }, 3000);
                 } else {
                     isInternalChange = true;
-                    controlRelay.bootstrapToggle('off');
-                    $(".mn3").fadeOut();
+                    controlRelay.bootstrapToggle('on');
                     const btn = $('#control-send-all')
                     btn.attr('disabled', true);
                     btn.removeClass('btn-success');
@@ -2399,6 +2236,171 @@
         }
     })
 
+    $('#control-send-manual').click(function () {
+        const macAddress = $('#controlLampSerialNo').val()
+        const endpoint = "http://85.204.247.82:3002/api/turnonlightval"
+        const warmVal = $('#controlRangeWarm').val()
+        const coolVal = $('#controlRangeCool').val()
+        const datas = {
+            macAddress,
+            warmVal,
+            coolVal
+        }
+        const options = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            body: JSON.stringify(datas)
+        }
+
+        Swal.fire({
+            title: '🔄 กำลังส่งคำสั่ง...',
+            html: `
+        <div style="font-size: 16px; color: #555;">
+            กำลังส่งคำสั่งให้อุปกรณ์ <strong>${macAddress}</strong><br>
+            กรุณารอสักครู่...
+        </div>
+    `,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        setTimeout(() => {
+            fetch(endpoint, options)
+                .then(resp => resp.json())
+                .then(obj => {
+                    getLampData($("#controllerCode option:selected").val(), $("#bottomPagination").twbsPagination("getCurrentPage"), $("#lampTextSearch").val());
+                    Swal.fire({
+                        position: "center",
+                        icon: 'success',
+                        title: "สำเร็จ",
+                        html: `<div style="padding: 12px; background-color: #e6f4ea; border: 1px solid #a3d9a5; border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2e7d32;">
+  ✅ ส่งคำสั่งอุปกรณ์ <strong style="color: #1b5e20;">${macAddress}</strong> สำเร็จ
+</div>`,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    // setTimeout(() => {
+                    //     $('#controlInfoModal').modal('hide')
+                    // }, 1500);
+                    $(this).prop('disabled', true);
+                    setTimeout(() => {
+                        $(this).prop('disabled', false);
+                    }, 6000);
+                })
+                .catch(err => {
+                    console.error("เกิดข้อผิดพลาด:", err);
+                    Swal.fire({
+                        position: "center",
+                        icon: 'error',
+                        title: "❌ ผิดพลาด!",
+                        html: `
+        <div style="font-size: 16px; color: #b71c1c;">
+            🚫 <strong>ส่งคำสั่งไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
+        </div>
+    `,
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    $('#controlInfoModal').modal('hide')
+                })
+        }, 1000)
+    })
+
+
+    $('#control-send-auto').click(async function () {
+        const macAddress = $('#controlLampSerialNo').val();
+        const endpoint = "http://85.204.247.82:3002/api/setschedule";
+        let datasarr = [];
+
+        for (let i = 1; i <= 5; i++) {
+            const no = $(`#schedule_${i}_no`).val();
+            const start = $(`#schedule_${i}_start`).val();
+            const end = $(`#schedule_${i}_end`).val();
+            if (no && start && end) {
+                datasarr.push({
+                    macAddress: macAddress,
+                    no: no,
+                    starttime: start,
+                    endtime: end,
+                    warmval: $(`#schedule_${i}_controlRangeWarm`).val(),
+                    coolval: $(`#schedule_${i}_controlRangeCool`).val()
+                });
+            }
+        }
+
+        const options = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            body: JSON.stringify(datasarr)
+        };
+
+        Swal.fire({
+            title: '🔄 กำลังส่งคำสั่ง...',
+            html: `
+        <div style="font-size: 16px; color: #555;">
+            กำลังส่งคำสั่งให้อุปกรณ์ <strong>${macAddress}</strong><br>
+            กรุณารอสักครู่...
+        </div>
+    `,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        try {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            const resp = await fetch(endpoint, options);
+            const obj = await resp.json();
+
+            Swal.fire({
+                position: "center",
+                icon: 'success',
+                title: "สำเร็จ",
+                html: `<div style="padding: 12px; background-color: #e6f4ea; border: 1px solid #a3d9a5; border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2e7d32;">
+  ✅ ส่งคำสั่งสำเร็จ <strong style="color: #1b5e20;">${macAddress}</strong> สำเร็จ
+</div>`,
+                showConfirmButton: false,
+                timer: 1500
+            })
+            // setTimeout(() => {
+            //     $('#controlInfoModal').modal('hide')
+            // }, 1500);
+            $(this).prop('disabled', true);
+            setTimeout(() => {
+                $(this).prop('disabled', false);
+            }, 7000);
+
+        } catch (err) {
+            console.error("เกิดข้อผิดพลาด:", err);
+            Swal.fire({
+                position: "center",
+                icon: 'error',
+                title: "❌ ผิดพลาด!",
+                html: `
+        <div style="font-size: 16px; color: #b71c1c;">
+            🚫 <strong>ส่งคำสั่งไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
+        </div>
+    `,
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    });
+
     $('#control-send-all').click(function () {
         const endpoint = "http://85.204.247.82:3002/api/turnonalllightval"
         const warmVal = $('#controlAllRangeWarm').val()
@@ -2455,7 +2457,7 @@
                     $(this).prop('disabled', true);
                     setTimeout(() => {
                         $(this).prop('disabled', false);
-                    }, 5000);
+                    }, 6000);
                 })
                 .catch(err => {
                     console.error("เกิดข้อผิดพลาด:", err);
@@ -2522,6 +2524,7 @@
 
     const bulb = $('#bulbIcon');
     const bulb2 = $('#bulbIcon2');
+    const bulbIconmanual = $('#bulbIconmanual');
     const toggle = $('#controlRelayState');
     const toggle2 = $('#controlRelayState2');
     const toggle3 = $('#controlAllRelayStatebtn');
@@ -2532,11 +2535,15 @@
             bulb.addClass('light-on');
             bulb2.removeClass('light-off');
             bulb2.addClass('light-on');
+            bulbIconmanual.removeClass('light-off');
+            bulbIconmanual.addClass('light-on');
         } else {
             bulb.removeClass('light-on');
             bulb.addClass('light-off');
             bulb2.removeClass('light-on');
             bulb2.addClass('light-off');
+            bulbIconmanual.removeClass('light-on');
+            bulbIconmanual.addClass('light-off');
         }
     }
 
@@ -2553,6 +2560,28 @@
     });
 
     updateBulbStatus(toggle.checked);
+    updateBulbStatus(toggle2.checked);
+    updateBulbStatus(toggle3.checked);
+
+    const toggles = $('#controlRelayState');
+    const wrapper = $('.light-status-wrapper');
+    const transbox = $('#transbox')
+    const subtransbox = $('#subtransbox')
+
+    toggles.change(function () {
+        console.log('test')
+        if (toggles.prop('checked')) {
+            wrapper.addClass('shift-left'); // เมื่อเปิด -> ชิดซ้าย
+            transbox.removeClass('justify-content-center')
+            subtransbox.removeClass('col-md-12')
+            subtransbox.addClass('col-md-3')
+        } else {
+            wrapper.removeClass('shift-left'); // เมื่อปิด -> กลับมาตรงกลาง
+            transbox.addClass('justify-content-center')
+            subtransbox.addClass('col-md-12')
+            subtransbox.removeClass('col-md-3')
+        }
+    });
 
     $('#controllerCode').on('change', function () {
         const alldevicesbtn = $('#controlAllRelayState')
@@ -2566,5 +2595,38 @@
             alldevicesbtn.addClass('d-flex')
         }
     });
+
+    const getLampOnClick = async () => {
+        const ctrlcode = $('#controllerCode option:selected').val()
+        const paging = $("#bottomPagination").twbsPagination("getCurrentPage")
+        const textsearch = $("#lampTextSearch").val()
+        getLampData(ctrlcode, paging, textsearch);
+    }
+
+    $('.md-close').on('click', getLampOnClick);
+
+    const deleteDevices = async (mac) => {
+        const endpoint = "http://85.204.247.82:3002/api/deletedevices"
+        const datas = {
+            macAddress: mac
+        }
+        const options = {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            body: JSON.stringify(datas)
+        }
+
+        try {
+            fetch(endpoint, options)
+                .then(resp => resp.json())
+                .then(result => {
+                    console.log(result?.status) //Devices F412FA49E9B9 is Delete
+                })
+        } catch (err) {
+            console.error("Error", err)
+        }
+    }
 
 })
