@@ -1201,11 +1201,13 @@
         const macAddress = $("#controlLampSerialNo").val();
         const endpoint_updatemode = "http://85.204.247.82:3002/api/updateMode"
         const endpoint_off = "http://85.204.247.82:3002/api/turnofflight"
+        const transbox = $('#transbox')
+        const subtransbox = $('#subtransbox')
         const btnswitchmanual = $('#controlRelayState')
         const btnswitchauto = $('#controlRelayState2')
         let mode = $(this).val();
-        $('.mn').fadeOut()
-        $('.mn2').fadeOut()
+        // $('.mn').fadeOut()
+        // $('.mn2').fadeOut()
 
         if (mode === "SET_SCHEDULE") {
             mode = "SCHEDULE";
@@ -1262,7 +1264,10 @@
                             firstloadmanual = true
                             btnswitchmanual.bootstrapToggle('off')
                             if (!btnswitchmanual.prop('checked')) {
-                                console.log('!btnswitchmanual.prop(checked)')
+                                subtransbox.removeClass('move-left')
+                                transbox.addClass('justify-content-center')
+                                subtransbox.addClass('col-md-12')
+                                subtransbox.removeClass('col-md-3')
                                 $('.mn').fadeOut()
                             }
                             return response.json();
@@ -1520,6 +1525,8 @@
         const macAddress = $('#controlLampSerialNo').val()
         const endpointon = "http://85.204.247.82:3002/api/turnonlight"
         const endpointoff = "http://85.204.247.82:3002/api/turnofflight"
+        const transbox = $('#transbox')
+        const subtransbox = $('#subtransbox')
         const datas = {
             macAddress,
         }
@@ -1565,6 +1572,10 @@
                             .then(res => res.json())
                             .then(obj => {
                                 Swal.close();
+                                subtransbox.addClass('move-left')
+                                transbox.removeClass('justify-content-center')
+                                subtransbox.removeClass('col-md-12')
+                                subtransbox.addClass('col-md-3')
                                 $(".mn").fadeIn();
                                 Swal.fire({
                                     position: "center",
@@ -1604,6 +1615,10 @@
                 } else {
                     isInternalChange = true;
                     controlRelay.bootstrapToggle('off');
+                    subtransbox.removeClass('move-left')
+                    transbox.addClass('justify-content-center')
+                    subtransbox.addClass('col-md-12')
+                    subtransbox.removeClass('col-md-3')
                     $(".mn").fadeOut();
                     const btn = $('#control-send-manual')
                     btn.attr('disabled', true);
@@ -1645,6 +1660,8 @@
                             .then(res => res.json())
                             .then(obj => {
                                 Swal.close();
+                                subtransbox.removeClass('move-left')
+                                transbox.addClass('justify-content-center')
                                 $(".mn").fadeOut();
                                 Swal.fire({
                                     position: "center",
@@ -1661,6 +1678,8 @@
                                 btn.attr('disabled', true);
                                 btn.removeClass('btn-success');
                                 btn.addClass('btn-secondary');
+                                subtransbox.removeClass('col-md-3')
+                                subtransbox.addClass('col-md-12')
                                 setTimeout(() => {
                                     $(this).prop('disabled', false);
                                 }, 3000);
@@ -1888,6 +1907,9 @@
         const endpoint = "http://85.204.247.82:3002/api/getalldevices"
         const table = $('#alldevice');
         const tableBody = document.querySelector("#alldevice tbody")
+        const transbox = $('#tb')
+        const subtransbox = $('#stb')
+
         let statarr = []
 
         tableBody.innerHTML = "";
@@ -2003,6 +2025,11 @@
                             firstloadall = true
                             $('#controlAllRelayStatebtn').bootstrapToggle('off')
                             const btn = $('#control-send-all')
+
+                            subtransbox.removeClass('move-left')
+                            transbox.addClass('justify-content-center')
+                            subtransbox.addClass('col-md-12')
+                            subtransbox.removeClass('col-md-3')
                             btn.attr('disabled', true);
                             btn.removeClass('btn-success');
                             btn.addClass('btn-secondary');
@@ -2011,6 +2038,11 @@
                             firstloadall = true
                             $('#controlAllRelayStatebtn').bootstrapToggle('on')
                             const btn = $('#control-send-all')
+
+                            subtransbox.addClass('move-left')
+                            transbox.removeClass('justify-content-center')
+                            subtransbox.removeClass('col-md-12')
+                            subtransbox.addClass('col-md-3')
                             btn.removeClass('btn-secondary');
                             btn.addClass('btn-success');
                             btn.removeAttr('disabled');
@@ -2053,6 +2085,8 @@
         const endpointon = "http://85.204.247.82:3002/api/turnonalllight"
         const endpointoff = "http://85.204.247.82:3002/api/turnoffalllight"
         const controlRelay = $("#controlAllRelayStatebtn");
+        const transbox = $('#tb')
+        const subtransbox = $('#stb')
         const options = {
             method: "POST"
         }
@@ -2109,10 +2143,15 @@
 
                                     $(this).prop('disabled', true)
                                     const btn = $('#control-send-all')
+                                    
                                     btn.attr('disabled', true);
                                     btn.removeClass('btn-success');
                                     btn.addClass('btn-secondary');
                                     $(".mn3").fadeOut();
+                                    subtransbox.removeClass('move-left')
+                                    transbox.addClass('justify-content-center')
+                                    subtransbox.addClass('col-md-12')
+                                    subtransbox.removeClass('col-md-3')
                                     setTimeout(() => {
                                         $(this).prop('disabled', false);
                                     }, 5000);
@@ -2195,6 +2234,11 @@
 
                                     $(this).prop('disabled', true)
                                     const btn = $('#control-send-all')
+
+                                    subtransbox.addClass('move-left')
+                                    transbox.removeClass('justify-content-center')
+                                    subtransbox.removeClass('col-md-12')
+                                    subtransbox.addClass('col-md-3')
                                     btn.attr('disabled', false);
                                     btn.removeClass('btn-secondary');
                                     btn.addClass('btn-success');
@@ -2482,9 +2526,17 @@
 
     const toggleStatus = (relay) => {
         const controlRelay = $("#controlRelayState");
+        const transbox = $('#transbox')
+        const subtransbox = $('#subtransbox')
+
         controlRelay.val(relay)
         if (relay === "OFF") {
             const btn = $('#control-send-manual')
+
+            subtransbox.removeClass('move-left')
+            transbox.addClass('justify-content-center')
+            subtransbox.addClass('col-md-12')
+            subtransbox.removeClass('col-md-3')
             btn.attr('disabled', true);
             btn.removeClass('btn-success');
             btn.addClass('btn-secondary');
@@ -2493,6 +2545,11 @@
             $("#controlActionManual").fadeOut();
         } else if (relay === "ON") {
             const btn = $('#control-send-manual')
+
+            subtransbox.addClass('move-left')
+            transbox.removeClass('justify-content-center')
+            subtransbox.removeClass('col-md-12')
+            subtransbox.addClass('col-md-3')
             btn.removeClass('btn-secondary');
             btn.addClass('btn-success');
             btn.removeAttr('disabled');
@@ -2562,26 +2619,6 @@
     updateBulbStatus(toggle.checked);
     updateBulbStatus(toggle2.checked);
     updateBulbStatus(toggle3.checked);
-
-    const toggles = $('#controlRelayState');
-    const wrapper = $('.light-status-wrapper');
-    const transbox = $('#transbox')
-    const subtransbox = $('#subtransbox')
-
-    toggles.change(function () {
-        console.log('test')
-        if (toggles.prop('checked')) {
-            wrapper.addClass('shift-left'); // เมื่อเปิด -> ชิดซ้าย
-            transbox.removeClass('justify-content-center')
-            subtransbox.removeClass('col-md-12')
-            subtransbox.addClass('col-md-3')
-        } else {
-            wrapper.removeClass('shift-left'); // เมื่อปิด -> กลับมาตรงกลาง
-            transbox.addClass('justify-content-center')
-            subtransbox.addClass('col-md-12')
-            subtransbox.removeClass('col-md-3')
-        }
-    });
 
     $('#controllerCode').on('change', function () {
         const alldevicesbtn = $('#controlAllRelayState')

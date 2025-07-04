@@ -131,9 +131,9 @@
                     </tbody>
                 </table>
                 <hr>
-                <div class="row" style="padding: 2rem;">
+                <div id="tb" class="row" style="padding: 2rem; position: relative;">
                     <!-- Checked switch -->
-                    <div class="form-check col-md-3 light-status-wrapper m-0 py-3">
+                    <div id="stb" class="form-check col-md-3 light-status-wrapper m-0 py-3">
                         <div id="bulbIcon" class="light-icon light-on">💡</div>
                         <label class="light-status-label">สถานะหลอดไฟ</label>
                         <input type="checkbox"
@@ -215,11 +215,13 @@
                     <div class="col-md-3 mn3">
                         <div class="light-info-box-warm text-center col-md-12 shadow-custom ">
                             <p class="label">ค่าแสงอุ่น</p>
+                            <hr>
                             <p class="value" id="allRangeWarm">0</p>
                         </div>
 
                         <div class="light-info-box-cool col-md-12 text-center shadow-custom mt-4">
                             <p class="label">ค่าแสงเย็น</p>
+                            <hr>
                             <p class="value" id="allRangeCool">0</p>
                         </div>
                     </div>
@@ -419,7 +421,7 @@
 
                 <div class="tab-content p-0 d-none" id="pills-tabContent">
                     <div class="tab-pane fade show active" id="manual" role="tabpanel" aria-labelledby="manual-tab">
-                        <div id="transbox" class="row" style="padding: 1rem;">
+                        <div id="transbox" class="row" style="padding: 1rem; position: relative;">
                             <!-- Checked switch -->
                             <div id="subtransbox" class="form-check col-md-3 light-status-wrapper m-0 py-3">
                                 <div id="bulbIconmanual" class="light-icon light-on">💡</div>
@@ -449,7 +451,7 @@
                                                 </div> -->
 
 
-                            <div class="mn col-md-6">
+                            <div class="mn col-md-6" style="margin-top: 30px;">
                                 <div>
                                     <!-- <div class="form-group col-md-12">
                                         <label for="controlRangeWarm" class="slider-label">ค่าแสงอุ่น</label> <span id="rangeWarm">50</span>
@@ -526,11 +528,13 @@
                                 <div class="mn col-md-3 flex flex-column" style="gap: 15px; display: flex; flex-direction: column;">
                                     <div class="light-info-box-warm text-center shadow-custom">
                                         <p class="label">ค่าแสงอุ่น</p>
+                                        <hr>
                                         <p class="value" id="rangeWarm"></p> <!-- แสดงค่าจริง -->
                                     </div>
 
                                     <div class="light-info-box-cool text-center shadow-custom">
                                         <p class="label">ค่าแสงเย็น</p>
+                                        <hr>
                                         <p class="value" id="rangeCool"></p> <!-- แสดงค่าจริง -->
                                     </div>
                         </div>
@@ -637,8 +641,9 @@
                                         </li>
                                     </ul>
 
-                                    <div class="light-info-box-warm text-center col-md-4 light-info-box shadow-custom ">
-                                        <p class="label">ค่าแสงอุ่น</p>
+                                    <div class="light-info-box-warm text-center col-md-5 light-info-box shadow-custom ">
+                                        <p class="label">ค่าแสงอุ่นลำดับที่ 1</p>
+                                        <hr>
                                         <p class="value" id="schedule_1_rangeWarm"></p> <!-- แสดงค่าจริง -->
                                     </div>
                                 </div>
@@ -672,8 +677,9 @@
                                             <div>100</div>
                                         </li>
                                     </ul>
-                                    <div class="light-info-box-cool text-center col-md-4 light-info-box shadow-custom">
-                                        <p class="label">ค่าแสงเย็น</p>
+                                    <div class="light-info-box-cool text-center col-md-5 light-info-box shadow-custom">
+                                        <p class="label">ค่าแสงเย็นลำดับที่ 1</p>
+                                        <hr>
                                         <p class="value" id="schedule_1_rangeCool"></p> <!-- แสดงค่าจริง -->
                                     </div>
                                 </div>
@@ -754,8 +760,9 @@
                                         </li>
                                     </ul>
 
-                                    <div class="light-info-box-warm text-center col-md-4 light-info-box shadow-custom ">
-                                        <p class="label">ค่าแสงอุ่น</p>
+                                    <div class="light-info-box-warm text-center col-md-5 light-info-box shadow-custom ">
+                                        <p class="label">ค่าแสงอุ่นลำดับที่ 2</p>
+                                        <hr>
                                         <p class="value" id="schedule_2_rangeWarm"></p> <!-- แสดงค่าจริง -->
                                     </div>
                                 </div>
@@ -789,8 +796,9 @@
                                             <div>100</div>
                                         </li>
                                     </ul>
-                                    <div class="light-info-box-cool text-center col-md-4 light-info-box shadow-custom">
-                                        <p class="label">ค่าแสงเย็น</p>
+                                    <div class="light-info-box-cool text-center col-md-5 light-info-box shadow-custom">
+                                        <p class="label">ค่าแสงเย็นลำดับที่ 2</p>
+                                        <hr>
                                         <p class="value" id="schedule_2_rangeCool"></p> <!-- แสดงค่าจริง -->
                                     </div>
                                 </div>
@@ -871,8 +879,9 @@
                                         </li>
                                     </ul>
 
-                                    <div class="light-info-box-warm text-center col-md-4 light-info-box shadow-custom ">
-                                        <p class="label">ค่าแสงอุ่น</p>
+                                    <div class="light-info-box-warm text-center col-md-5 light-info-box shadow-custom ">
+                                        <p class="label">ค่าแสงอุ่นลำดับที่ 3</p>
+                                        <hr>
                                         <p class="value" id="schedule_3_rangeWarm"></p> <!-- แสดงค่าจริง -->
                                     </div>
                                 </div>
@@ -906,8 +915,9 @@
                                             <div>100</div>
                                         </li>
                                     </ul>
-                                    <div class="light-info-box-cool text-center col-md-4 light-info-box shadow-custom">
-                                        <p class="label">ค่าแสงเย็น</p>
+                                    <div class="light-info-box-cool text-center col-md-5 light-info-box shadow-custom">
+                                        <p class="label">ค่าแสงเย็นลำดับที่ 3</p>
+                                        <hr>
                                         <p class="value" id="schedule_3_rangeCool"></p> <!-- แสดงค่าจริง -->
                                     </div>
                                 </div>
@@ -988,8 +998,9 @@
                                         </li>
                                     </ul>
 
-                                    <div class="light-info-box-warm text-center col-md-4 light-info-box shadow-custom ">
-                                        <p class="label">ค่าแสงอุ่น</p>
+                                    <div class="light-info-box-warm text-center col-md-5 light-info-box shadow-custom ">
+                                        <p class="label">ค่าแสงอุ่นลำดับที่ 4</p>
+                                        <hr>
                                         <p class="value" id="schedule_4_rangeWarm"></p> <!-- แสดงค่าจริง -->
                                     </div>
                                 </div>
@@ -1023,8 +1034,9 @@
                                             <div>100</div>
                                         </li>
                                     </ul>
-                                    <div class="light-info-box-cool text-center col-md-4 light-info-box shadow-custom">
-                                        <p class="label">ค่าแสงเย็น</p>
+                                    <div class="light-info-box-cool text-center col-md-5 light-info-box shadow-custom">
+                                        <p class="label">ค่าแสงเย็นลำดับที่ 4</p>
+                                        <hr>
                                         <p class="value" id="schedule_4_rangeCool"></p> <!-- แสดงค่าจริง -->
                                     </div>
                                 </div>
@@ -1106,8 +1118,9 @@
                                         </li>
                                     </ul>
 
-                                    <div class="light-info-box-warm text-center col-md-4 light-info-box shadow-custom ">
-                                        <p class="label">ค่าแสงอุ่น</p>
+                                    <div class="light-info-box-warm text-center col-md-5 light-info-box shadow-custom ">
+                                        <p class="label">ค่าแสงอุ่นลำดับที่ 5</p>
+                                        <hr>
                                         <p class="value" id="schedule_5_rangeWarm"></p> <!-- แสดงค่าจริง -->
                                     </div>
                                 </div>
@@ -1141,8 +1154,9 @@
                                             <div>100</div>
                                         </li>
                                     </ul>
-                                    <div class="light-info-box-cool text-center col-md-4 light-info-box shadow-custom">
-                                        <p class="label">ค่าแสงเย็น</p>
+                                    <div class="light-info-box-cool text-center col-md-5 light-info-box shadow-custom">
+                                        <p class="label">ค่าแสงเย็นลำดับที่ 5</p>
+                                        <hr>
                                         <p class="value" id="schedule_5_rangeCool"></p> <!-- แสดงค่าจริง -->
                                     </div>
                                 </div>
