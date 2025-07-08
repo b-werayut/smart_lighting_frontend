@@ -24490,3 +24490,25 @@ input:checked + .slider {
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     z-index: 9999;
 }
+
+.bootstrap-select .dropdown-toggle {
+        background-color: #f8f9fa !important; 
+        border-color: black !important;
+        color: black !important;
+    }
+
+.bootstrap-select .dropdown-toggle:hover {
+        background-color: #e2e6ea !important;
+    }
+
+.dropdown-item .active .selected{
+background-color: #f8f9fa !important; 
+    }
+
+ #alldevice {
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+    }
+    #alldevice.show {
+        opacity: 1;
+    }
