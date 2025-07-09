@@ -1903,14 +1903,17 @@
     //     });
 
     $('#controlAllRelayState').click(function () {
-        const endpoint = "http://85.204.247.82:3002/api/getalldevices"
+        const groupval = $('#groupDevices').val()
+        const endpoint = `http://85.204.247.82:3002/api/getgroupdevices/${groupval}`
+        const endpointAllDevices = `http://85.204.247.82:3002/api/getalldevices`
         const table = $('#alldevice');
         const tableBody = document.querySelector("#alldevice tbody")
         const transbox = $('#tb')
         const subtransbox = $('#stb')
         const groupselect = $('#groupSelect')
-
-        let statarr = []
+        const options = {
+            method: "GET"
+        }
 
         tableBody.innerHTML = ""
 
@@ -1933,7 +1936,7 @@
 
 
         // setTimeout(() => {
-        fetch(endpoint)
+        fetch(endpoint, options)
             .then(res => res.json())
             .then(obj => {
                 //                 Swal.fire({
@@ -1951,11 +1954,7 @@
 
 
                 // setTimeout(() => {
-                obj.devices.forEach(item => {
-                    if (item.relay === "ON") {
-                        statarr.push(item?.relay)
-                    }
-
+                obj.groupdevices.forEach(item => {
                     const row = tableBody.insertRow();
                     row.insertCell().textContent = item?.macAddress;
                     row.insertCell().textContent = item?.tag;
@@ -1974,7 +1973,7 @@
                 table.find("tbody").empty();
 
 
-                obj.devices.forEach(item => {
+                obj.groupdevices.forEach(item => {
                     const row = $("<tr>");
                     row.append(`<td>${item?.macAddress}</td>`)
                     row.append(`<td>${item?.tag}</td>`)
@@ -1995,77 +1994,83 @@
                         infoFiltered: "(กรองจากทั้งหมด _MAX_ รายการ)"
                     },
                     initComplete: function () {
-                        addDropdown().then(() => {
+                        addDropdown().then(async () => {
                             const groupselect = $('#groupSelect');
+                            const getGroup = await fetch(endpointAllDevices);
+                            const result = await getGroup.json();
 
-                            const mids = [...new Set(obj.devices.map(item => item.mid))]
+                            const mids = [...new Set(result.devices.map(item => item.mid))];
 
                             mids.forEach(mid => {
-                                let group = $(`<option value="${mid}">กลุ่ม ${mid}</option>`)
+                                let group = $(`<option value="${mid}">กลุ่ม ${mid}</option>`);
                                 group.appendTo(groupselect);
                             })
-                            groupselect.selectpicker('refresh');
-                        });
+
+                            groupselect.selectpicker('refresh')
+                            groupselect.val(groupval)
+                            groupselect.selectpicker('render')
+                        })
+
                     }
                 })
 
                 $('#controlAllRelayStateModal').modal('show');
 
-                if (parseInt(statarr.length) !== parseInt(obj.devices.length)) {
-                    const endpointoff = "http://85.204.247.82:3002/api/turnoffalllight"
-                    const options = {
-                        method: "POST"
-                    }
-                    // setTimeout(() => {
-                    //                 fetch(endpointoff, options)
-                    //                     .then(res => res.json())
-                    //                     .then(obj => {
-                    //                         console.log("Turn off all Devices Status: ", obj.status)
-                    //                     })
-                    //                     .catch(err => {
-                    //                         console.error("เกิดข้อผิดพลาด:", err);
-                    //                         Swal.fire({
-                    //                             position: "center",
-                    //                             icon: 'error',
-                    //                             title: "❌ ผิดพลาด!",
-                    //                             html: `
-                    //     <div style="font-size: 16px; color: #b71c1c;">
-                    //         🚫 ไม่สามารถ <strong>ปิดไฟทุกอุปกรณ์</strong> ได้<br>
-                    //         กรุณาติดต่อผู้ดูแลระบบ
-                    //     </div>
-                    // `,
-                    //                             showConfirmButton: false,
-                    //                             timer: 2000
-                    //                         })
+                // if (parseInt(statarr.length) !== parseInt(obj.groupdevices.length)) {
+                //     const endpointoff = "http://85.204.247.82:3002/api/turnoffalllight"
+                //     const options = {
+                //         method: "POST"
+                //     }
+                //     // setTimeout(() => {
+                //     //                 fetch(endpointoff, options)
+                //     //                     .then(res => res.json())
+                //     //                     .then(obj => {
+                //     //                         console.log("Turn off all Devices Status: ", obj.status)
+                //     //                     })
+                //     //                     .catch(err => {
+                //     //                         console.error("เกิดข้อผิดพลาด:", err);
+                //     //                         Swal.fire({
+                //     //                             position: "center",
+                //     //                             icon: 'error',
+                //     //                             title: "❌ ผิดพลาด!",
+                //     //                             html: `
+                //     //     <div style="font-size: 16px; color: #b71c1c;">
+                //     //         🚫 ไม่สามารถ <strong>ปิดไฟทุกอุปกรณ์</strong> ได้<br>
+                //     //         กรุณาติดต่อผู้ดูแลระบบ
+                //     //     </div>
+                //     // `,
+                //     //                             showConfirmButton: false,
+                //     //                             timer: 2000
+                //     //                         })
 
-                    //                     })
-                    // }, 1000)
-                    firstloadall = true
-                    $('#controlAllRelayStatebtn').bootstrapToggle('off')
-                    const btn = $('#control-send-all')
+                //     //                     })
+                //     // }, 1000)
+                //     firstloadall = true
+                //     $('#controlAllRelayStatebtn').bootstrapToggle('off')
+                //     const btn = $('#control-send-all')
 
-                    // subtransbox.removeClass('move-left')
-                    // transbox.addClass('justify-content-center')
-                    // subtransbox.addClass('col-md-12')
-                    // subtransbox.removeClass('col-md-3')
-                    // btn.attr('disabled', true);
-                    // btn.removeClass('btn-success');
-                    // btn.addClass('btn-secondary');
-                    // $(".mn3").fadeOut()
-                } else {
-                    firstloadall = true
-                    $('#controlAllRelayStatebtn').bootstrapToggle('on')
-                    const btn = $('#control-send-all')
+                //     // subtransbox.removeClass('move-left')
+                //     // transbox.addClass('justify-content-center')
+                //     // subtransbox.addClass('col-md-12')
+                //     // subtransbox.removeClass('col-md-3')
+                //     // btn.attr('disabled', true);
+                //     // btn.removeClass('btn-success');
+                //     // btn.addClass('btn-secondary');
+                //     // $(".mn3").fadeOut()
+                // } else {
+                //     firstloadall = true
+                //     $('#controlAllRelayStatebtn').bootstrapToggle('on')
+                //     const btn = $('#control-send-all')
 
-                    // subtransbox.addClass('move-left')
-                    // transbox.removeClass('justify-content-center')
-                    // subtransbox.removeClass('col-md-12')
-                    // subtransbox.addClass('col-md-3')
-                    btn.removeClass('btn-secondary');
-                    btn.addClass('btn-success');
-                    btn.removeAttr('disabled');
-                    $(".mn3").fadeIn()
-                }
+                //     // subtransbox.addClass('move-left')
+                //     // transbox.removeClass('justify-content-center')
+                //     // subtransbox.removeClass('col-md-12')
+                //     // subtransbox.addClass('col-md-3')
+                //     btn.removeClass('btn-secondary');
+                //     btn.addClass('btn-success');
+                //     btn.removeAttr('disabled');
+                //     $(".mn3").fadeIn()
+                // }
 
                 // }, 1500);
             })
@@ -2089,214 +2094,214 @@
         // }, 500);
     });
 
-    $('#controlAllRelayStatebtn').change(function () {
-        if (firstloadall) {
-            firstloadall = false;
-            return;
-        }
+    // $('#controlAllRelayStatebtn').change(function () {
+    //     if (firstloadall) {
+    //         firstloadall = false;
+    //         return;
+    //     }
 
-        if (isInternalChange) {
-            isInternalChange = false;
-            return;
-        }
+    //     if (isInternalChange) {
+    //         isInternalChange = false;
+    //         return;
+    //     }
 
-        const endpointon = "http://85.204.247.82:3002/api/turnonalllight"
-        const endpointoff = "http://85.204.247.82:3002/api/turnoffalllight"
-        const controlRelay = $("#controlAllRelayStatebtn");
-        const transbox = $('#tb')
-        const subtransbox = $('#stb')
-        const options = {
-            method: "POST"
-        }
+    //     const endpointon = "http://85.204.247.82:3002/api/turnonalllight"
+    //     const endpointoff = "http://85.204.247.82:3002/api/turnoffalllight"
+    //     const controlRelay = $("#controlAllRelayStatebtn");
+    //     const transbox = $('#tb')
+    //     const subtransbox = $('#stb')
+    //     const options = {
+    //         method: "POST"
+    //     }
 
-        if (!controlRelay.prop('checked')) {
+    //     if (!controlRelay.prop('checked')) {
 
-            Swal.fire({
-                title: "⚠️ ยืนยันการปิดไฟ?",
-                html: `<div style="font-size: 16px;">คุณต้องการ <strong>ปิดไฟทุกอุปกรณ์</strong> ใช่หรือไม่?</div>`,
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "ตกลง",
-                cancelButtonText: "ยกเลิก"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: '🔄 กำลังดำเนินการ...',
-                        html: `
-        <div style="font-size: 16px; color: #555;">
-            กำลังส่งคำสั่ง <strong>ปิดไฟทุกอุปกรณ์</strong><br>
-            กรุณารอสักครู่...
-        </div>
-    `,
-                        timerProgressBar: true,
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
-                        showConfirmButton: false,
-                        didOpen: () => {
-                            Swal.showLoading();
-                        }
-                    });
+    //         Swal.fire({
+    //             title: "⚠️ ยืนยันการปิดไฟ?",
+    //             html: `<div style="font-size: 16px;">คุณต้องการ <strong>ปิดไฟทุกอุปกรณ์</strong> ใช่หรือไม่?</div>`,
+    //             icon: "warning",
+    //             showCancelButton: true,
+    //             confirmButtonColor: "#3085d6",
+    //             cancelButtonColor: "#d33",
+    //             confirmButtonText: "ตกลง",
+    //             cancelButtonText: "ยกเลิก"
+    //         }).then((result) => {
+    //             if (result.isConfirmed) {
+    //                 Swal.fire({
+    //                     title: '🔄 กำลังดำเนินการ...',
+    //                     html: `
+    //     <div style="font-size: 16px; color: #555;">
+    //         กำลังส่งคำสั่ง <strong>ปิดไฟทุกอุปกรณ์</strong><br>
+    //         กรุณารอสักครู่...
+    //     </div>
+    // `,
+    //                     timerProgressBar: true,
+    //                     allowOutsideClick: false,
+    //                     allowEscapeKey: false,
+    //                     showConfirmButton: false,
+    //                     didOpen: () => {
+    //                         Swal.showLoading();
+    //                     }
+    //                 });
 
-                    setTimeout(() => {
-                        fetch(endpointoff, options)
-                            .then(res => res.json())
-                            .then(obj => {
-                                console.log("obj", obj.status)
-                                if (obj.status === "Success") {
-                                    Swal.close();
-                                    Swal.fire({
-                                        position: "center",
-                                        icon: 'success',
-                                        title: '✅ สำเร็จ!',
-                                        html: `
-        <div style="padding: 12px; background-color: #e6f4ea; border: 1px solid #a3d9a5; border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2e7d32;">
-            ปิดไฟให้กับ <strong style="color: #1b5e20;">ทุกอุปกรณ์</strong> เรียบร้อยแล้ว
-        </div>
-    `,
-                                        showConfirmButton: false,
-                                        timer: 2000
-                                    });
+    //                 setTimeout(() => {
+    //                     fetch(endpointoff, options)
+    //                         .then(res => res.json())
+    //                         .then(obj => {
+    //                             console.log("obj", obj.status)
+    //                             if (obj.status === "Success") {
+    //                                 Swal.close();
+    //                                 Swal.fire({
+    //                                     position: "center",
+    //                                     icon: 'success',
+    //                                     title: '✅ สำเร็จ!',
+    //                                     html: `
+    //     <div style="padding: 12px; background-color: #e6f4ea; border: 1px solid #a3d9a5; border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2e7d32;">
+    //         ปิดไฟให้กับ <strong style="color: #1b5e20;">ทุกอุปกรณ์</strong> เรียบร้อยแล้ว
+    //     </div>
+    // `,
+    //                                     showConfirmButton: false,
+    //                                     timer: 2000
+    //                                 });
 
-                                    $(this).prop('disabled', true)
-                                    const btn = $('#control-send-all')
+    //                                 $(this).prop('disabled', true)
+    //                                 const btn = $('#control-send-all')
 
-                                    // btn.attr('disabled', true);
-                                    // btn.removeClass('btn-success');
-                                    // btn.addClass('btn-secondary');
-                                    // $(".mn3").fadeOut();
-                                    // subtransbox.removeClass('move-left')
-                                    // transbox.addClass('justify-content-center')
-                                    // subtransbox.addClass('col-md-12')
-                                    // subtransbox.removeClass('col-md-3')
-                                    setTimeout(() => {
-                                        $(this).prop('disabled', false);
-                                    }, 5000);
-                                }
-                            })
-                            .catch(err => {
-                                console.error("เกิดข้อผิดพลาด:", err);
-                                Swal.fire({
-                                    position: "center",
-                                    icon: 'error',
-                                    title: "❌ ผิดพลาด!",
-                                    html: `
-        <div style="font-size: 16px; color: #b71c1c;">
-            🚫 ไม่สามารถ <strong>ปิดไฟทุกอุปกรณ์</strong> ได้<br>
-            กรุณาติดต่อผู้ดูแลระบบ
-        </div>
-    `,
-                                    showConfirmButton: false,
-                                    timer: 2000
-                                });
+    //                                 // btn.attr('disabled', true);
+    //                                 // btn.removeClass('btn-success');
+    //                                 // btn.addClass('btn-secondary');
+    //                                 // $(".mn3").fadeOut();
+    //                                 // subtransbox.removeClass('move-left')
+    //                                 // transbox.addClass('justify-content-center')
+    //                                 // subtransbox.addClass('col-md-12')
+    //                                 // subtransbox.removeClass('col-md-3')
+    //                                 setTimeout(() => {
+    //                                     $(this).prop('disabled', false);
+    //                                 }, 5000);
+    //                             }
+    //                         })
+    //                         .catch(err => {
+    //                             console.error("เกิดข้อผิดพลาด:", err);
+    //                             Swal.fire({
+    //                                 position: "center",
+    //                                 icon: 'error',
+    //                                 title: "❌ ผิดพลาด!",
+    //                                 html: `
+    //     <div style="font-size: 16px; color: #b71c1c;">
+    //         🚫 ไม่สามารถ <strong>ปิดไฟทุกอุปกรณ์</strong> ได้<br>
+    //         กรุณาติดต่อผู้ดูแลระบบ
+    //     </div>
+    // `,
+    //                                 showConfirmButton: false,
+    //                                 timer: 2000
+    //                             });
 
-                            });
-                    }, 3000);
-                } else {
-                    isInternalChange = true;
-                    controlRelay.bootstrapToggle('on');
-                    const btn = $('#control-send-all')
-                    btn.attr('disabled', true);
-                    btn.removeClass('btn-success');
-                    btn.addClass('btn-secondary');
-                }
-            })
-        } else {
-            Swal.fire({
-                title: "⚠️ ต้องการส่งคำสั่ง?",
-                html: `<div style="font-size: 16px;">คุณต้องการ <strong>เปิดไฟทุกอุปกรณ์</strong> ใช่หรือไม่?</div>`,
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "ตกลง",
-                cancelButtonText: "ยกเลิก"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: '🔄 กำลังดำเนินการ...',
-                        html: `
-        <div style="font-size: 16px; color: #555;">
-            กำลังส่งคำสั่ง <strong>ปิดไฟทุกอุปกรณ์</strong><br>
-            กรุณารอสักครู่...
-        </div>
-    `,
-                        timerProgressBar: true,
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
-                        showConfirmButton: false,
-                        didOpen: () => {
-                            Swal.showLoading();
-                        }
-                    });
+    //                         });
+    //                 }, 3000);
+    //             } else {
+    //                 isInternalChange = true;
+    //                 controlRelay.bootstrapToggle('on');
+    //                 const btn = $('#control-send-all')
+    //                 btn.attr('disabled', true);
+    //                 btn.removeClass('btn-success');
+    //                 btn.addClass('btn-secondary');
+    //             }
+    //         })
+    //     } else {
+    //         Swal.fire({
+    //             title: "⚠️ ต้องการส่งคำสั่ง?",
+    //             html: `<div style="font-size: 16px;">คุณต้องการ <strong>เปิดไฟทุกอุปกรณ์</strong> ใช่หรือไม่?</div>`,
+    //             icon: "warning",
+    //             showCancelButton: true,
+    //             confirmButtonColor: "#3085d6",
+    //             cancelButtonColor: "#d33",
+    //             confirmButtonText: "ตกลง",
+    //             cancelButtonText: "ยกเลิก"
+    //         }).then((result) => {
+    //             if (result.isConfirmed) {
+    //                 Swal.fire({
+    //                     title: '🔄 กำลังดำเนินการ...',
+    //                     html: `
+    //     <div style="font-size: 16px; color: #555;">
+    //         กำลังส่งคำสั่ง <strong>ปิดไฟทุกอุปกรณ์</strong><br>
+    //         กรุณารอสักครู่...
+    //     </div>
+    // `,
+    //                     timerProgressBar: true,
+    //                     allowOutsideClick: false,
+    //                     allowEscapeKey: false,
+    //                     showConfirmButton: false,
+    //                     didOpen: () => {
+    //                         Swal.showLoading();
+    //                     }
+    //                 });
 
-                    setTimeout(() => {
-                        fetch(endpointon, options)
-                            .then(res => res.json())
-                            .then(obj => {
-                                if (obj.status === "Success") {
-                                    Swal.close();
-                                    Swal.fire({
-                                        position: "center",
-                                        icon: 'success',
-                                        title: '✅ สำเร็จ!',
-                                        html: `
-        <div style="padding: 12px; background-color: #e6f4ea; border: 1px solid #a3d9a5; border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2e7d32;">
-            เปิดไฟให้กับ <strong>ทุกอุปกรณ์</strong> เรียบร้อยแล้ว
-        </div>
-    `,
-                                        showConfirmButton: false,
-                                        timer: 2000
-                                    });
+    //                 setTimeout(() => {
+    //                     fetch(endpointon, options)
+    //                         .then(res => res.json())
+    //                         .then(obj => {
+    //                             if (obj.status === "Success") {
+    //                                 Swal.close();
+    //                                 Swal.fire({
+    //                                     position: "center",
+    //                                     icon: 'success',
+    //                                     title: '✅ สำเร็จ!',
+    //                                     html: `
+    //     <div style="padding: 12px; background-color: #e6f4ea; border: 1px solid #a3d9a5; border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2e7d32;">
+    //         เปิดไฟให้กับ <strong>ทุกอุปกรณ์</strong> เรียบร้อยแล้ว
+    //     </div>
+    // `,
+    //                                     showConfirmButton: false,
+    //                                     timer: 2000
+    //                                 });
 
-                                    $(this).prop('disabled', true)
-                                    const btn = $('#control-send-all')
+    //                                 $(this).prop('disabled', true)
+    //                                 const btn = $('#control-send-all')
 
-                                    // subtransbox.addClass('move-left')
-                                    // transbox.removeClass('justify-content-center')
-                                    // subtransbox.removeClass('col-md-12')
-                                    // subtransbox.addClass('col-md-3')
-                                    btn.attr('disabled', false);
-                                    btn.removeClass('btn-secondary');
-                                    btn.addClass('btn-success');
-                                    $(".mn3").fadeIn();
-                                    setTimeout(() => {
-                                        $(this).prop('disabled', false);
-                                    }, 5000);
+    //                                 // subtransbox.addClass('move-left')
+    //                                 // transbox.removeClass('justify-content-center')
+    //                                 // subtransbox.removeClass('col-md-12')
+    //                                 // subtransbox.addClass('col-md-3')
+    //                                 btn.attr('disabled', false);
+    //                                 btn.removeClass('btn-secondary');
+    //                                 btn.addClass('btn-success');
+    //                                 $(".mn3").fadeIn();
+    //                                 setTimeout(() => {
+    //                                     $(this).prop('disabled', false);
+    //                                 }, 5000);
 
-                                }
-                            })
-                            .catch(err => {
-                                console.error("เกิดข้อผิดพลาด:", err);
-                                Swal.fire({
-                                    position: "center",
-                                    icon: 'error',
-                                    title: "❌ ผิดพลาด!",
-                                    html: `
-        <div style="font-size: 16px; color: #b71c1c;">
-            🚫 ไม่สามารถ <strong>เปิดไฟ</strong> ให้กับทุกอุปกรณ์ได้<br>
-            กรุณาติดต่อผู้ดูแลระบบ
-        </div>
-    `,
-                                    showConfirmButton: false,
-                                    timer: 2000
-                                });
+    //                             }
+    //                         })
+    //                         .catch(err => {
+    //                             console.error("เกิดข้อผิดพลาด:", err);
+    //                             Swal.fire({
+    //                                 position: "center",
+    //                                 icon: 'error',
+    //                                 title: "❌ ผิดพลาด!",
+    //                                 html: `
+    //     <div style="font-size: 16px; color: #b71c1c;">
+    //         🚫 ไม่สามารถ <strong>เปิดไฟ</strong> ให้กับทุกอุปกรณ์ได้<br>
+    //         กรุณาติดต่อผู้ดูแลระบบ
+    //     </div>
+    // `,
+    //                                 showConfirmButton: false,
+    //                                 timer: 2000
+    //                             });
 
-                            });
-                    }, 3000);
-                } else {
-                    isInternalChange = true;
-                    controlRelay.bootstrapToggle('off');
-                    // $(".mn3").fadeOut();
-                    // const btn = $('#control-send-all')
-                    // btn.attr('disabled', true);
-                    // btn.removeClass('btn-success');
-                    // btn.addClass('btn-secondary');
-                }
-            })
-        }
-    })
+    //                         });
+    //                 }, 3000);
+    //             } else {
+    //                 isInternalChange = true;
+    //                 controlRelay.bootstrapToggle('off');
+    //                 // $(".mn3").fadeOut();
+    //                 // const btn = $('#control-send-all')
+    //                 // btn.attr('disabled', true);
+    //                 // btn.removeClass('btn-success');
+    //                 // btn.addClass('btn-secondary');
+    //             }
+    //         })
+    //     }
+    // })
 
     $('#control-send-manual').click(function () {
         const macAddress = $('#controlLampSerialNo').val()
@@ -2477,7 +2482,19 @@
         const endpoint = "http://85.204.247.82:3002/api/turnonalllightval"
         const warmVal = $('#controlAllRangeWarm').val()
         const coolVal = $('#controlAllRangeCool').val()
+        const relaybtn = $('#controlAllRelayStatebtn')
+        const group = $('#groupSelect').val()
+        let relay
+
+        if(relaybtn.prop('checked')){
+            relay = "ON"
+        }else{
+            relay = "OFF"
+        }
+
         const datas = {
+            relay,
+            group,
             warmVal,
             coolVal
         }
@@ -2651,18 +2668,21 @@
     $('#controllerCode').on('change', function () {
         const alldevicesbtn = $('#controlAllRelayState')
         const groupDevies = $('#groupDeviceslebel')
-        let value = $(this).val();
-        let text = $(this).find('option:selected').text();
+        const groupdropdown = $('.groupDevices')
+        let value = $(this).val()
+        let text = $(this).find('option:selected').text()
         if (value !== 'CTL25-00002') {
             groupDevies.addClass('d-none')
             groupDevies.removeClass('d-flex')
             alldevicesbtn.addClass('d-none')
             alldevicesbtn.removeClass('d-flex')
+            groupdropdown.addClass('d-none')
         } else {
             alldevicesbtn.fadeIn()
             alldevicesbtn.addClass('d-flex')
             groupDevies.fadeIn()
             groupDevies.addClass('d-flex')
+            groupdropdown.removeClass('d-none')
         }
     });
 
@@ -2701,6 +2721,7 @@
 
     const getGroupDevices = async () => {
         const inputGroup = $("#groupDevices")
+        const inputGroup_addmodal = $("#groupDevices_addmodal")
         const endpoint = "http://85.204.247.82:3002/api/getalldevices"
         const checkArr = new Set()
         const options = { method: "GET" }
@@ -2715,6 +2736,7 @@
 
                 checkArr.add(group)
                 $(`<option value="${group}">${group}</option>`).appendTo(inputGroup)
+                $(`<option value="${group}">${group}</option>`).appendTo(inputGroup_addmodal)
             })
         } catch (error) {
             console.error("Error fetching group devices:", error)
@@ -2723,22 +2745,16 @@
     getGroupDevices()
 
     const addDropdown = async () => {
+        if ($('#groupSelect').length > 0) return;
+
         const headtable = $('.dt-layout-start').first();
 
-        //         const dropdown = $(`
-        //         <div class="col-md-4 d-flex align-items-center justify-content-center">
-        //     <label for="groupSelect" style="width: 100px">เลือกกลุ่ม:</label>
-        //     <select id="groupSelect" class="selectpicker form-control border-secondary text-dark" data-live-search="true" title="Please select" style="min-width: 200px; border: 1px solid;">
-        //     </select>
-        // </div>
-        //     `);
-
         const dropdown = $(`
-        <div class="col-md-3 d-flex align-items-center justify-content-center">
-    <select id="groupSelect" class="selectpicker form-control border-secondary text-dark" data-live-search="true" title="เลือกกลุ่ม" style="min-width: 200px; border: 1px solid;">
-    <option value="all">เลือกทั้งหมด</option>
-    </select>
-</div>
+        <div class="col-md-3 d-flex align-items-center justify-content-center groupSelect">
+            <select id="groupSelect" class="selectpicker form-control border-secondary text-dark" data-live-search="true" title="เลือกกลุ่ม" style="min-width: 200px; border: 1px solid;">
+                <option value="0">เลือกทั้งหมด</option>
+            </select>
+        </div>
     `);
 
         headtable.after(dropdown);
@@ -2747,16 +2763,14 @@
 
 
     const selectGroupDevices = async (group) => {
-        // const group = $("#groupSelect").val()
-        const table = $('#alldevice')
-        const endpointalldevices = "http://85.204.247.82:3002/api/getalldevices"
-        const tableBody = document.querySelector("#alldevice tbody")
-        const endpointgetgroupdatas = `http://85.204.247.82:3002/api/getgroupdevices/${group}`
-        const options = { method: "GET" }
-        tableBody.innerHTML = ""
+        const table = $('#alldevice');
+        const endpointgetgroupdatas = `http://85.204.247.82:3002/api/getgroupdevices/${group}`;
+        const tableBody = document.querySelector("#alldevice tbody");
+        tableBody.innerHTML = "";
+        const groupselect = $('.groupSelect')
         try {
-            const response = await fetch(endpointgetgroupdatas, options)
-            const obj = await response.json()
+            const response = await fetch(endpointgetgroupdatas);
+            const obj = await response.json();
 
             obj.groupdevices.forEach(item => {
                 const row = tableBody.insertRow();
@@ -2767,7 +2781,6 @@
                 row.insertCell().textContent = item?.mid;
                 row.insertCell().textContent = item?.workmode;
             });
-
 
             if ($.fn.DataTable.isDataTable(table)) {
                 table.DataTable().clear().destroy();
@@ -2784,7 +2797,9 @@
                 table.find("tbody").append(row);
             });
 
-            table.removeClass("animate__fadeOut").addClass("animate__animated animate__fadeIn")
+            table.removeClass("animate__fadeOut").addClass("animate__animated animate__fadeIn");
+            groupselect.removeClass("animate__fadeOut").addClass("animate__animated animate__fadeIn");
+
 
             table.DataTable({
                 language: {
@@ -2794,35 +2809,51 @@
                     info: "แสดง _START_ ถึง _END_ จาก _TOTAL_ รายการ",
                     infoEmpty: "แสดง 0 ถึง 0 จาก 0 รายการ",
                     infoFiltered: "(กรองจากทั้งหมด _MAX_ รายการ)"
-                },
-                initComplete: function () {
-                    addDropdown().then(async () => {
-                        const groupselect = $('#groupSelect')
-                        const group = await fetch(endpointalldevices)
-                        const obj = await group.json();
-                        const mids = [...new Set(obj.devices.map(item => item.mid))]
-                        mids.forEach(mid => {
-                            let group = $(`<option value="${mid}">กลุ่ม ${mid}</option>`)
-                            group.appendTo(groupselect)
-                        });
-                        groupselect.selectpicker('refresh')
-                    });
                 }
             });
-
+            await addDropdown(group);
+            await loadGroupDropdown(group);
         } catch (error) {
-            console.error("Error fetching group devices:", error)
+            console.error("Error loading group devices", error);
         }
-    }
+    };
 
     $(document).on('change', '#groupSelect', async function () {
         const group = $('#groupSelect').val()
         console.log('groupSelect', group)
-        if (group === 'all') {
-            console.log('group === all')
-        } else {
-            selectGroupDevices(group)
-        }
+        await selectGroupDevices(group)
     });
+
+    const loadGroupDropdown = async (selectedGroup) => {
+        const groupselect = $('#groupSelect');
+        groupselect.empty();
+
+        try {
+            const res = await fetch("http://85.204.247.82:3002/api/getalldevices");
+            const data = await res.json();
+            const mids = [...new Set(data.devices.map(item => item.mid))];
+
+            await groupselect.append(`<option value="0">เลือกทั้งหมด</option>`);
+            mids.forEach(mid => {
+                groupselect.append(`<option value="${mid}">กลุ่ม ${mid}</option>`);
+            });
+
+            groupselect.selectpicker('refresh');
+
+            // if (selectedGroup && mids.includes(selectedGroup)) {
+            groupselect.val(selectedGroup);
+            groupselect.selectpicker('refresh');
+            groupselect.selectpicker('render');
+            // } else {
+            //     console.warn('กลุ่มที่เลือกไม่มีใน dropdown:', selectedGroup);
+            // }
+
+        } catch (err) {
+            console.error("โหลด groupSelect ล้มเหลว:", err);
+        }
+    };
+
+
+
 
 })

@@ -516,8 +516,8 @@
     function showLampModalInEditMode() {
         modalState = MODAL_STATE.UPDATE;
 
-        $("#lampInfoModalLongTitle").text("ข้อมูลหลอดไฟ");
-        $("#lampInfoModal").LoadingOverlay("show");
+        $("#lampInfoModalEditLongTitle").text("ข้อมูลหลอดไฟ");
+        $("#lampInfoModalEdit").LoadingOverlay("show");
 
         fetch(ENDPOINT_URL.LAMP_INFO, {
             method: "POST",
@@ -526,14 +526,14 @@
             },
             body: JSON.stringify({ "lampCode": $(this).attr("data-valkey") })
         }).then(response => {
-            $("#lampInfoModal").LoadingOverlay("hide");
+            $("#lampInfoModalEdit").LoadingOverlay("hide");
             return response.json();
         }).then(result => {
             let viewModel = JSON.parse(JSON.stringify(result));
 
             if (viewModel.state == "success") {
                 bindLampViewModelToModal(viewModel.data);
-                $("#lampInfoModal").modal("show");
+                $("#lampInfoModalEdit").modal("show");
             } else {
                 showDialog(viewModel.state, viewModel.title, viewModel.message);
             }
@@ -594,19 +594,19 @@
     };
 
     function bindLampViewModelToModal(viewModel) {
-        $("#lampSerialNo").val(viewModel.lampCode);
-        $("#lampSerialNo").prop("disabled", true);
+        $("#lampSerialNoEdit").val(viewModel.lampCode);
+        $("#lampSerialNoEdit").prop("disabled", true);
 
-        $("#lampName").val(viewModel.lampName);
-        $("#lampDescription").val(viewModel.lampDescription);
-        $("#lampLat").val(viewModel.latitude);
-        $("#lampLong").val(viewModel.longitude);
+        $("#lampNameEdit").val(viewModel.lampName);
+        $("#lampDescriptionEdit").val(viewModel.lampDescription);
+        $("#lampLatEdit").val(viewModel.latitude);
+        $("#lampLongEdit").val(viewModel.longitude);
         $("#isWarning").prop("checked", viewModel.allowNotify);
     };
 
     $(".modal-state-create").on("click", function (e) {
         modalState = MODAL_STATE.CREATE;
-        $("#lampInfoModalLongTitle").text("เพิ่มหลอดไฟใหม่");
+        $("#lampInfoModalEditLongTitle").text("เพิ่มหลอดไฟใหม่");
     });
 
     $("#modal-save-button").on("click", function (e) {
@@ -614,7 +614,7 @@
             return;
         }
 
-        $("#lampInfoModal").LoadingOverlay("show");
+        $("#lampInfoModalEdit").LoadingOverlay("show");
 
         let postToUrl;
         switch (modalState) {
@@ -644,13 +644,13 @@
             },
             body: JSON.stringify(controllerData)
         }).then(response => {
-            $("#lampInfoModal").LoadingOverlay("hide");
+            $("#lampInfoModalEdit").LoadingOverlay("hide");
             return response.json();
         }).then(result => {
             let viewModel = JSON.parse(JSON.stringify(result));
 
             if (viewModel.state == "success") {
-                $("#lampInfoModal").modal("hide");
+                $("#lampInfoModalEdit").modal("hide");
             }
 
             Swal.fire({
@@ -2634,18 +2634,24 @@
     $('#controllerCode').on('change', function () {
         const alldevicesbtn = $('#controlAllRelayState')
         const groupDevies = $('#groupDeviceslebel')
-        let value = $(this).val();
-        let text = $(this).find('option:selected').text();
+        const groupdropdown = $('.groupDevices')
+        const groupdropdownedit = $('.groupDevicesEdit')
+        let value = $(this).val()
+        let text = $(this).find('option:selected').text()
         if (value !== 'CTL25-00002') {
             groupDevies.addClass('d-none')
             groupDevies.removeClass('d-flex')
             alldevicesbtn.addClass('d-none')
             alldevicesbtn.removeClass('d-flex')
+            groupdropdown.addClass('d-none')
+            groupdropdownedit.addClass('d-none')
         } else {
             alldevicesbtn.fadeIn()
             alldevicesbtn.addClass('d-flex')
             groupDevies.fadeIn()
             groupDevies.addClass('d-flex')
+            groupdropdown.removeClass('d-none')
+            groupdropdownedit.removeClass('d-none')
         }
     });
 
@@ -2684,6 +2690,8 @@
 
     const getGroupDevices = async () => {
         const inputGroup = $("#groupDevices")
+        const inputGroup_addmodal = $("#groupDevices_addmodal")
+        const inputGroup_addmodalEdit = $("#groupDevices_modalEdit")
         const endpoint = "http://85.204.247.82:3002/api/getalldevices"
         const checkArr = new Set()
         const options = { method: "GET" }
@@ -2698,6 +2706,8 @@
 
                 checkArr.add(group)
                 $(`<option value="${group}">${group}</option>`).appendTo(inputGroup)
+                $(`<option value="${group}">${group}</option>`).appendTo(inputGroup_addmodal)
+                $(`<option value="${group}">${group}</option>`).appendTo(inputGroup_addmodalEdit)
             })
         } catch (error) {
             console.error("Error fetching group devices:", error)

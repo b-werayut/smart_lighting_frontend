@@ -152,7 +152,20 @@
                     </tbody>
                 </table>
                 <hr>
-                <div class="row" style="padding: 2rem; position: relative;">
+
+                    <ul class="nav nav-pills mb-3" id="pills-tab-all" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link active" id="manualAll-tab" data-toggle="pill" data-target="#manualAll" type="button" role="tab" aria-controls="manualAll" aria-selected="true">กำหนดการทำงานด้วยตนเอง(Manual)</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="autoAll-tab" data-toggle="pill" data-target="#autoAll" type="button" role="tab" aria-controls="autoAll" aria-selected="false">ตั้งเวลาทำงานอัตโนมัติ(Schedule)</a>
+                        </li>
+                    </ul>
+                    <hr>
+                
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="manualAll" role="tabpanel" aria-labelledby="manualAll-tab">
+                    <div class="row" style="padding: 2rem; position: relative;">
                     <!-- Checked switch -->
                     <div class="form-check col-md-3 light-status-wrapper m-0 py-3">
                         <div id="bulbIcon" class="light-icon light-on">💡</div>
@@ -247,6 +260,9 @@
                         </div>
                     </div>
                 </div>
+                    </div>
+                    <div class="tab-pane fade" id="autoAll" role="tabpanel" aria-labelledby="autoAll-tab"><span>Auto</span></div>
+                </div>
             </div>
             <div class="modal-footer d-flex justify-content-end flex-wrap">
                 <button type="button" class="btn btn-outline-secondary btn-sm md-close" data-dismiss="modal">
@@ -276,7 +292,7 @@
                 <div class="row">
                     <label class="form-group col-md-12 has-float-label" for="lampSerialNo">
                         <input type="text" class="form-control" id="lampSerialNo" autocomplete="off" />
-                        <span>S/N</span>
+                        <span>Mac Address</span>
                     </label>
                 </div>
                 <div class="row">
@@ -304,6 +320,13 @@
                             <span>ลองจิจูด</span>
                         </label>
                     </div>
+                    <div class="col-md-6 groupDevices">
+                    <label class="form-group has-float-label" id="groupDeviceslebel" for="groupDevices_addmodal">
+                    <select id="groupDevices_addmodal" class="form-control">
+                    </select>
+                    <span>กลุ่ม</span>
+                </label>
+                </div>
                 </div>
                 <!-- <div class="px-2 py-2">
                     <p>สถานะ</p>
