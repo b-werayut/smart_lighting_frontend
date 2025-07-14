@@ -42,6 +42,16 @@
     $("#schedule_4_end").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
     $("#schedule_5_start").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
     $("#schedule_5_end").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
+    $("#scheduleall_1_start").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
+    $("#scheduleall_1_end").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
+    $("#scheduleall_2_start").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
+    $("#scheduleall_2_end").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
+    $("#scheduleall_3_start").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
+    $("#scheduleall_3_end").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
+    $("#scheduleall_4_start").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
+    $("#scheduleall_4_end").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
+    $("#scheduleall_5_start").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
+    $("#scheduleall_5_end").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
     //$("#schedule_1_duration").datetimepicker({ format: "HH:mm" });
     //$("#schedule_2_duration").datetimepicker({ format: "HH:mm" });
     //$("#schedule_3_duration").datetimepicker({ format: "HH:mm" });
@@ -766,7 +776,7 @@
             console.log("MANUAL")
             $("#controlActionList").val(obj.data[0]?.workmode).trigger("change");
             $('#control-send-manual').removeClass('d-none')
-            $('#control-send-auto').addClass('d-none')
+            $('#control-send-schedule').addClass('d-none')
             $("#manual").fadeIn()
             $("#auto").fadeOut()
             $("#pills-tabContent").fadeIn()
@@ -840,7 +850,7 @@
                 $(`#schedule_${i}_rangeCool`).text(item)
             })
 
-            $('#control-send-auto').removeClass('d-none')
+            $('#control-send-schedule').removeClass('d-none')
             $('#control-send-manual').addClass('d-none')
             $("#controlActionList").val(mode).trigger("change");
             $("#auto").fadeIn()
@@ -976,6 +986,52 @@
         $("#schedule_5_controlRangeWarm").val("0");
         $("#schedule_5_rangeCool").text("0");
         $("#schedule_5_controlRangeCool").val("0");
+
+        //allcontrol
+        $("#scheduleall_1_start").val("00:00");
+        $("#scheduleall_1_end").val("00:00");
+        $("#scheduleall_1_duration_h").val("0");
+        $("#scheduleall_1_duration_m").val("0");
+        $("#scheduleall_1_rangeWarm").text("0");
+        $("#scheduleall_1_controlRangeWarm").val("0");
+        $("#scheduleall_1_rangeCool").text("0");
+        $("#scheduleall_1_controlRangeCool").val("0");
+
+        $("#scheduleall_2_start").val("00:00");
+        $("#scheduleall_2_end").val("00:00");
+        $("#scheduleall_2_duration_h").val("0");
+        $("#scheduleall_2_duration_m").val("0");
+        $("#scheduleall_2_rangeWarm").text("0");
+        $("#scheduleall_2_controlRangeWarm").val("0");
+        $("#scheduleall_2_rangeCool").text("0");
+        $("#scheduleall_2_controlRangeCool").val("0");
+
+        $("#scheduleall_3_start").val("00:00");
+        $("#scheduleall_3_end").val("00:00");
+        $("#scheduleall_3_duration_h").val("0");
+        $("#scheduleall_3_duration_m").val("0");
+        $("#scheduleall_3_rangeWarm").text("0");
+        $("#scheduleall_3_controlRangeWarm").val("0");
+        $("#scheduleall_3_rangeCool").text("0");
+        $("#scheduleall_3_controlRangeCool").val("0");
+
+        $("#scheduleall_4_start").val("00:00");
+        $("#scheduleall_4_end").val("00:00");
+        $("#scheduleall_4_duration_h").val("0");
+        $("#scheduleall_4_duration_m").val("0");
+        $("#scheduleall_4_rangeWarm").text("0");
+        $("#scheduleall_4_controlRangeWarm").val("0");
+        $("#scheduleall_4_rangeCool").text("0");
+        $("#scheduleall_4_controlRangeCool").val("0");
+
+        $("#scheduleall_5_start").val("00:00");
+        $("#scheduleall_5_end").val("00:00");
+        $("#scheduleall_5_duration_h").val("0");
+        $("#scheduleall_5_duration_m").val("0");
+        $("#scheduleall_5_rangeWarm").text("0");
+        $("#scheduleall_5_controlRangeWarm").val("0");
+        $("#scheduleall_5_rangeCool").text("0");
+        $("#scheduleall_5_controlRangeCool").val("0");
     };
 
     // $("#controlInfoModal").on("hidden.bs.modal", function (e) {
@@ -1263,13 +1319,6 @@
                         }).then(response => {
                             firstloadmanual = true
                             btnswitchmanual.bootstrapToggle('off')
-                            if (!btnswitchmanual.prop('checked')) {
-                                // subtransbox.removeClass('move-left')
-                                // transbox.addClass('justify-content-center')
-                                // subtransbox.addClass('col-md-12')
-                                // subtransbox.removeClass('col-md-3')
-                                // $('.mn').fadeOut()
-                            }
                             return response.json();
                         }).then(result => {
                             console.log('result', result)
@@ -1288,7 +1337,7 @@
                                 timer: 2000
                             })
                         })
-                    }, 500);
+                    }, 500)
 
                     setTimeout(() => {
                         fetch(endpoint_updatemode, {
@@ -1325,7 +1374,7 @@
                                 })
                             }
                             $('#control-send-manual').removeClass('d-none')
-                            $('#control-send-auto').addClass('d-none')
+                            $('#control-send-schedule').addClass('d-none')
                             $("#manual").fadeIn()
                             $("#auto").fadeOut()
                             $("#pills-tabContent").fadeIn()
@@ -1455,7 +1504,7 @@
                                 });
 
                             }
-                            $('#control-send-auto').removeClass('d-none')
+                            $('#control-send-schedule').removeClass('d-none')
                             $('#control-send-manual').addClass('d-none')
                             $("#auto").fadeIn()
                             $("#manual").fadeOut()
@@ -1780,7 +1829,7 @@
     //                                     timer: 1500
     //                                 })
     //                                 $(this).prop('disabled', true);
-    //                                 const btn = $('#control-send-auto')
+    //                                 const btn = $('#control-send-schedule')
     //                                 btn.removeAttr('disabled');
     //                                 btn.removeClass('btn-secondary');
     //                                 btn.addClass('btn-success');
@@ -1809,7 +1858,7 @@
     //                     isInternalChange = true;
     //                     controlRelay.bootstrapToggle('off');
     //                     $(".mn2").fadeOut();
-    //                     const btn = $('#control-send-auto')
+    //                     const btn = $('#control-send-schedule')
     //                     btn.attr('disabled', true);
     //                     btn.removeClass('btn-success');
     //                     btn.addClass('btn-secondary');
@@ -1870,7 +1919,7 @@
     //                                     timer: 1500
     //                                 })
     //                                 $(this).prop('disabled', true);
-    //                                 const btn = $('#control-send-auto')
+    //                                 const btn = $('#control-send-schedule')
     //                                 btn.attr('disabled', true);
     //                                 btn.removeClass('btn-success');
     //                                 btn.addClass('btn-secondary');
@@ -1917,6 +1966,7 @@
 
         tableBody.innerHTML = ""
 
+        clearControlModalInput()
         //     Swal.fire({
         //         title: '🔄 กำลังดึงข้อมูล...',
         //         html: `
@@ -2391,49 +2441,51 @@
         }, 500)
     })
 
-    $('#control-send-auto').click(async function () {
-        const macAddress = $('#controlLampSerialNo').val();
-        const endpoint = "http://85.204.247.82:3002/api/setschedule";
-        let datasarr = [];
+    $('#control-send-schedule').click(async function () {
+        const macAddress = $('#controlLampSerialNo').val()
+        const endpoint = "http://85.204.247.82:3002/api/setschedule"
+        const mac = macAddress
+        let datasarr = []
 
         for (let i = 1; i <= 5; i++) {
-            const no = $(`#schedule_${i}_no`).val();
-            const start = $(`#schedule_${i}_start`).val();
-            const end = $(`#schedule_${i}_end`).val();
+            const no = $(`#schedule_${i}_no`).val()
+            const start = $(`#schedule_${i}_start`).val()
+            const end = $(`#schedule_${i}_end`).val()
             if (no && start && end) {
                 datasarr.push({
-                    macAddress: macAddress,
                     no: no,
                     starttime: start,
                     endtime: end,
                     warmval: $(`#schedule_${i}_controlRangeWarm`).val(),
                     coolval: $(`#schedule_${i}_controlRangeCool`).val()
-                });
+                })
             }
         }
 
+        let datas = { macAddress: mac, schedule: datasarr }
+        console.log(datas)
         const options = {
             method: "POST",
             headers: {
                 "Content-Type": "application/json; charset=utf-8"
             },
-            body: JSON.stringify(datasarr)
+            body: JSON.stringify(datas)
         };
 
         Swal.fire({
             title: '🔄 กำลังส่งคำสั่ง...',
             html: `
-            <div style="font-size: 16px; color: #555;">
-                กำลังส่งคำสั่งให้อุปกรณ์ <strong>${macAddress}</strong><br>
-                กรุณารอสักครู่...
-            </div>
-        `,
+                <div style="font-size: 16px; color: #555;">
+                    กำลังส่งคำสั่งให้อุปกรณ์ <strong>${macAddress}</strong><br>
+                    กรุณารอสักครู่...
+                </div>
+            `,
             allowOutsideClick: false,
             allowEscapeKey: false,
             showConfirmButton: false,
             timerProgressBar: true,
             didOpen: () => {
-                Swal.showLoading();
+                Swal.showLoading()
             }
         });
 
@@ -2448,8 +2500,8 @@
                 icon: 'success',
                 title: "สำเร็จ",
                 html: `<div style="padding: 12px; background-color: #e6f4ea; border: 1px solid #a3d9a5; border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2e7d32;">
-      ✅ ส่งคำสั่งสำเร็จ <strong style="color: #1b5e20;">${macAddress}</strong> สำเร็จ
-    </div>`,
+          ✅ ส่งคำสั่งสำเร็จ <strong style="color: #1b5e20;">${macAddress}</strong> สำเร็จ
+        </div>`,
                 showConfirmButton: false,
                 timer: 1500
             })
@@ -2468,17 +2520,109 @@
                 icon: 'error',
                 title: "❌ ผิดพลาด!",
                 html: `
-            <div style="font-size: 16px; color: #b71c1c;">
-                🚫 <strong>ส่งคำสั่งไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
-            </div>
-        `,
+                <div style="font-size: 16px; color: #b71c1c;">
+                    🚫 <strong>ส่งคำสั่งไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
+                </div>
+            `,
                 showConfirmButton: false,
                 timer: 1500
             });
         }
-    });
+    })
 
-    $('#control-send-all').click(function () {
+    $('#control-send-all-schedule').click(async function () {
+        const group = $('#groupSelect').val()
+        const endpoint = 'http://85.204.247.82:3002/api/setallschedule'
+        const schedule = []
+
+        for (let i = 1; i <= 5; i++) {
+            const no = $(`#scheduleall_${i}_no`).val()
+            const starttime = $(`#scheduleall_${i}_start`).val()
+            const endtime = $(`#scheduleall_${i}_end`).val()
+            const warmval = $(`#scheduleall_${i}_controlRangeWarm`).val()
+            const coolval = $(`#scheduleall_${i}_controlRangeCool`).val()
+
+            schedule.push({
+                no,
+                starttime,
+                endtime,
+                warmval,
+                coolval
+            })
+        }
+
+        const datas = { group: group, schedule: schedule }
+        // console.log('datas', datas)
+
+        const options = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            body: JSON.stringify(datas)
+        }
+
+        Swal.fire({
+            title: '<span>🔄 กำลังดำเนินการ...</span>',
+            html: `
+        <div style="font-size: 16px; color: #555;">
+            กำลังส่งคำสั่งทุกอุปกรณ์<br>
+            กรุณารอสักครู่...
+        </div>
+    `,
+            timerProgressBar: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        })
+
+        try {
+            const resp = await fetch(endpoint, options);
+            const obj = await resp.json();
+            // console.log('obj', obj)
+            Swal.fire({
+                position: "center",
+                icon: 'success',
+                title: '✅ สำเร็จ!',
+                html: `
+        <div style="font-size: 16px; color: #2e7d32;">
+            ส่งคำสั่งไปยังทุกอุปกรณ์ <strong>สำเร็จ</strong>
+        </div>
+    `,
+                showConfirmButton: false,
+                timer: 2000
+            })
+
+            // setTimeout(() => {
+            //     $('#controlInfoModal').modal('hide')
+            // }, 1500);
+            $(this).prop('disabled', true);
+            setTimeout(() => {
+                $(this).prop('disabled', false);
+            }, 10000);
+
+        } catch (err) {
+            console.error("เกิดข้อผิดพลาด:", err);
+            Swal.fire({
+                position: "center",
+                icon: 'error',
+                title: "❌ ผิดพลาด!",
+                html: `
+                <div style="font-size: 16px; color: #b71c1c;">
+                    🚫 <strong>ส่งคำสั่งไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
+                </div>
+            `,
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+
+    })
+
+    $('#control-send-all-manual').click(function () {
         const endpoint = "http://85.204.247.82:3002/api/turnonalllightval"
         const warmVal = $('#controlAllRangeWarm').val()
         const coolVal = $('#controlAllRangeCool').val()
@@ -2486,9 +2630,9 @@
         const group = $('#groupSelect').val()
         let relay
 
-        if(relaybtn.prop('checked')){
+        if (relaybtn.prop('checked')) {
             relay = "ON"
-        }else{
+        } else {
             relay = "OFF"
         }
 
@@ -2521,7 +2665,7 @@
             didOpen: () => {
                 Swal.showLoading();
             }
-        });
+        })
 
         // setTimeout(() => {
         fetch(endpoint, options)
@@ -2538,7 +2682,7 @@
     `,
                     showConfirmButton: false,
                     timer: 2000
-                });
+                })
 
                 setTimeout(() => {
                     // $('#controlAllRelayStateModal').modal('hide')
@@ -2607,7 +2751,7 @@
         const controlRelay = $("#controlRelayState2");
         controlRelay.val(relay)
         if (relay === "OFF") {
-            // const btn = $('#control-send-auto')
+            // const btn = $('#control-send-schedule')
             // btn.attr('disabled', true);
             // btn.removeClass('btn-success');
             // btn.addClass('btn-secondary');
@@ -2615,7 +2759,7 @@
             // $("#controlActionManual").fadeOut();
             controlRelay.bootstrapToggle('off');
         } else if (relay === "ON") {
-            // const btn = $('#control-send-auto')
+            // const btn = $('#control-send-schedule')
             // btn.removeClass('btn-secondary');
             // btn.addClass('btn-success');
             // btn.removeAttr('disabled');
@@ -2763,27 +2907,27 @@
 
 
     const selectGroupDevices = async (group) => {
-        const table = $('#alldevice');
-        const endpointgetgroupdatas = `http://85.204.247.82:3002/api/getgroupdevices/${group}`;
+        const table = $('#alldevice')
+        const endpointgetgroupdatas = `http://85.204.247.82:3002/api/getgroupdevices/${group}`
         const tableBody = document.querySelector("#alldevice tbody");
         tableBody.innerHTML = "";
         const groupselect = $('.groupSelect')
         try {
-            const response = await fetch(endpointgetgroupdatas);
-            const obj = await response.json();
+            const response = await fetch(endpointgetgroupdatas)
+            const obj = await response.json()
 
             obj.groupdevices.forEach(item => {
                 const row = tableBody.insertRow();
-                row.insertCell().textContent = item?.macAddress;
-                row.insertCell().textContent = item?.tag;
-                row.insertCell().textContent = item?.relay;
-                row.insertCell().textContent = item?.pwm_freq;
-                row.insertCell().textContent = item?.mid;
-                row.insertCell().textContent = item?.workmode;
+                row.insertCell().textContent = item?.macAddress
+                row.insertCell().textContent = item?.tag
+                row.insertCell().textContent = item?.relay
+                row.insertCell().textContent = item?.pwm_freq
+                row.insertCell().textContent = item?.mid
+                row.insertCell().textContent = item?.workmode
             });
 
             if ($.fn.DataTable.isDataTable(table)) {
-                table.DataTable().clear().destroy();
+                table.DataTable().clear().destroy()
             }
 
             obj.groupdevices.forEach(item => {
@@ -2811,10 +2955,10 @@
                     infoFiltered: "(กรองจากทั้งหมด _MAX_ รายการ)"
                 }
             });
-            await addDropdown(group);
-            await loadGroupDropdown(group);
+            await addDropdown(group)
+            await loadGroupDropdown(group)
         } catch (error) {
-            console.error("Error loading group devices", error);
+            console.error("Error loading group devices", error)
         }
     };
 
@@ -2822,36 +2966,189 @@
         const group = $('#groupSelect').val()
         console.log('groupSelect', group)
         await selectGroupDevices(group)
-    });
+    })
 
     const loadGroupDropdown = async (selectedGroup) => {
         const groupselect = $('#groupSelect');
-        groupselect.empty();
+        groupselect.empty()
 
         try {
-            const res = await fetch("http://85.204.247.82:3002/api/getalldevices");
+            const res = await fetch("http://85.204.247.82:3002/api/getalldevices")
             const data = await res.json();
-            const mids = [...new Set(data.devices.map(item => item.mid))];
+            const mids = [...new Set(data.devices.map(item => item.mid))]
 
-            await groupselect.append(`<option value="0">เลือกทั้งหมด</option>`);
+            await groupselect.append(`<option value="0">เลือกทั้งหมด</option>`)
             mids.forEach(mid => {
-                groupselect.append(`<option value="${mid}">กลุ่ม ${mid}</option>`);
+                groupselect.append(`<option value="${mid}">กลุ่ม ${mid}</option>`)
             });
 
-            groupselect.selectpicker('refresh');
-
-            // if (selectedGroup && mids.includes(selectedGroup)) {
-            groupselect.val(selectedGroup);
-            groupselect.selectpicker('refresh');
-            groupselect.selectpicker('render');
-            // } else {
-            //     console.warn('กลุ่มที่เลือกไม่มีใน dropdown:', selectedGroup);
-            // }
+            groupselect.selectpicker('refresh')
+            groupselect.val(selectedGroup)
+            groupselect.selectpicker('refresh')
+            groupselect.selectpicker('render')
 
         } catch (err) {
-            console.error("โหลด groupSelect ล้มเหลว:", err);
+            console.error("โหลด groupSelect ล้มเหลว:", err)
         }
     };
+
+    $('a[data-toggle="pill"]').on('shown.bs.tab', function (e) {
+        var targetTabId = $(e.target).attr('id')
+        const manualbtn = $('#control-send-all-manual')
+        const manualauto = $('#control-send-all-schedule')
+
+        if (targetTabId === 'manualAll-tab') {
+            manualbtn.removeClass('d-none')
+            manualauto.addClass('d-none')
+            runManualFunction()
+        } else if (targetTabId === 'autoAll-tab') {
+            manualbtn.addClass('d-none')
+            manualauto.removeClass('d-none')
+            runAutoFunction()
+        }
+    })
+
+    function runManualFunction() {
+        console.log("กำลังทำงานในแท็บ Manual")
+        // ใส่โค้ดที่ต้องการให้ทำงาน
+    }
+
+    function runAutoFunction() {
+        console.log("กำลังทำงานในแท็บ Auto")
+        // ใส่โค้ดที่ต้องการให้ทำงาน
+    }
+
+    $('#addtaskbtn').click(() => {
+        const taskInput = $("#taskInput");
+        const taskText = taskInput.val().trim();
+        if (taskText) {
+            addTask(taskText);
+            taskInput.val("");
+        }
+    });
+
+    function addTask(taskText) {
+        const taskList = $('#tasklist');
+
+        const li = $("<li></li>");
+        const spanText = $("<span></span>").text(taskText).on("click", function () {
+            $(this).parent().toggleClass("done");
+        });
+        const spanRemove = $("<span class='remove'>×</span>").on("click", function () {
+            $(this).parent().remove();
+        });
+
+        li.append(spanText, spanRemove);
+        taskList.append(li);
+    }
+
+    document.querySelector('#addschedule').addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const list = document.getElementById('schedulelist');
+        const currentCount = list.getElementsByTagName('li').length;
+        const period = currentCount + 1;
+
+        const li = document.createElement('li');
+        li.innerHTML = `
+        
+        <div class="config-box">
+                        <h2 class="text-center mb-4"><div class="line">
+          <span class="label">🕒 ช่วงเวลา:</span> 
+          <span class="value">${period}</span>
+        </div></h2>
+
+                        <div class="form-group">
+                        <label for="start-time">ตั้งแต่เวลา</label>
+                        <input type="time" class="form-control datetimepicker-input" id="scheduleall_1_start" data-toggle="datetimepicker" autocomplete="off" data-target="#scheduleall_1_start" />
+                        </div>
+
+                        <div class="form-group">
+                        <label for="end-time">ถึงเวลา</label>
+                        <input type="time" class="form-control datetimepicker-input" id="scheduleall_1_end" data-toggle="datetimepicker" autocomplete="off" data-target="#scheduleall_1_end" />
+                        </div>
+
+                        <div class="form-group">
+                        <label for="day">Select Day</label>
+                        <select id="day" disabled>
+                            <option>Everyday</option>
+                            <option>Monday</option>
+                            <option>Tuesday</option>
+                            <option>Wednesday</option>
+                            <option>Thursday</option>
+                            <option>Friday</option>
+                            <option>Saturday</option>
+                            <option>Sunday</option>
+                        </select>
+                        </div>
+
+                        <div class="sliders-wrapper">
+                        <div class="slider-box">
+                            <label for="scheduleall_1_controlRangeWarm">แสงอุ่น</label>
+                            <input type="range" min="0" max="100" class="brightness-slider-warm" id="scheduleall_5_controlRangeWarm"
+                            oninput="document.getElementById('scheduleall_1_rangeWarm').innerText = this.value">
+
+                            <div class="slider-marks">
+                            <div class="slider-mark"><div>|</div><div>0</div></div>
+                            <div class="slider-mark"><div>|</div><div>20</div></div>
+                            <div class="slider-mark"><div>|</div><div>40</div></div>
+                            <div class="slider-mark"><div>|</div><div>60</div></div>
+                            <div class="slider-mark"><div>|</div><div>80</div></div>
+                            <div class="slider-mark"><div>|</div><div>100</div></div>
+                            </div>
+
+                            <div class="light-info-box-warm">
+                            <p class="label">กำหนดค่าแสงอุ่น</p>
+                            <hr>
+                            <p class="value" id="scheduleall_1_rangeWarm">0</p>
+                            </div>
+                        </div>
+
+                        <!-- Cool Light Slider -->
+                        <div class="slider-box">
+                            <label for="scheduleall_5_controlRangeCool">แสงเย็น</label>
+                            <input type="range" min="0" max="100" class="brightness-slider-cool" id="scheduleall_5_controlRangeCool"
+                            oninput="document.getElementById('scheduleall_1_rangeCool').innerText = this.value">
+
+                            <div class="slider-marks">
+                            <div class="slider-mark"><div>|</div><div>0</div></div>
+                            <div class="slider-mark"><div>|</div><div>20</div></div>
+                            <div class="slider-mark"><div>|</div><div>40</div></div>
+                            <div class="slider-mark"><div>|</div><div>60</div></div>
+                            <div class="slider-mark"><div>|</div><div>80</div></div>
+                            <div class="slider-mark"><div>|</div><div>100</div></div>
+                            </div>
+
+                            <div class="light-info-box-cool">
+                            <p class="label">กำหนดค่าแสงเย็น</p>
+                            <hr>
+                            <p class="value" id="scheduleall_1_rangeCool">0</p>
+                            </div>
+                        </div>
+                        </div>
+      <button class="remove-btn">ลบ</button>
+    `;
+
+        list.appendChild(li);
+
+        li.querySelector('.remove-btn').addEventListener('click', function () {
+            li.remove();
+            // ถ้าต้องการอัปเดตลำดับใหม่หลังลบ ให้เพิ่มฟังก์ชันรีลำดับด้านล่างนี้
+            updatePeriodNumbers();
+        });
+    });
+
+    function updatePeriodNumbers() {
+        const listItems = document.querySelectorAll('#schedulelist li');
+        listItems.forEach((li, index) => {
+            const periodValueSpan = li.querySelector('.line span.value');
+            if (periodValueSpan) {
+                periodValueSpan.textContent = index + 1;
+            }
+        });
+    }
+
+
 
 
 
