@@ -42,16 +42,7 @@
     $("#schedule_4_end").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
     $("#schedule_5_start").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
     $("#schedule_5_end").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
-    $("#scheduleall_1_start").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
-    $("#scheduleall_1_end").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
-    $("#scheduleall_2_start").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
-    $("#scheduleall_2_end").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
-    $("#scheduleall_3_start").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
-    $("#scheduleall_3_end").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
-    $("#scheduleall_4_start").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
-    $("#scheduleall_4_end").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
-    $("#scheduleall_5_start").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
-    $("#scheduleall_5_end").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
+
     //$("#schedule_1_duration").datetimepicker({ format: "HH:mm" });
     //$("#schedule_2_duration").datetimepicker({ format: "HH:mm" });
     //$("#schedule_3_duration").datetimepicker({ format: "HH:mm" });
@@ -2533,26 +2524,33 @@
     $('#control-send-all-schedule').click(async function () {
         const group = $('#groupSelect').val()
         const endpoint = 'http://85.204.247.82:3002/api/setallschedule'
-        const schedule = []
+        const schedulDatas = []
 
-        for (let i = 1; i <= 5; i++) {
-            const no = $(`#scheduleall_${i}_no`).val()
-            const starttime = $(`#scheduleall_${i}_start`).val()
-            const endtime = $(`#scheduleall_${i}_end`).val()
-            const warmval = $(`#scheduleall_${i}_controlRangeWarm`).val()
-            const coolval = $(`#scheduleall_${i}_controlRangeCool`).val()
+        $('#schedulelist li').each(function (index) {
+            const no = index + 1
+            const starttime = $(`#scheduleall_${no}_start`).val()
+            const endtime = $(`#scheduleall_${no}_end`).val()
+            const warmval = $(`#scheduleall_${no}_controlRangeWarm`).val()
+            const coolval = $(`#scheduleall_${no}_controlRangeCool`).val()
 
-            schedule.push({
+
+            const schedulVal = {
                 no,
                 starttime,
                 endtime,
                 warmval,
                 coolval
-            })
-        }
+            }
 
-        const datas = { group: group, schedule: schedule }
-        // console.log('datas', datas)
+            schedulDatas.push(schedulVal)
+        })
+
+        const datas = { group: group, schedule: schedulDatas }
+        console.log('datas', datas)
+
+        // schedulDatas.forEach(items =>{
+        //     console.log(items)
+        // })
 
         const options = {
             method: "POST",
@@ -2565,11 +2563,11 @@
         Swal.fire({
             title: '<span>🔄 กำลังดำเนินการ...</span>',
             html: `
-        <div style="font-size: 16px; color: #555;">
-            กำลังส่งคำสั่งทุกอุปกรณ์<br>
-            กรุณารอสักครู่...
-        </div>
-    `,
+            <div style="font-size: 16px; color: #555;">
+                กำลังส่งคำสั่งทุกอุปกรณ์<br>
+                กรุณารอสักครู่...
+            </div>
+        `,
             timerProgressBar: true,
             allowOutsideClick: false,
             allowEscapeKey: false,
@@ -2582,16 +2580,16 @@
         try {
             const resp = await fetch(endpoint, options);
             const obj = await resp.json();
-            // console.log('obj', obj)
+            console.log('response', obj.status)
             Swal.fire({
                 position: "center",
                 icon: 'success',
                 title: '✅ สำเร็จ!',
                 html: `
-        <div style="font-size: 16px; color: #2e7d32;">
-            ส่งคำสั่งไปยังทุกอุปกรณ์ <strong>สำเร็จ</strong>
-        </div>
-    `,
+            <div style="font-size: 16px; color: #2e7d32;">
+                ส่งคำสั่งไปยังทุกอุปกรณ์ <strong>สำเร็จ</strong>
+            </div>
+        `,
                 showConfirmButton: false,
                 timer: 2000
             })
@@ -2611,10 +2609,10 @@
                 icon: 'error',
                 title: "❌ ผิดพลาด!",
                 html: `
-                <div style="font-size: 16px; color: #b71c1c;">
-                    🚫 <strong>ส่งคำสั่งไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
-                </div>
-            `,
+                    <div style="font-size: 16px; color: #b71c1c;">
+                        🚫 <strong>ส่งคำสั่งไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
+                    </div>
+                `,
                 showConfirmButton: false,
                 timer: 1500
             });
@@ -3013,9 +3011,131 @@
         // ใส่โค้ดที่ต้องการให้ทำงาน
     }
 
+    let schedultab = true
+
     function runAutoFunction() {
         console.log("กำลังทำงานในแท็บ Auto")
-        // ใส่โค้ดที่ต้องการให้ทำงาน
+
+        if (!schedultab) return
+
+        const currentCount = $('#schedulelist li').length;
+        const period = currentCount + 1;
+
+        const $li = $(`
+    <li class="col-md-12 mb-3" style="display: none;">
+      <div class="config-box">
+      <div class="col-md-12 d-flex justify-content-center align-items-center">
+      <div class="col-md-4">
+        <div class="col-md-12">
+        <div class="mb-3">
+  <h2 class="text-center">🕒 ช่วงเวลาที่ ${period} </h2>
+  <input type="hidden" id="no" value="${period}">
+</div>
+<hr>
+        <div class="form-group">
+          <label for="scheduleall_${period}_start">ตั้งแต่เวลา</label>
+          <input type="text" class="form-control datetimepicker-input" id="scheduleall_${period}_start" data-toggle="datetimepicker" autocomplete="off" data-target="#scheduleall_${period}_start"/>
+        </div>
+
+        <div class="form-group">
+        <label for="scheduleall_${period}_end">ถึงเวลา</label>
+          <input type="text" class="form-control datetimepicker-input" id="scheduleall_${period}_end" data-toggle="datetimepicker" autocomplete="off" data-target="#scheduleall_${period}_end" />
+        </div>
+        </div>
+        </div>
+
+        <div class="col-md-8">
+        <div class="sliders-wrapper">
+          <div class="slider-box">
+            <label>แสงอุ่น</label>
+            <input type="range" min="0" max="100" value="0" class="brightness-slider-warm py-2" id="scheduleall_${period}_controlRangeWarm" onInput="$('#scheduleall_${period}_rangeWarm').html($(this).val())">
+            <div class="slider-marks">
+              <div class="slider-mark"><div>|</div><div>0</div></div>
+              <div class="slider-mark"><div>|</div><div>20</div></div>
+              <div class="slider-mark"><div>|</div><div>40</div></div>
+              <div class="slider-mark"><div>|</div><div>60</div></div>
+              <div class="slider-mark"><div>|</div><div>80</div></div>
+              <div class="slider-mark"><div>|</div><div>100</div></div>
+            </div>
+            <div class="light-info-box-warm">
+              <p class="label">กำหนดค่าแสงอุ่น</p>
+              <hr>
+              <p class="value" id="scheduleall_${period}_rangeWarm">0</p>
+            </div>
+          </div>
+
+          <div class="slider-box">
+            <label>แสงเย็น</label>
+            <input type="range" min="0" max="100" value="0" class="brightness-slider-cool py-2" id="scheduleall_${period}_controlRangeCool" onInput="$('#scheduleall_${period}_rangeCool').html($(this).val())">
+            <div class="slider-marks">
+              <div class="slider-mark"><div>|</div><div>0</div></div>
+              <div class="slider-mark"><div>|</div><div>20</div></div>
+              <div class="slider-mark"><div>|</div><div>40</div></div>
+              <div class="slider-mark"><div>|</div><div>60</div></div>
+              <div class="slider-mark"><div>|</div><div>80</div></div>
+              <div class="slider-mark"><div>|</div><div>100</div></div>
+            </div>
+            <div class="light-info-box-cool">
+              <p class="label">กำหนดค่าแสงเย็น</p>
+              <hr>
+              <p class="value" id="scheduleall_${period}_rangeCool">0</p>
+            </div>
+          </div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-end mt-4">
+          <button type="button" class="btn btn-danger btn-sm remove-btn" title="ลบ" disabled>
+            <i class="fa fa-trash"></i>
+          </button>
+        </div>
+        </div>
+        </div>
+      </div>
+    </li>
+  `);
+
+        $('#schedulelist').append($li);
+        $li.fadeIn(function () {
+            $(`#scheduleall_${period}_start`).datetimepicker({
+                format: "HH:mm",
+                icons: {
+                    time: 'fa fa-clock',
+                    date: 'fa fa-calendar',
+                    up: 'fa fa-chevron-up',
+                    down: 'fa fa-chevron-down',
+                    previous: 'fa fa-chevron-left',
+                    next: 'fa fa-chevron-right',
+                    today: 'fa fa-calendar-check',
+                    clear: 'fa fa-trash',
+                    close: 'fa fa-times'
+                }
+            });
+
+            $(`#scheduleall_${period}_end`).datetimepicker({
+                format: "HH:mm",
+                icons: {
+                    time: 'fa fa-clock',
+                    date: 'fa fa-calendar',
+                    up: 'fa fa-chevron-up',
+                    down: 'fa fa-chevron-down',
+                    previous: 'fa fa-chevron-left',
+                    next: 'fa fa-chevron-right',
+                    today: 'fa fa-calendar-check',
+                    clear: 'fa fa-trash',
+                    close: 'fa fa-times'
+                }
+            });
+
+            $(`#scheduleall_${period}_start`).datetimepicker('date', moment('00:00', 'HH:mm'));
+            $(`#scheduleall_${period}_end`).datetimepicker('date', moment('00:00', 'HH:mm'));
+
+            $(`#scheduleall_${period}_rangeWarm`).text("0");
+            $(`#scheduleall_${period}_controlRangeWarm`).val("0");
+            $(`#scheduleall_${period}_rangeCool`).text("0");
+            $(`#scheduleall_${period}_controlRangeCool`).val("0");
+        });
+
+        schedultab = false
     }
 
     $('#addtaskbtn').click(() => {
@@ -3045,108 +3165,169 @@
     document.querySelector('#addschedule').addEventListener('click', function (e) {
         e.preventDefault();
 
-        const list = document.getElementById('schedulelist');
-        const currentCount = list.getElementsByTagName('li').length;
+        const currentCount = $('#schedulelist li').length;
         const period = currentCount + 1;
 
-        const li = document.createElement('li');
-        li.innerHTML = `
-        
-        <div class="config-box">
-                        <h2 class="text-center mb-4"><div class="line">
-          <span class="label">🕒 ช่วงเวลา:</span> 
-          <span class="value">${period}</span>
-        </div></h2>
+        if (period > 5) return
 
-                        <div class="form-group">
-                        <label for="start-time">ตั้งแต่เวลา</label>
-                        <input type="time" class="form-control datetimepicker-input" id="scheduleall_1_start" data-toggle="datetimepicker" autocomplete="off" data-target="#scheduleall_1_start" />
-                        </div>
+        const $li = $(`
+    <li class="col-md-12 mb-3" style="display: none;">
+      <div class="config-box">
+      <div class="col-md-12 d-flex justify-content-center align-items-center">
+      <div class="col-md-4">
+        <div class="col-md-12">
+        <div class="mb-3">
+  <h2 class="text-center">🕒 ช่วงเวลาที่ ${period} </h2>
+  <input type="hidden" id="no" value="${period}">
+</div>
+<hr>
+        <div class="form-group">
+          <label for="scheduleall_${period}_start">ตั้งแต่เวลา</label>
+          <input type="text" class="form-control datetimepicker-input" id="scheduleall_${period}_start" data-toggle="datetimepicker" autocomplete="off" data-target="#scheduleall_${period}_start"/>
+        </div>
 
-                        <div class="form-group">
-                        <label for="end-time">ถึงเวลา</label>
-                        <input type="time" class="form-control datetimepicker-input" id="scheduleall_1_end" data-toggle="datetimepicker" autocomplete="off" data-target="#scheduleall_1_end" />
-                        </div>
+        <div class="form-group">
+        <label for="scheduleall_${period}_end">ถึงเวลา</label>
+          <input type="text" class="form-control datetimepicker-input py-2" id="scheduleall_${period}_end" data-toggle="datetimepicker" autocomplete="off" data-target="#scheduleall_${period}_end" />
+        </div>
+        </div>
+        </div>
 
-                        <div class="form-group">
-                        <label for="day">Select Day</label>
-                        <select id="day" disabled>
-                            <option>Everyday</option>
-                            <option>Monday</option>
-                            <option>Tuesday</option>
-                            <option>Wednesday</option>
-                            <option>Thursday</option>
-                            <option>Friday</option>
-                            <option>Saturday</option>
-                            <option>Sunday</option>
-                        </select>
-                        </div>
+        <div class="col-md-8">
+        <div class="sliders-wrapper">
+          <div class="slider-box">
+            <label>แสงอุ่น</label>
+            <input type="range" min="0" max="100" value="0" class="brightness-slider-warm" id="scheduleall_${period}_controlRangeWarm" onInput="$('#scheduleall_${period}_rangeWarm').html($(this).val())">
+            <div class="slider-marks">
+              <div class="slider-mark"><div>|</div><div>0</div></div>
+              <div class="slider-mark"><div>|</div><div>20</div></div>
+              <div class="slider-mark"><div>|</div><div>40</div></div>
+              <div class="slider-mark"><div>|</div><div>60</div></div>
+              <div class="slider-mark"><div>|</div><div>80</div></div>
+              <div class="slider-mark"><div>|</div><div>100</div></div>
+            </div>
+            <div class="light-info-box-warm">
+              <p class="label">กำหนดค่าแสงอุ่น</p>
+              <hr>
+              <p class="value" id="scheduleall_${period}_rangeWarm">0</p>
+            </div>
+          </div>
 
-                        <div class="sliders-wrapper">
-                        <div class="slider-box">
-                            <label for="scheduleall_1_controlRangeWarm">แสงอุ่น</label>
-                            <input type="range" min="0" max="100" class="brightness-slider-warm" id="scheduleall_5_controlRangeWarm"
-                            oninput="document.getElementById('scheduleall_1_rangeWarm').innerText = this.value">
+          <div class="slider-box">
+            <label>แสงเย็น</label>
+            <input type="range" min="0" max="100" value="0" class="brightness-slider-cool py-2" id="scheduleall_${period}_controlRangeCool" onInput="$('#scheduleall_${period}_rangeCool').html($(this).val())">
+            <div class="slider-marks">
+              <div class="slider-mark"><div>|</div><div>0</div></div>
+              <div class="slider-mark"><div>|</div><div>20</div></div>
+              <div class="slider-mark"><div>|</div><div>40</div></div>
+              <div class="slider-mark"><div>|</div><div>60</div></div>
+              <div class="slider-mark"><div>|</div><div>80</div></div>
+              <div class="slider-mark"><div>|</div><div>100</div></div>
+            </div>
+            <div class="light-info-box-cool">
+              <p class="label">กำหนดค่าแสงเย็น</p>
+              <hr>
+              <p class="value" id="scheduleall_${period}_rangeCool">0</p>
+            </div>
+          </div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-end mt-4">
+          <button type="button" class="btn btn-danger btn-sm remove-btn" title="ลบ">
+            <i class="fa fa-trash"></i>
+          </button>
+        </div>
+        </div>
+        </div>
+      </div>
+    </li>
+  `);
 
-                            <div class="slider-marks">
-                            <div class="slider-mark"><div>|</div><div>0</div></div>
-                            <div class="slider-mark"><div>|</div><div>20</div></div>
-                            <div class="slider-mark"><div>|</div><div>40</div></div>
-                            <div class="slider-mark"><div>|</div><div>60</div></div>
-                            <div class="slider-mark"><div>|</div><div>80</div></div>
-                            <div class="slider-mark"><div>|</div><div>100</div></div>
-                            </div>
+        $('#schedulelist').append($li);
+        $li.fadeIn(function () {
+            $(`#scheduleall_${period}_start`).datetimepicker({
+                format: "HH:mm",
+                icons: {
+                    time: 'fa fa-clock',
+                    date: 'fa fa-calendar',
+                    up: 'fa fa-chevron-up',
+                    down: 'fa fa-chevron-down',
+                    previous: 'fa fa-chevron-left',
+                    next: 'fa fa-chevron-right',
+                    today: 'fa fa-calendar-check',
+                    clear: 'fa fa-trash',
+                    close: 'fa fa-times'
+                }
+            });
 
-                            <div class="light-info-box-warm">
-                            <p class="label">กำหนดค่าแสงอุ่น</p>
-                            <hr>
-                            <p class="value" id="scheduleall_1_rangeWarm">0</p>
-                            </div>
-                        </div>
+            $(`#scheduleall_${period}_end`).datetimepicker({
+                format: "HH:mm",
+                icons: {
+                    time: 'fa fa-clock',
+                    date: 'fa fa-calendar',
+                    up: 'fa fa-chevron-up',
+                    down: 'fa fa-chevron-down',
+                    previous: 'fa fa-chevron-left',
+                    next: 'fa fa-chevron-right',
+                    today: 'fa fa-calendar-check',
+                    clear: 'fa fa-trash',
+                    close: 'fa fa-times'
+                }
+            });
 
-                        <!-- Cool Light Slider -->
-                        <div class="slider-box">
-                            <label for="scheduleall_5_controlRangeCool">แสงเย็น</label>
-                            <input type="range" min="0" max="100" class="brightness-slider-cool" id="scheduleall_5_controlRangeCool"
-                            oninput="document.getElementById('scheduleall_1_rangeCool').innerText = this.value">
+            $(`#scheduleall_${period}_start`).datetimepicker('date', moment('00:00', 'HH:mm'));
+            $(`#scheduleall_${period}_end`).datetimepicker('date', moment('00:00', 'HH:mm'));
 
-                            <div class="slider-marks">
-                            <div class="slider-mark"><div>|</div><div>0</div></div>
-                            <div class="slider-mark"><div>|</div><div>20</div></div>
-                            <div class="slider-mark"><div>|</div><div>40</div></div>
-                            <div class="slider-mark"><div>|</div><div>60</div></div>
-                            <div class="slider-mark"><div>|</div><div>80</div></div>
-                            <div class="slider-mark"><div>|</div><div>100</div></div>
-                            </div>
+            $(`#scheduleall_${period}_rangeWarm`).text("0");
+            $(`#scheduleall_${period}_controlRangeWarm`).val("0");
+            $(`#scheduleall_${period}_rangeCool`).text("0");
+            $(`#scheduleall_${period}_controlRangeCool`).val("0");
+        });
 
-                            <div class="light-info-box-cool">
-                            <p class="label">กำหนดค่าแสงเย็น</p>
-                            <hr>
-                            <p class="value" id="scheduleall_1_rangeCool">0</p>
-                            </div>
-                        </div>
-                        </div>
-      <button class="remove-btn">ลบ</button>
-    `;
+        $li.find('.remove-btn').on('click', function () {
+            if (period <= 1) return
 
-        list.appendChild(li);
-
-        li.querySelector('.remove-btn').addEventListener('click', function () {
-            li.remove();
-            // ถ้าต้องการอัปเดตลำดับใหม่หลังลบ ให้เพิ่มฟังก์ชันรีลำดับด้านล่างนี้
-            updatePeriodNumbers();
+            $li.fadeOut(function () {
+                $li.remove();
+                updatePeriodNumbers();
+            });
         });
     });
 
     function updatePeriodNumbers() {
-        const listItems = document.querySelectorAll('#schedulelist li');
-        listItems.forEach((li, index) => {
-            const periodValueSpan = li.querySelector('.line span.value');
-            if (periodValueSpan) {
-                periodValueSpan.textContent = index + 1;
-            }
+        $('#schedulelist li').each(function (index) {
+            const $li = $(this);
+            const newPeriod = index + 1;
+
+            $li.find('h2.text-center').html(`🕒 ช่วงเวลาที่ ${newPeriod}`);
+            $li.find('input#no').val(newPeriod);
+
+            const $startInput = $li.find('input[id^="scheduleall_"][id$="_start"]');
+            $startInput.attr('id', `scheduleall_${newPeriod}_start`);
+            $startInput.attr('data-target', `#scheduleall_${newPeriod}_start`);
+            $li.find(`label[for^="scheduleall_"][for$="_start"]`).attr('for', `scheduleall_${newPeriod}_start`);
+
+            const $endInput = $li.find('input[id^="scheduleall_"][id$="_end"]');
+            $endInput.attr('id', `scheduleall_${newPeriod}_end`);
+            $endInput.attr('data-target', `#scheduleall_${newPeriod}_end`);
+            $li.find(`label[for^="scheduleall_"][for$="_end"]`).attr('for', `scheduleall_${newPeriod}_end`);
+
+            $li.find('input.brightness-slider-warm')
+                .attr('id', `scheduleall_${newPeriod}_controlRangeWarm`)
+                .attr('oninput', `$('#scheduleall_${newPeriod}_rangeWarm').html($(this).val())`);
+            $li.find('#' + $li.find('.light-info-box-warm .value').attr('id'))
+                .attr('id', `scheduleall_${newPeriod}_rangeWarm`)
+            // .text('0');
+
+            $li.find('input.brightness-slider-cool')
+                .attr('id', `scheduleall_${newPeriod}_controlRangeCool`)
+                .attr('oninput', `$('#scheduleall_${newPeriod}_rangeCool').html($(this).val())`);
+            $li.find('#' + $li.find('.light-info-box-cool .value').attr('id'))
+                .attr('id', `scheduleall_${newPeriod}_rangeCool`)
+            // .text('0');
         });
     }
+
 
 
 

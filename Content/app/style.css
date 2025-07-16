@@ -24521,7 +24521,7 @@ background-color: #f8f9fa !important;
       border-radius: 12px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.1);
       /* width: 600px; */
-      max-width: 95%;
+      max-width: 100%;
     }
 
     .config-box h2 {
@@ -24587,7 +24587,7 @@ background-color: #f8f9fa !important;
 
     .slider-mark {
       text-align: center;
-      flex: 1;
+      /* flex: 1; */
     }
 
     .light-info-box-warm,
@@ -24622,4 +24622,8 @@ background-color: #f8f9fa !important;
     #schedulelist {
   list-style: none;
   padding: 0;
+}
+
+.actionbtn{
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
