@@ -2546,7 +2546,7 @@
         })
 
         const datas = { group: group, schedule: schedulDatas }
-        console.log('datas', datas)
+        // console.log('datas', datas)
 
         // schedulDatas.forEach(items =>{
         //     console.log(items)
@@ -2580,7 +2580,8 @@
         try {
             const resp = await fetch(endpoint, options);
             const obj = await resp.json();
-            console.log('response', obj.status)
+            // console.log('response', obj.status)
+
             Swal.fire({
                 position: "center",
                 icon: 'success',
@@ -2600,7 +2601,7 @@
             $(this).prop('disabled', true);
             setTimeout(() => {
                 $(this).prop('disabled', false);
-            }, 10000);
+            }, 15000);
 
         } catch (err) {
             console.error("เกิดข้อผิดพลาด:", err);
@@ -3014,12 +3015,11 @@
     let schedultab = true
 
     function runAutoFunction() {
-        console.log("กำลังทำงานในแท็บ Auto")
 
         if (!schedultab) return
 
         const currentCount = $('#schedulelist li').length;
-        const period = currentCount + 1;
+        const period = currentCount + 1
 
         const $li = $(`
     <li class="col-md-12 mb-3" style="display: none;">
