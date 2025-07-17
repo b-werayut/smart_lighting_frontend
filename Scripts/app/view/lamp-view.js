@@ -2533,7 +2533,6 @@
             const warmval = $(`#scheduleall_${no}_controlRangeWarm`).val()
             const coolval = $(`#scheduleall_${no}_controlRangeCool`).val()
 
-
             const schedulVal = {
                 no,
                 starttime,
@@ -2545,79 +2544,113 @@
             schedulDatas.push(schedulVal)
         })
 
-        const datas = { group: group, schedule: schedulDatas }
-        // console.log('datas', datas)
+        // for (let i = 1; i <= 5; i++) {
+        //     let no = i
+        //     let active = true
+        //     let starttime = $(`#scheduleall_${no}_start`).val()
+        //     let endtime = $(`#scheduleall_${no}_end`).val()
+        //     let warmval = $(`#scheduleall_${no}_controlRangeWarm`).val()
+        //     let coolval = $(`#scheduleall_${no}_controlRangeCool`).val()
 
-        // schedulDatas.forEach(items =>{
+        //     if (!starttime && !endtime && !warmval && !coolval) active = false
+        //     if (starttime === '00:00' && endtime === '00:00' && warmval === '0' && coolval === '0') active = false
+        //     if (endtime <= starttime) starttime = '00:00', endtime = '00:00' , active = false
+        //     // if (!starttime && !endtime) starttime = '00:00', endtime = '00:00'
+        //     // if (!warmval && !coolval) warmval = '0', coolval = '0'
+
+
+        //     // if (warmval === '0' && coolval === '0') active = false
+
+        //     const datas = {
+        //         no,
+        //         active,
+        //         starttime,
+        //         endtime,
+        //         warmval,
+        //         coolval
+        //     }
+
+        //     schedulDatas.push(datas)
+
+        // }
+
+        // schedulDatas.forEach(items => {
         //     console.log(items)
         // })
 
-        const options = {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json; charset=utf-8"
-            },
-            body: JSON.stringify(datas)
-        }
+        // const datas = { group: group, schedule: schedulDatas }
+        // // console.log('datas', datas)
 
-        Swal.fire({
-            title: '<span>🔄 กำลังดำเนินการ...</span>',
-            html: `
-            <div style="font-size: 16px; color: #555;">
-                กำลังส่งคำสั่งทุกอุปกรณ์<br>
-                กรุณารอสักครู่...
-            </div>
-        `,
-            timerProgressBar: true,
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            showConfirmButton: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        })
+        // // schedulDatas.forEach(items =>{
+        // //     console.log(items)
+        // // })
 
-        try {
-            const resp = await fetch(endpoint, options);
-            const obj = await resp.json();
-            // console.log('response', obj.status)
+        // const options = {
+        //     method: "POST",
+        //     headers: {
+        //         "Content-Type": "application/json; charset=utf-8"
+        //     },
+        //     body: JSON.stringify(datas)
+        // }
 
-            Swal.fire({
-                position: "center",
-                icon: 'success',
-                title: '✅ สำเร็จ!',
-                html: `
-            <div style="font-size: 16px; color: #2e7d32;">
-                ส่งคำสั่งไปยังทุกอุปกรณ์ <strong>สำเร็จ</strong>
-            </div>
-        `,
-                showConfirmButton: false,
-                timer: 2000
-            })
+        // Swal.fire({
+        //     title: '<span>🔄 กำลังดำเนินการ...</span>',
+        //     html: `
+        //     <div style="font-size: 16px; color: #555;">
+        //         กำลังส่งคำสั่งทุกอุปกรณ์<br>
+        //         กรุณารอสักครู่...
+        //     </div>
+        // `,
+        //     timerProgressBar: true,
+        //     allowOutsideClick: false,
+        //     allowEscapeKey: false,
+        //     showConfirmButton: false,
+        //     didOpen: () => {
+        //         Swal.showLoading();
+        //     }
+        // })
 
-            // setTimeout(() => {
-            //     $('#controlInfoModal').modal('hide')
-            // }, 1500);
-            $(this).prop('disabled', true);
-            setTimeout(() => {
-                $(this).prop('disabled', false);
-            }, 15000);
+        // try {
+        //     const resp = await fetch(endpoint, options);
+        //     const obj = await resp.json();
+        //     // console.log('response', obj.status)
 
-        } catch (err) {
-            console.error("เกิดข้อผิดพลาด:", err);
-            Swal.fire({
-                position: "center",
-                icon: 'error',
-                title: "❌ ผิดพลาด!",
-                html: `
-                    <div style="font-size: 16px; color: #b71c1c;">
-                        🚫 <strong>ส่งคำสั่งไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
-                    </div>
-                `,
-                showConfirmButton: false,
-                timer: 1500
-            });
-        }
+        //     Swal.fire({
+        //         position: "center",
+        //         icon: 'success',
+        //         title: '✅ สำเร็จ!',
+        //         html: `
+        //     <div style="font-size: 16px; color: #2e7d32;">
+        //         ส่งคำสั่งไปยังทุกอุปกรณ์ <strong>สำเร็จ</strong>
+        //     </div>
+        // `,
+        //         showConfirmButton: false,
+        //         timer: 2000
+        //     })
+
+        //     // setTimeout(() => {
+        //     //     $('#controlInfoModal').modal('hide')
+        //     // }, 1500);
+        //     $(this).prop('disabled', true);
+        //     setTimeout(() => {
+        //         $(this).prop('disabled', false);
+        //     }, 15000);
+
+        // } catch (err) {
+        //     console.error("เกิดข้อผิดพลาด:", err);
+        //     Swal.fire({
+        //         position: "center",
+        //         icon: 'error',
+        //         title: "❌ ผิดพลาด!",
+        //         html: `
+        //             <div style="font-size: 16px; color: #b71c1c;">
+        //                 🚫 <strong>ส่งคำสั่งไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
+        //             </div>
+        //         `,
+        //         showConfirmButton: false,
+        //         timer: 1500
+        //     });
+        // }
 
     })
 
@@ -3012,6 +3045,15 @@
         // ใส่โค้ดที่ต้องการให้ทำงาน
     }
 
+    $('#addtaskbtn').click(() => {
+        const taskInput = $("#taskInput");
+        const taskText = taskInput.val().trim();
+        if (taskText) {
+            addTask(taskText);
+            taskInput.val("");
+        }
+    });
+
     let schedultab = true
 
     function runAutoFunction() {
@@ -3127,25 +3169,96 @@
             });
 
             $(`#scheduleall_${period}_start`).datetimepicker('date', moment('00:00', 'HH:mm'));
-            $(`#scheduleall_${period}_end`).datetimepicker('date', moment('00:00', 'HH:mm'));
+            if (period > 1) {
+                const prevEndVal = $(`#scheduleall_${period - 1}_end`).val();
+                if (prevEndVal) {
+                    const startMoment = moment(prevEndVal, 'HH:mm');
+                    const endMoment = startMoment.clone().add(1, 'hours'); // เพิ่ม 1 ชม.
+
+                    $(`#scheduleall_${period}_start`).datetimepicker('date', startMoment);
+                    $(`#scheduleall_${period}_end`).datetimepicker('date', endMoment);
+                } else {
+                    $(`#scheduleall_${period}_start`).datetimepicker('date', moment('00:00', 'HH:mm'));
+                    $(`#scheduleall_${period}_end`).datetimepicker('date', moment('01:00', 'HH:mm'));
+                }
+            } else {
+                $(`#scheduleall_${period}_start`).datetimepicker('date', moment('00:00', 'HH:mm'));
+                $(`#scheduleall_${period}_end`).datetimepicker('date', moment('01:00', 'HH:mm'));
+            }
 
             $(`#scheduleall_${period}_rangeWarm`).text("0");
             $(`#scheduleall_${period}_controlRangeWarm`).val("0");
             $(`#scheduleall_${period}_rangeCool`).text("0");
             $(`#scheduleall_${period}_controlRangeCool`).val("0");
+
+            $(`#scheduleall_${period}_start`).on("change.datetimepicker", function (e) {
+                const start = moment(e.date, 'HH:mm');
+                const endVal = $(`#scheduleall_${period}_end`).val();
+                if (endVal) {
+                    const end = moment(endVal, 'HH:mm');
+                    if (start.isAfter(end)) {
+                        alert("เวลาเริ่มต้นต้องไม่มากกว่าเวลาสิ้นสุด");
+                        $(`#scheduleall_${period}_start`).datetimepicker('date', moment('00:00', 'HH:mm'));
+                        return;
+                    }
+                }
+
+                for (let i = 1; i < period; i++) {
+                    const prevEndVal = $(`#scheduleall_${i}_end`).val();
+                    if (prevEndVal) {
+                        const prevEnd = moment(prevEndVal, 'HH:mm');
+                        if (start.isBefore(prevEnd)) {
+                            alert(`ช่วงเวลาที่ ${period} ต้องไม่เริ่มก่อนช่วงเวลาที่ ${i}`);
+                            $(`#scheduleall_${period}_start`).datetimepicker('date', prevEnd); // <<< ใช้ prevEnd
+                            return;
+                        }
+                    }
+                }
+            });
+
+            let previousEnd = null;
+
+            $(`#scheduleall_${period}_end`).on("show.datetimepicker", function () {
+                previousEnd = $(`#scheduleall_${period}_end`).val(); // เก็บไว้ตอน popup ขึ้น
+            });
+
+            $(`#scheduleall_${period}_end`).on("change.datetimepicker", function (e) {
+                const end = moment(e.date, 'HH:mm');
+                const startVal = $(`#scheduleall_${period}_start`).val();
+                if (startVal) {
+                    const start = moment(startVal, 'HH:mm');
+                    if (end.isBefore(start)) {
+                        alert("เวลาสิ้นสุดต้องไม่น้อยกว่าเวลาเริ่มต้น");
+                        $(`#scheduleall_${period}_end`).datetimepicker('date', moment(previousEnd, 'HH:mm'));
+                        return;
+                    }
+                }
+
+                for (let i = 1; i < period; i++) {
+                    const prevEndVal = $(`#scheduleall_${i}_end`).val();
+                    if (prevEndVal) {
+                        const prevEnd = moment(prevEndVal, 'HH:mm');
+                        if (end.isBefore(prevEnd)) {
+                            alert(`ช่วงเวลาที่ ${period} ต้องสิ้นสุดหลังจากช่วงเวลาที่ ${i}`);
+                            $(`#scheduleall_${period}_end`).datetimepicker('date', prevEnd); // <<< ใช้ prevEnd
+                            return;
+                        }
+                    }
+                }
+
+                const nextPeriod = period + 1;
+                const $nextStart = $(`#scheduleall_${nextPeriod}_start`);
+                if ($nextStart.length) {
+                    const nextStartVal = $nextStart.val();
+                    if (!nextStartVal || moment(nextStartVal, 'HH:mm').isBefore(end)) {
+                        $nextStart.datetimepicker('date', end);
+                    }
+                }
+            });
         });
 
         schedultab = false
     }
-
-    $('#addtaskbtn').click(() => {
-        const taskInput = $("#taskInput");
-        const taskText = taskInput.val().trim();
-        if (taskText) {
-            addTask(taskText);
-            taskInput.val("");
-        }
-    });
 
     function addTask(taskText) {
         const taskList = $('#tasklist');
@@ -3275,13 +3388,92 @@
                 }
             });
 
-            $(`#scheduleall_${period}_start`).datetimepicker('date', moment('00:00', 'HH:mm'));
-            $(`#scheduleall_${period}_end`).datetimepicker('date', moment('00:00', 'HH:mm'));
+            if (period > 1) {
+                const prevEndVal = $(`#scheduleall_${period - 1}_end`).val();
+                if (prevEndVal) {
+                    const startMoment = moment(prevEndVal, 'HH:mm');
+                    const endMoment = startMoment.clone().add(1, 'hours'); // เพิ่ม 1 ชม.
+
+                    $(`#scheduleall_${period}_start`).datetimepicker('date', startMoment);
+                    $(`#scheduleall_${period}_end`).datetimepicker('date', endMoment);
+                } else {
+                    $(`#scheduleall_${period}_start`).datetimepicker('date', moment('00:00', 'HH:mm'));
+                    $(`#scheduleall_${period}_end`).datetimepicker('date', moment('01:00', 'HH:mm'));
+                }
+            } else {
+                $(`#scheduleall_${period}_start`).datetimepicker('date', moment('00:00', 'HH:mm'));
+                $(`#scheduleall_${period}_end`).datetimepicker('date', moment('01:00', 'HH:mm'));
+            }
 
             $(`#scheduleall_${period}_rangeWarm`).text("0");
             $(`#scheduleall_${period}_controlRangeWarm`).val("0");
             $(`#scheduleall_${period}_rangeCool`).text("0");
             $(`#scheduleall_${period}_controlRangeCool`).val("0");
+
+            $(`#scheduleall_${period}_start`).on("change.datetimepicker", function (e) {
+                const start = moment(e.date, 'HH:mm');
+                const endVal = $(`#scheduleall_${period}_end`).val();
+                if (endVal) {
+                    const end = moment(endVal, 'HH:mm');
+                    if (start.isAfter(end)) {
+                        alert("เวลาเริ่มต้นต้องไม่มากกว่าเวลาสิ้นสุด");
+                        $(`#scheduleall_${period}_start`).datetimepicker('date', moment(start));
+                        return;
+                    }
+                }
+
+                for (let i = 1; i < period; i++) {
+                    const prevEndVal = $(`#scheduleall_${i}_end`).val();
+                    if (prevEndVal) {
+                        const prevEnd = moment(prevEndVal, 'HH:mm');
+                        if (start.isBefore(prevEnd)) {
+                            alert(`ช่วงเวลาที่ ${period} ต้องไม่เริ่มก่อนช่วงเวลาที่ ${i}`);
+                            $(`#scheduleall_${period}_start`).datetimepicker('date', prevEnd); // <<< ใช้ prevEnd
+                            return;
+                        }
+                    }
+                }
+            });
+
+            let previousEnd = null;
+
+            $(`#scheduleall_${period}_end`).on("show.datetimepicker", function () {
+                previousEnd = $(`#scheduleall_${period}_end`).val(); // เก็บไว้ตอน popup ขึ้น
+            });
+
+            $(`#scheduleall_${period}_end`).on("change.datetimepicker", function (e) {
+                const end = moment(e.date, 'HH:mm');
+                const startVal = $(`#scheduleall_${period}_start`).val();
+                if (startVal) {
+                    const start = moment(startVal, 'HH:mm');
+                    if (end.isBefore(start)) {
+                        alert("เวลาสิ้นสุดต้องไม่น้อยกว่าเวลาเริ่มต้น");
+                        $(`#scheduleall_${period}_end`).datetimepicker('date', moment(previousEnd, 'HH:mm'));
+                        return;
+                    }
+                }
+
+                for (let i = 1; i < period; i++) {
+                    const prevEndVal = $(`#scheduleall_${i}_end`).val();
+                    if (prevEndVal) {
+                        const prevEnd = moment(prevEndVal, 'HH:mm');
+                        if (end.isBefore(prevEnd)) {
+                            alert(`ช่วงเวลาที่ ${period} ต้องสิ้นสุดหลังจากช่วงเวลาที่ ${i}`);
+                            $(`#scheduleall_${period}_end`).datetimepicker('date', prevEnd); // <<< ใช้ prevEnd
+                            return;
+                        }
+                    }
+                }
+
+                const nextPeriod = period + 1;
+                const $nextStart = $(`#scheduleall_${nextPeriod}_start`);
+                if ($nextStart.length) {
+                    const nextStartVal = $nextStart.val();
+                    if (!nextStartVal || moment(nextStartVal, 'HH:mm').isBefore(end)) {
+                        $nextStart.datetimepicker('date', end);
+                    }
+                }
+            });
         });
 
         $li.find('.remove-btn').on('click', function () {
