@@ -3173,7 +3173,7 @@
                 const prevEndVal = $(`#scheduleall_${period - 1}_end`).val();
                 if (prevEndVal) {
                     const startMoment = moment(prevEndVal, 'HH:mm');
-                    const endMoment = startMoment.clone().add(1, 'hours'); 
+                    const endMoment = startMoment.clone().add(1, 'hours');
 
                     $(`#scheduleall_${period}_start`).datetimepicker('date', startMoment);
                     $(`#scheduleall_${period}_end`).datetimepicker('date', endMoment);
@@ -3193,6 +3193,26 @@
 
             $(`#scheduleall_${period}_start`).on("change.datetimepicker", function (e) {
                 const start = moment(e.date, 'HH:mm');
+
+                if (start.format('HH:mm') === '23:00' || start.isSameOrAfter(moment('23:00', 'HH:mm')) || start.hour() >= 23) {
+                    Swal.fire({
+                        title: 'แจ้งเตือน',
+                        html: '<h4 style="color:#333;font-weight:normal;">เป็นเวลาของวันที่แล้ว ไม่สามารถตั้งค่าได้</h4>',
+                        icon: 'warning',
+                        confirmButtonText: 'ตกลง',
+                        confirmButtonColor: '#d33',
+                        background: '#fff',
+                        customClass: {
+                            popup: 'swal2-modern-popup',
+                            title: 'swal2-modern-title',
+                            content: 'swal2-modern-content'
+                        }
+                    });
+
+                    $(`#scheduleall_${period}_start`).datetimepicker('date', moment('00:00', 'HH:mm'));
+                    return;
+                }
+
                 const endVal = $(`#scheduleall_${period}_end`).val();
                 if (endVal) {
                     const end = moment(endVal, 'HH:mm');
@@ -3202,7 +3222,7 @@
                             html: '<h4 style="color:#333;font-weight:normal;">เวลาเริ่มต้นต้องไม่มากกว่าเวลาสิ้นสุด</h4>',
                             icon: 'warning',
                             confirmButtonText: 'ตกลง',
-                            confirmButtonColor: '#3085d6',
+                            confirmButtonColor: '#d33',
                             background: '#fff',
                             customClass: {
                                 popup: 'swal2-modern-popup',
@@ -3226,7 +3246,7 @@
                                 html: `<h4 style="color:#333;font-weight:normal;">ช่วงเวลาที่ ${period} ต้องไม่เริ่มก่อนช่วงเวลาที่ ${i}</h4>`,
                                 icon: 'warning',
                                 confirmButtonText: 'ตกลง',
-                                confirmButtonColor: '#3085d6',
+                                confirmButtonColor: '#d33',
                                 background: '#fff',
                                 customClass: {
                                     popup: 'swal2-modern-popup',
@@ -3258,7 +3278,7 @@
                             html: `<h4 style="color:#333;font-weight:normal;">เวลาสิ้นสุดต้องไม่น้อยกว่าเวลาเริ่มต้น</h4>`,
                             icon: 'warning',
                             confirmButtonText: 'ตกลง',
-                            confirmButtonColor: '#3085d6',
+                            confirmButtonColor: '#d33',
                             background: '#fff',
                             customClass: {
                                 popup: 'swal2-modern-popup',
@@ -3282,7 +3302,7 @@
                                 html: `<h4 style="color:#333;font-weight:normal;">ช่วงเวลาที่ ${period} ต้องสิ้นสุดหลังจากช่วงเวลาที่ ${i}</h4>`,
                                 icon: 'warning',
                                 confirmButtonText: 'ตกลง',
-                                confirmButtonColor: '#3085d6',
+                                confirmButtonColor: '#d33',
                                 background: '#fff',
                                 customClass: {
                                     popup: 'swal2-modern-popup',
@@ -3305,34 +3325,6 @@
                         $nextStart.datetimepicker('date', end);
                     }
                 }
-
-                if (period === 5) {
-                    const firstStartVal = $(`#scheduleall_1_start`).val();
-                    if (firstStartVal) {
-                        const firstStart = moment(firstStartVal, 'HH:mm');
-                        if (end.isSameOrAfter(firstStart)) {
-                            Swal.fire({
-                                title: 'แจ้งเตือน',
-                                html: `<h4 style="color:#333;font-weight:normal;">ช่วงเวลาที่ 5 ต้องสิ้นสุดก่อนเวลาเริ่มต้นของช่วงที่ 1</h4>`,
-                                icon: 'warning',
-                                confirmButtonText: 'ตกลง',
-                                confirmButtonColor: '#3085d6',
-                                background: '#fff',
-                                customClass: {
-                                    popup: 'swal2-modern-popup',
-                                    title: 'swal2-modern-title',
-                                    content: 'swal2-modern-content'
-                                }
-                            });
-
-                            if (startVal) {
-                                $(`#scheduleall_${period}_end`).datetimepicker('date', moment(startVal, 'HH:mm'));
-                            }
-                            return;
-                        }
-                    }
-                }
-
 
             });
         });
@@ -3508,7 +3500,7 @@
                             html: `<h4 style="color:#333;font-weight:normal;">เวลาเริ่มต้นต้องไม่มากกว่าเวลาสิ้นสุด</h4>`,
                             icon: 'warning',
                             confirmButtonText: 'ตกลง',
-                            confirmButtonColor: '#3085d6',
+                            confirmButtonColor: '#d33',
                             background: '#fff',
                             customClass: {
                                 popup: 'swal2-modern-popup',
@@ -3517,7 +3509,6 @@
                             }
                         });
 
-                        // ใช้ค่าเดิมที่ผู้ใช้เคยตั้งไว้
                         if (previousStart) {
                             $(`#scheduleall_${period}_start`).datetimepicker('date', moment(previousStart, 'HH:mm'));
                         }
@@ -3525,7 +3516,6 @@
                     }
                 }
 
-                // ตรวจสอบกับช่วงก่อนหน้า
                 for (let i = 1; i < period; i++) {
                     const prevEndVal = $(`#scheduleall_${i}_end`).val();
                     if (prevEndVal) {
@@ -3536,7 +3526,7 @@
                                 html: `<h4 style="color:#333;font-weight:normal;">ช่วงเวลาที่ ${period} ต้องไม่เริ่มก่อนช่วงเวลาที่ ${i}</h4>`,
                                 icon: 'warning',
                                 confirmButtonText: 'ตกลง',
-                                confirmButtonColor: '#3085d6',
+                                confirmButtonColor: '#d33',
                                 background: '#fff',
                                 customClass: {
                                     popup: 'swal2-modern-popup',
@@ -3557,7 +3547,7 @@
             let previousEnd = null;
 
             $(`#scheduleall_${period}_end`).on("show.datetimepicker", function () {
-                previousEnd = $(`#scheduleall_${period}_end`).val(); // เก็บไว้ตอน popup ขึ้น
+                previousEnd = $(`#scheduleall_${period}_end`).val();
             });
 
             $(`#scheduleall_${period}_end`).on("change.datetimepicker", function (e) {
@@ -3571,7 +3561,7 @@
                             html: `<h4 style="color:#333;font-weight:normal;">เวลาสิ้นสุดต้องไม่น้อยกว่าเวลาเริ่มต้น</h4>`,
                             icon: 'warning',
                             confirmButtonText: 'ตกลง',
-                            confirmButtonColor: '#3085d6',
+                            confirmButtonColor: '#d33',
                             background: '#fff',
                             customClass: {
                                 popup: 'swal2-modern-popup',
@@ -3595,7 +3585,7 @@
                                 html: `<h4 style="color:#333;font-weight:normal;">ช่วงเวลาที่ ${period} ต้องสิ้นสุดหลังจากช่วงเวลาที่ ${i}</h4>`,
                                 icon: 'warning',
                                 confirmButtonText: 'ตกลง',
-                                confirmButtonColor: '#3085d6',
+                                confirmButtonColor: '#d33',
                                 background: '#fff',
                                 customClass: {
                                     popup: 'swal2-modern-popup',
@@ -3618,6 +3608,57 @@
                         $nextStart.datetimepicker('date', end);
                     }
                 }
+
+                if (period === 5) {
+                    const firstStartVal = $(`#scheduleall_1_start`).val();
+                    if (firstStartVal) {
+                        const firstStartTime = moment(firstStartVal, 'HH:mm');
+                        const endTime = moment(end.format('HH:mm'), 'HH:mm');
+
+                        let endMoment = moment().set({
+                            hour: endTime.get('hour'),
+                            minute: endTime.get('minute'),
+                            second: 0,
+                            millisecond: 0
+                        });
+
+                        if (endTime.isSameOrBefore(firstStartTime)) {
+                            endMoment.add(1, 'day');
+                        }
+
+                        let maxEnd = moment().add(1, 'day').startOf('day');
+
+                        if (endMoment.isSameOrAfter(maxEnd)) {
+                            Swal.fire({
+                                title: 'แจ้งเตือน',
+                                html: `<h4 style="color:#333;font-weight:normal;">ช่วงเวลาที่ 5 ต้องสิ้นสุดก่อนเที่ยงคืนของวันเริ่มต้นช่วงที่ 1 (ไม่สามารถตั้งเป็น 00:00 ได้)</h4>`,
+                                icon: 'warning',
+                                confirmButtonText: 'ตกลง',
+                                confirmButtonColor: '#d33',
+                                background: '#fff',
+                                customClass: {
+                                    popup: 'swal2-modern-popup',
+                                    title: 'swal2-modern-title',
+                                    content: 'swal2-modern-content'
+                                }
+                            });
+
+                            const startVal = $(`#scheduleall_${period}_start`).val();
+                            if (startVal) {
+                                const startMoment = moment(startVal, 'HH:mm');
+                                const resetTime = startMoment.clone().add(1, 'hour');
+                                $(`#scheduleall_${period}_end`).datetimepicker('date', resetTime);
+                            } else {
+                                const resetTime = moment().add(1, 'hour');
+                                $(`#scheduleall_${period}_end`).datetimepicker('date', resetTime);
+                            }
+                            return;
+                        }
+                    }
+                }
+
+
+
             });
         });
 
