@@ -979,50 +979,50 @@
         $("#schedule_5_controlRangeCool").val("0");
 
         //allcontrol
-        $("#scheduleall_1_start").val("00:00");
-        $("#scheduleall_1_end").val("00:00");
-        $("#scheduleall_1_duration_h").val("0");
-        $("#scheduleall_1_duration_m").val("0");
-        $("#scheduleall_1_rangeWarm").text("0");
-        $("#scheduleall_1_controlRangeWarm").val("0");
-        $("#scheduleall_1_rangeCool").text("0");
-        $("#scheduleall_1_controlRangeCool").val("0");
+        // $("#scheduleall_1_start").val("00:00");
+        // $("#scheduleall_1_end").val("00:00");
+        // $("#scheduleall_1_duration_h").val("0");
+        // $("#scheduleall_1_duration_m").val("0");
+        // $("#scheduleall_1_rangeWarm").text("0");
+        // $("#scheduleall_1_controlRangeWarm").val("0");
+        // $("#scheduleall_1_rangeCool").text("0");
+        // $("#scheduleall_1_controlRangeCool").val("0");
 
-        $("#scheduleall_2_start").val("00:00");
-        $("#scheduleall_2_end").val("00:00");
-        $("#scheduleall_2_duration_h").val("0");
-        $("#scheduleall_2_duration_m").val("0");
-        $("#scheduleall_2_rangeWarm").text("0");
-        $("#scheduleall_2_controlRangeWarm").val("0");
-        $("#scheduleall_2_rangeCool").text("0");
-        $("#scheduleall_2_controlRangeCool").val("0");
+        // $("#scheduleall_2_start").val("00:00");
+        // $("#scheduleall_2_end").val("00:00");
+        // $("#scheduleall_2_duration_h").val("0");
+        // $("#scheduleall_2_duration_m").val("0");
+        // $("#scheduleall_2_rangeWarm").text("0");
+        // $("#scheduleall_2_controlRangeWarm").val("0");
+        // $("#scheduleall_2_rangeCool").text("0");
+        // $("#scheduleall_2_controlRangeCool").val("0");
 
-        $("#scheduleall_3_start").val("00:00");
-        $("#scheduleall_3_end").val("00:00");
-        $("#scheduleall_3_duration_h").val("0");
-        $("#scheduleall_3_duration_m").val("0");
-        $("#scheduleall_3_rangeWarm").text("0");
-        $("#scheduleall_3_controlRangeWarm").val("0");
-        $("#scheduleall_3_rangeCool").text("0");
-        $("#scheduleall_3_controlRangeCool").val("0");
+        // $("#scheduleall_3_start").val("00:00");
+        // $("#scheduleall_3_end").val("00:00");
+        // $("#scheduleall_3_duration_h").val("0");
+        // $("#scheduleall_3_duration_m").val("0");
+        // $("#scheduleall_3_rangeWarm").text("0");
+        // $("#scheduleall_3_controlRangeWarm").val("0");
+        // $("#scheduleall_3_rangeCool").text("0");
+        // $("#scheduleall_3_controlRangeCool").val("0");
 
-        $("#scheduleall_4_start").val("00:00");
-        $("#scheduleall_4_end").val("00:00");
-        $("#scheduleall_4_duration_h").val("0");
-        $("#scheduleall_4_duration_m").val("0");
-        $("#scheduleall_4_rangeWarm").text("0");
-        $("#scheduleall_4_controlRangeWarm").val("0");
-        $("#scheduleall_4_rangeCool").text("0");
-        $("#scheduleall_4_controlRangeCool").val("0");
+        // $("#scheduleall_4_start").val("00:00");
+        // $("#scheduleall_4_end").val("00:00");
+        // $("#scheduleall_4_duration_h").val("0");
+        // $("#scheduleall_4_duration_m").val("0");
+        // $("#scheduleall_4_rangeWarm").text("0");
+        // $("#scheduleall_4_controlRangeWarm").val("0");
+        // $("#scheduleall_4_rangeCool").text("0");
+        // $("#scheduleall_4_controlRangeCool").val("0");
 
-        $("#scheduleall_5_start").val("00:00");
-        $("#scheduleall_5_end").val("00:00");
-        $("#scheduleall_5_duration_h").val("0");
-        $("#scheduleall_5_duration_m").val("0");
-        $("#scheduleall_5_rangeWarm").text("0");
-        $("#scheduleall_5_controlRangeWarm").val("0");
-        $("#scheduleall_5_rangeCool").text("0");
-        $("#scheduleall_5_controlRangeCool").val("0");
+        // $("#scheduleall_5_start").val("00:00");
+        // $("#scheduleall_5_end").val("00:00");
+        // $("#scheduleall_5_duration_h").val("0");
+        // $("#scheduleall_5_duration_m").val("0");
+        // $("#scheduleall_5_rangeWarm").text("0");
+        // $("#scheduleall_5_controlRangeWarm").val("0");
+        // $("#scheduleall_5_rangeCool").text("0");
+        // $("#scheduleall_5_controlRangeCool").val("0");
     };
 
     // $("#controlInfoModal").on("hidden.bs.modal", function (e) {
@@ -2526,57 +2526,57 @@
         const endpoint = 'http://85.204.247.82:3002/api/setallschedule'
         const schedulDatas = []
 
-        $('#schedulelist li').each(function (index) {
-            const no = index + 1
-            const starttime = $(`#scheduleall_${no}_start`).val()
-            const endtime = $(`#scheduleall_${no}_end`).val()
-            const warmval = $(`#scheduleall_${no}_controlRangeWarm`).val()
-            const coolval = $(`#scheduleall_${no}_controlRangeCool`).val()
+        // $('#schedulelist li').each(function (index) {
+        //     const no = index + 1
+        //     const starttime = $(`#scheduleall_${no}_start`).val()
+        //     const endtime = $(`#scheduleall_${no}_end`).val()
+        //     const warmval = $(`#scheduleall_${no}_controlRangeWarm`).val()
+        //     const coolval = $(`#scheduleall_${no}_controlRangeCool`).val()
 
-            const schedulVal = {
-                no,
-                starttime,
-                endtime,
-                warmval,
-                coolval
-            }
-
-            schedulDatas.push(schedulVal)
-        })
-
-        // for (let i = 1; i <= 5; i++) {
-        //     let no = i
-        //     let active = true
-        //     let starttime = $(`#scheduleall_${no}_start`).val()
-        //     let endtime = $(`#scheduleall_${no}_end`).val()
-        //     let warmval = $(`#scheduleall_${no}_controlRangeWarm`).val()
-        //     let coolval = $(`#scheduleall_${no}_controlRangeCool`).val()
-
-        //     if (!starttime && !endtime && !warmval && !coolval) active = false
-        //     if (starttime === '00:00' && endtime === '00:00' && warmval === '0' && coolval === '0') active = false
-        //     if (endtime <= starttime) starttime = '00:00', endtime = '00:00' , active = false
-        //     // if (!starttime && !endtime) starttime = '00:00', endtime = '00:00'
-        //     // if (!warmval && !coolval) warmval = '0', coolval = '0'
-
-
-        //     // if (warmval === '0' && coolval === '0') active = false
-
-        //     const datas = {
+        //     const schedulVal = {
         //         no,
-        //         active,
         //         starttime,
         //         endtime,
         //         warmval,
         //         coolval
         //     }
 
-        //     schedulDatas.push(datas)
-
-        // }
-
-        // schedulDatas.forEach(items => {
-        //     console.log(items)
+        //     schedulDatas.push(schedulVal)
         // })
+
+        for (let i = 1; i <= 5; i++) {
+            let no = i
+            let active = true
+            let starttime = $(`#scheduleall_${no}_start`).val()
+            let endtime = $(`#scheduleall_${no}_end`).val()
+            let warmval = $(`#scheduleall_${no}_controlRangeWarm`).val()
+            let coolval = $(`#scheduleall_${no}_controlRangeCool`).val()
+
+            if (!starttime && !endtime && !warmval && !coolval) active = false
+            if (starttime === '00:00' && endtime === '00:00' && warmval === '0' && coolval === '0') active = false
+            if (endtime <= starttime) starttime = '00:00', endtime = '00:00', active = false
+            // if (!starttime && !endtime) starttime = '00:00', endtime = '00:00'
+            // if (!warmval && !coolval) warmval = '0', coolval = '0'
+
+
+            // if (warmval === '0' && coolval === '0') active = false
+
+            const datas = {
+                no,
+                active,
+                starttime,
+                endtime,
+                warmval,
+                coolval
+            }
+
+            schedulDatas.push(datas)
+
+        }
+
+        schedulDatas.forEach(items => {
+            console.log(items)
+        })
 
         // const datas = { group: group, schedule: schedulDatas }
         // // console.log('datas', datas)
@@ -3213,28 +3213,31 @@
                     return;
                 }
 
-                const endVal = $(`#scheduleall_${period}_end`).val();
-                if (endVal) {
-                    const end = moment(endVal, 'HH:mm');
-                    if (start.isAfter(end)) {
-                        Swal.fire({
-                            title: 'แจ้งเตือน',
-                            html: '<h4 style="color:#333;font-weight:normal;">เวลาเริ่มต้นต้องไม่มากกว่าเวลาสิ้นสุด</h4>',
-                            icon: 'warning',
-                            confirmButtonText: 'ตกลง',
-                            confirmButtonColor: '#d33',
-                            background: '#fff',
-                            customClass: {
-                                popup: 'swal2-modern-popup',
-                                title: 'swal2-modern-title',
-                                content: 'swal2-modern-content'
-                            }
-                        });
+                // const endVal = $(`#scheduleall_${period}_end`).val();
+                // if (endVal) {
+                //     const end = moment(endVal, 'HH:mm');
+                //     if (start.isSameOrAfter(end)) {
+                //         Swal.fire({
+                //             title: 'แจ้งเตือน',
+                //             html: '<h4 style="color:#333;font-weight:normal;">เวลาเริ่มต้นต้องไม่มากกว่าหรือเท่ากับเวลาสิ้นสุด</h4>',
+                //             icon: 'warning',
+                //             confirmButtonText: 'ตกลง',
+                //             confirmButtonColor: '#d33',
+                //             background: '#fff',
+                //             customClass: {
+                //                 popup: 'swal2-modern-popup',
+                //                 title: 'swal2-modern-title',
+                //                 content: 'swal2-modern-content'
+                //             }
+                //         });
 
-                        $(`#scheduleall_${period}_start`).datetimepicker('date', moment('00:00', 'HH:mm'));
-                        return;
-                    }
-                }
+                //         $(`#scheduleall_${period}_start`).datetimepicker('date', moment('00:00', 'HH:mm'));
+                //         return;
+                //     }
+                // }
+
+                const newEnd = moment(start).add(1, 'hours');
+                $(`#scheduleall_${period}_end`).datetimepicker('date', newEnd);
 
                 for (let i = 1; i < period; i++) {
                     const prevEndVal = $(`#scheduleall_${i}_end`).val();
@@ -3254,8 +3257,23 @@
                                     content: 'swal2-modern-content'
                                 }
                             });
-                            $(`#scheduleall_${period}_start`).datetimepicker('date', prevEnd);
+
+                            if (previousStart) {
+                                $(`#scheduleall_${period}_start`).datetimepicker('date', moment(previousStart, 'HH:mm'));
+                            }
                             return;
+                        }
+                    }
+                }
+
+                const nextPeriod = period + 1;
+                const $nextStart = $(`#scheduleall_${nextPeriod}_start`);
+                if ($nextStart.length) {
+                    const thisEndVal = $(`#scheduleall_${period}_end`).val();
+                    if (thisEndVal) {
+                        const thisEndMoment = moment(thisEndVal, 'HH:mm');
+                        if (moment($nextStart.val(), 'HH:mm').isBefore(thisEndMoment)) {
+                            $nextStart.datetimepicker('date', thisEndMoment);
                         }
                     }
                 }
@@ -3272,10 +3290,10 @@
                 const startVal = $(`#scheduleall_${period}_start`).val();
                 if (startVal) {
                     const start = moment(startVal, 'HH:mm');
-                    if (end.isBefore(start)) {
+                    if (end.isSameOrBefore(start)) {
                         Swal.fire({
                             title: 'แจ้งเตือน',
-                            html: `<h4 style="color:#333;font-weight:normal;">เวลาสิ้นสุดต้องไม่น้อยกว่าเวลาเริ่มต้น</h4>`,
+                            html: `<h4 style="color:#333;font-weight:normal;">เวลาสิ้นสุดต้องไม่น้อยกว่าหรือเท่ากับเวลาเริ่มต้น</h4>`,
                             icon: 'warning',
                             confirmButtonText: 'ตกลง',
                             confirmButtonColor: '#d33',
@@ -3492,29 +3510,32 @@
                 const start = moment(e.date, 'HH:mm');
                 const endVal = $(`#scheduleall_${period}_end`).val();
 
-                if (endVal) {
-                    const end = moment(endVal, 'HH:mm');
-                    if (start.isAfter(end)) {
-                        Swal.fire({
-                            title: 'แจ้งเตือน',
-                            html: `<h4 style="color:#333;font-weight:normal;">เวลาเริ่มต้นต้องไม่มากกว่าเวลาสิ้นสุด</h4>`,
-                            icon: 'warning',
-                            confirmButtonText: 'ตกลง',
-                            confirmButtonColor: '#d33',
-                            background: '#fff',
-                            customClass: {
-                                popup: 'swal2-modern-popup',
-                                title: 'swal2-modern-title',
-                                content: 'swal2-modern-content'
-                            }
-                        });
+                // if (endVal) {
+                //     const end = moment(endVal, 'HH:mm');
+                //     if (start.isSameOrAfter(end)) {
+                //         Swal.fire({
+                //             title: 'แจ้งเตือน',
+                //             html: `<h4 style="color:#333;font-weight:normal;">เวลาเริ่มต้นต้องไม่มากกว่าหรือเท่ากับเวลาสิ้นสุด</h4>`,
+                //             icon: 'warning',
+                //             confirmButtonText: 'ตกลง',
+                //             confirmButtonColor: '#d33',
+                //             background: '#fff',
+                //             customClass: {
+                //                 popup: 'swal2-modern-popup',
+                //                 title: 'swal2-modern-title',
+                //                 content: 'swal2-modern-content'
+                //             }
+                //         });
 
-                        if (previousStart) {
-                            $(`#scheduleall_${period}_start`).datetimepicker('date', moment(previousStart, 'HH:mm'));
-                        }
-                        return;
-                    }
-                }
+                //         if (previousStart) {
+                //             $(`#scheduleall_${period}_start`).datetimepicker('date', moment(previousStart, 'HH:mm'));
+                //         }
+                //         return;
+                //     }
+                // }
+
+                const newEnd = moment(start).add(1, 'hours');
+                $(`#scheduleall_${period}_end`).datetimepicker('date', newEnd);
 
                 for (let i = 1; i < period; i++) {
                     const prevEndVal = $(`#scheduleall_${i}_end`).val();
@@ -3542,6 +3563,18 @@
                         }
                     }
                 }
+
+                const nextPeriod = period + 1;
+                const $nextStart = $(`#scheduleall_${nextPeriod}_start`);
+                if ($nextStart.length) {
+                    const thisEndVal = $(`#scheduleall_${period}_end`).val();
+                    if (thisEndVal) {
+                        const thisEndMoment = moment(thisEndVal, 'HH:mm');
+                        if (moment($nextStart.val(), 'HH:mm').isBefore(thisEndMoment)) {
+                            $nextStart.datetimepicker('date', thisEndMoment);
+                        }
+                    }
+                }
             });
 
             let previousEnd = null;
@@ -3555,10 +3588,10 @@
                 const startVal = $(`#scheduleall_${period}_start`).val();
                 if (startVal) {
                     const start = moment(startVal, 'HH:mm');
-                    if (end.isBefore(start)) {
+                    if (end.isSameOrBefore(start)) {
                         Swal.fire({
                             title: 'แจ้งเตือน',
-                            html: `<h4 style="color:#333;font-weight:normal;">เวลาสิ้นสุดต้องไม่น้อยกว่าเวลาเริ่มต้น</h4>`,
+                            html: `<h4 style="color:#333;font-weight:normal;">เวลาสิ้นสุดต้องไม่น้อยกว่าหรือเท่ากับเวลาเริ่มต้น</h4>`,
                             icon: 'warning',
                             confirmButtonText: 'ตกลง',
                             confirmButtonColor: '#d33',
@@ -3597,15 +3630,6 @@
                             $(`#scheduleall_${period}_end`).datetimepicker('date', prevEnd); // <<< ใช้ prevEnd
                             return;
                         }
-                    }
-                }
-
-                const nextPeriod = period + 1;
-                const $nextStart = $(`#scheduleall_${nextPeriod}_start`);
-                if ($nextStart.length) {
-                    const nextStartVal = $nextStart.val();
-                    if (!nextStartVal || moment(nextStartVal, 'HH:mm').isBefore(end)) {
-                        $nextStart.datetimepicker('date', end);
                     }
                 }
 
@@ -3657,8 +3681,14 @@
                     }
                 }
 
-
-
+                const nextPeriod = period + 1;
+                const $nextStart = $(`#scheduleall_${nextPeriod}_start`);
+                if ($nextStart.length) {
+                    const nextStartVal = $nextStart.val();
+                    if (!nextStartVal || moment(nextStartVal, 'HH:mm').isBefore(end)) {
+                        $nextStart.datetimepicker('date', end);
+                    }
+                }
             });
         });
 
@@ -3705,6 +3735,22 @@
             // .text('0');
         });
     }
+
+    $('#clearAllSchedules').on('click', function () {
+        $('#schedulelist li').slice(1).remove();
+
+        const $firstLi = $('#schedulelist li').first();
+
+        $firstLi.find('input[id^="scheduleall_"][id$="_start"]').datetimepicker('date', moment('00:00', 'HH:mm'));
+
+        $firstLi.find('input[id^="scheduleall_"][id$="_end"]').datetimepicker('date', moment('01:00', 'HH:mm'));
+
+        $firstLi.find('input[id^="scheduleall_"][id$="_controlRangeWarm"]').val(0).trigger('input');
+        $firstLi.find('p[id^="scheduleall_"][id$="_rangeWarm"]').text('0');
+
+        $firstLi.find('input[id^="scheduleall_"][id$="_controlRangeCool"]').val(0).trigger('input');
+        $firstLi.find('p[id^="scheduleall_"][id$="_rangeCool"]').text('0');
+    });
 
 
 
