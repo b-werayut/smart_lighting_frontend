@@ -3138,52 +3138,43 @@
 
         $('#schedulelist').append($li);
         $li.fadeIn(function () {
-            $(`#scheduleall_${period}_start`).datetimepicker({
-                format: "HH:mm",
-                icons: {
-                    time: 'fa fa-clock',
-                    date: 'fa fa-calendar',
-                    up: 'fa fa-chevron-up',
-                    down: 'fa fa-chevron-down',
-                    previous: 'fa fa-chevron-left',
-                    next: 'fa fa-chevron-right',
-                    today: 'fa fa-calendar-check',
-                    clear: 'fa fa-trash',
-                    close: 'fa fa-times'
-                }
+            const $start = $(`#scheduleall_${period}_start`);
+            const $end = $(`#scheduleall_${period}_end`);
+            const prevPeriod = period - 1;
+            const nextPeriod = period + 1;
+            let previousStart = null;
+            let previousDuration = null;
+
+            [$start, $end].forEach($el => {
+                $el.datetimepicker({
+                    format: "HH:mm",
+                    icons: {
+                        time: 'fa fa-clock',
+                        date: 'fa fa-calendar',
+                        up: 'fa fa-chevron-up',
+                        down: 'fa fa-chevron-down',
+                        previous: 'fa fa-chevron-left',
+                        next: 'fa fa-chevron-right',
+                        today: 'fa fa-calendar-check',
+                        clear: 'fa fa-trash',
+                        close: 'fa fa-times'
+                    }
+                });
             });
 
-            $(`#scheduleall_${period}_end`).datetimepicker({
-                format: "HH:mm",
-                icons: {
-                    time: 'fa fa-clock',
-                    date: 'fa fa-calendar',
-                    up: 'fa fa-chevron-up',
-                    down: 'fa fa-chevron-down',
-                    previous: 'fa fa-chevron-left',
-                    next: 'fa fa-chevron-right',
-                    today: 'fa fa-calendar-check',
-                    clear: 'fa fa-trash',
-                    close: 'fa fa-times'
-                }
-            });
-
-            $(`#scheduleall_${period}_start`).datetimepicker('date', moment('00:00', 'HH:mm'));
             if (period > 1) {
-                const prevEndVal = $(`#scheduleall_${period - 1}_end`).val();
+                const prevEndVal = $(`#scheduleall_${prevPeriod}_end`).val();
                 if (prevEndVal) {
                     const startMoment = moment(prevEndVal, 'HH:mm');
-                    const endMoment = startMoment.clone().add(1, 'hours');
-
-                    $(`#scheduleall_${period}_start`).datetimepicker('date', startMoment);
-                    $(`#scheduleall_${period}_end`).datetimepicker('date', endMoment);
+                    $start.datetimepicker('date', startMoment);
+                    $end.datetimepicker('date', startMoment.clone().add(1, 'hours'));
                 } else {
-                    $(`#scheduleall_${period}_start`).datetimepicker('date', moment('00:00', 'HH:mm'));
-                    $(`#scheduleall_${period}_end`).datetimepicker('date', moment('01:00', 'HH:mm'));
+                    $start.datetimepicker('date', moment('00:00', 'HH:mm'));
+                    $end.datetimepicker('date', moment('01:00', 'HH:mm'));
                 }
             } else {
-                $(`#scheduleall_${period}_start`).datetimepicker('date', moment('00:00', 'HH:mm'));
-                $(`#scheduleall_${period}_end`).datetimepicker('date', moment('01:00', 'HH:mm'));
+                $start.datetimepicker('date', moment('00:00', 'HH:mm'));
+                $end.datetimepicker('date', moment('01:00', 'HH:mm'));
             }
 
             $(`#scheduleall_${period}_rangeWarm`).text("0");
@@ -3191,13 +3182,25 @@
             $(`#scheduleall_${period}_rangeCool`).text("0");
             $(`#scheduleall_${period}_controlRangeCool`).val("0");
 
-            $(`#scheduleall_${period}_start`).on("change.datetimepicker", function (e) {
+            $start.on("show.datetimepicker", function () {
+                const start = moment($start.val(), 'HH:mm');
+                const end = moment($end.val(), 'HH:mm');
+                if (start.isValid() && end.isValid() && end.isAfter(start)) {
+                    previousStart = start.format('HH:mm');
+                    previousDuration = moment.duration(end.diff(start));
+                }
+            });
+
+            $start.on("change.datetimepicker", function (e) {
                 const start = moment(e.date, 'HH:mm');
 
-                if (start.format('HH:mm') === '23:00' || start.isSameOrAfter(moment('23:00', 'HH:mm')) || start.hour() >= 23) {
+                const firstStartVal = $('#scheduleall_1_start').val();
+                const firstStart = moment(firstStartVal, 'HH:mm');
+
+                if (!start.isValid() || start.isSameOrAfter(moment('23:00', 'HH:mm')) || start.hour() >= 23 || firstStart.isBefore(moment('00:00', 'HH:mm'))) {
                     Swal.fire({
                         title: 'แจ้งเตือน',
-                        html: '<h4 style="color:#333;font-weight:normal;">เป็นเวลาของวันที่แล้ว ไม่สามารถตั้งค่าได้</h4>',
+                        html: '<h4 style="color:#333;font-weight:normal;">เวลาเริ่มต้นต้องอยู่ระหว่าง 00:00 - 23:59 น. และช่วงเวลาสุดท้ายไม่สามารถข้ามวันได้</h4>',
                         icon: 'warning',
                         confirmButtonText: 'ตกลง',
                         confirmButtonColor: '#d33',
@@ -3207,19 +3210,18 @@
                             title: 'swal2-modern-title',
                             content: 'swal2-modern-content'
                         }
+                    }).then(() => {
+                        $start.datetimepicker('date', moment('00:00', 'HH:mm'));
                     });
-
-                    $(`#scheduleall_${period}_start`).datetimepicker('date', moment('00:00', 'HH:mm'));
                     return;
                 }
 
-                // const endVal = $(`#scheduleall_${period}_end`).val();
-                // if (endVal) {
-                //     const end = moment(endVal, 'HH:mm');
-                //     if (start.isSameOrAfter(end)) {
+                // for (let i = 1; i < period; i++) {
+                //     const prevEndVal = $(`#scheduleall_${i}_end`).val();
+                //     if (prevEndVal && start.isBefore(moment(prevEndVal, 'HH:mm'))) {
                 //         Swal.fire({
                 //             title: 'แจ้งเตือน',
-                //             html: '<h4 style="color:#333;font-weight:normal;">เวลาเริ่มต้นต้องไม่มากกว่าหรือเท่ากับเวลาสิ้นสุด</h4>',
+                //             html: `<h4 style="color:#333;font-weight:normal;">ช่วงเวลาที่ ${period} ต้องไม่เริ่มก่อนช่วงเวลาที่ ${i}</h4>`,
                 //             icon: 'warning',
                 //             confirmButtonText: 'ตกลง',
                 //             confirmButtonColor: '#d33',
@@ -3230,53 +3232,37 @@
                 //                 content: 'swal2-modern-content'
                 //             }
                 //         });
-
-                //         $(`#scheduleall_${period}_start`).datetimepicker('date', moment('00:00', 'HH:mm'));
+                //         if (previousStart) {
+                //             $start.datetimepicker('date', moment(previousStart, 'HH:mm'));
+                //         }
                 //         return;
                 //     }
                 // }
 
-                const newEnd = moment(start).add(1, 'hours');
-                $(`#scheduleall_${period}_end`).datetimepicker('date', newEnd);
+                const newEnd = previousDuration
+                    ? moment(start).add(previousDuration)
+                    : moment(start).add(1, 'hours');
+                $end.datetimepicker('date', newEnd);
 
-                for (let i = 1; i < period; i++) {
-                    const prevEndVal = $(`#scheduleall_${i}_end`).val();
-                    if (prevEndVal) {
-                        const prevEnd = moment(prevEndVal, 'HH:mm');
-                        if (start.isBefore(prevEnd)) {
-                            Swal.fire({
-                                title: 'แจ้งเตือน',
-                                html: `<h4 style="color:#333;font-weight:normal;">ช่วงเวลาที่ ${period} ต้องไม่เริ่มก่อนช่วงเวลาที่ ${i}</h4>`,
-                                icon: 'warning',
-                                confirmButtonText: 'ตกลง',
-                                confirmButtonColor: '#d33',
-                                background: '#fff',
-                                customClass: {
-                                    popup: 'swal2-modern-popup',
-                                    title: 'swal2-modern-title',
-                                    content: 'swal2-modern-content'
-                                }
-                            });
-
-                            if (previousStart) {
-                                $(`#scheduleall_${period}_start`).datetimepicker('date', moment(previousStart, 'HH:mm'));
-                            }
-                            return;
-                        }
-                    }
-                }
-
-                const nextPeriod = period + 1;
                 const $nextStart = $(`#scheduleall_${nextPeriod}_start`);
-                if ($nextStart.length) {
-                    const thisEndVal = $(`#scheduleall_${period}_end`).val();
-                    if (thisEndVal) {
-                        const thisEndMoment = moment(thisEndVal, 'HH:mm');
-                        if (moment($nextStart.val(), 'HH:mm').isBefore(thisEndMoment)) {
-                            $nextStart.datetimepicker('date', thisEndMoment);
+                const $nextEnd = $(`#scheduleall_${nextPeriod}_end`);
+                if ($nextStart.length && $nextEnd.length) {
+                    const nextStartVal = $nextStart.val();
+                    const nextEndVal = $nextEnd.val();
+                    let nextDuration = moment.duration(1, 'hours'); // default
+
+                    if (nextStartVal && nextEndVal) {
+                        const nextStart = moment(nextStartVal, 'HH:mm');
+                        const nextEnd = moment(nextEndVal, 'HH:mm');
+                        if (nextEnd.isAfter(nextStart)) {
+                            nextDuration = moment.duration(nextEnd.diff(nextStart));
                         }
                     }
+
+                    $nextStart.datetimepicker('date', newEnd);
+                    $nextEnd.datetimepicker('date', moment(newEnd).add(nextDuration));
                 }
+
             });
 
             let previousEnd = null;
@@ -3290,10 +3276,11 @@
                 const startVal = $(`#scheduleall_${period}_start`).val();
                 if (startVal) {
                     const start = moment(startVal, 'HH:mm');
-                    if (end.isSameOrBefore(start)) {
+
+                    if (period === 1 && end.isSameOrBefore(start)) {
                         Swal.fire({
                             title: 'แจ้งเตือน',
-                            html: `<h4 style="color:#333;font-weight:normal;">เวลาสิ้นสุดต้องไม่น้อยกว่าหรือเท่ากับเวลาเริ่มต้น</h4>`,
+                            html: `<h4 style="color:#333;font-weight:normal;">เวลาสิ้นสุดต้องมากกว่าเวลาเริ่มต้น</h4>`,
                             icon: 'warning',
                             confirmButtonText: 'ตกลง',
                             confirmButtonColor: '#d33',
@@ -3305,7 +3292,11 @@
                             }
                         });
 
-                        $(`#scheduleall_${period}_end`).datetimepicker('date', moment(previousEnd, 'HH:mm'));
+                        const startVal = $(`#scheduleall_${period}_start`).val();
+                        if (startVal) {
+                            const newEnd = moment(startVal, 'HH:mm').add(1, 'hours');
+                            $(`#scheduleall_${period}_end`).datetimepicker('date', newEnd);
+                        }
                         return;
                     }
                 }
@@ -3448,51 +3439,44 @@
 
         $('#schedulelist').append($li);
         $li.fadeIn(function () {
-            $(`#scheduleall_${period}_start`).datetimepicker({
-                format: "HH:mm",
-                icons: {
-                    time: 'fa fa-clock',
-                    date: 'fa fa-calendar',
-                    up: 'fa fa-chevron-up',
-                    down: 'fa fa-chevron-down',
-                    previous: 'fa fa-chevron-left',
-                    next: 'fa fa-chevron-right',
-                    today: 'fa fa-calendar-check',
-                    clear: 'fa fa-trash',
-                    close: 'fa fa-times'
-                }
+            const $start = $(`#scheduleall_${period}_start`);
+            const $end = $(`#scheduleall_${period}_end`);
+            const prevPeriod = period - 1;
+            const nextPeriod = period + 1;
+            let previousStart = null;
+            let previousDuration = null;
+
+            [$start, $end].forEach($el => {
+                $el.datetimepicker({
+                    format: "HH:mm",
+                    icons: {
+                        time: 'fa fa-clock',
+                        date: 'fa fa-calendar',
+                        up: 'fa fa-chevron-up',
+                        down: 'fa fa-chevron-down',
+                        previous: 'fa fa-chevron-left',
+                        next: 'fa fa-chevron-right',
+                        today: 'fa fa-calendar-check',
+                        clear: 'fa fa-trash',
+                        close: 'fa fa-times'
+                    }
+                });
             });
 
-            $(`#scheduleall_${period}_end`).datetimepicker({
-                format: "HH:mm",
-                icons: {
-                    time: 'fa fa-clock',
-                    date: 'fa fa-calendar',
-                    up: 'fa fa-chevron-up',
-                    down: 'fa fa-chevron-down',
-                    previous: 'fa fa-chevron-left',
-                    next: 'fa fa-chevron-right',
-                    today: 'fa fa-calendar-check',
-                    clear: 'fa fa-trash',
-                    close: 'fa fa-times'
-                }
-            });
 
             if (period > 1) {
-                const prevEndVal = $(`#scheduleall_${period - 1}_end`).val();
+                const prevEndVal = $(`#scheduleall_${prevPeriod}_end`).val();
                 if (prevEndVal) {
                     const startMoment = moment(prevEndVal, 'HH:mm');
-                    const endMoment = startMoment.clone().add(1, 'hours'); // เพิ่ม 1 ชม.
-
-                    $(`#scheduleall_${period}_start`).datetimepicker('date', startMoment);
-                    $(`#scheduleall_${period}_end`).datetimepicker('date', endMoment);
+                    $start.datetimepicker('date', startMoment);
+                    $end.datetimepicker('date', startMoment.clone().add(1, 'hours'));
                 } else {
-                    $(`#scheduleall_${period}_start`).datetimepicker('date', moment('00:00', 'HH:mm'));
-                    $(`#scheduleall_${period}_end`).datetimepicker('date', moment('01:00', 'HH:mm'));
+                    $start.datetimepicker('date', moment('00:00', 'HH:mm'));
+                    $end.datetimepicker('date', moment('01:00', 'HH:mm'));
                 }
             } else {
-                $(`#scheduleall_${period}_start`).datetimepicker('date', moment('00:00', 'HH:mm'));
-                $(`#scheduleall_${period}_end`).datetimepicker('date', moment('01:00', 'HH:mm'));
+                $start.datetimepicker('date', moment('00:00', 'HH:mm'));
+                $end.datetimepicker('date', moment('01:00', 'HH:mm'));
             }
 
             $(`#scheduleall_${period}_rangeWarm`).text("0");
@@ -3500,98 +3484,24 @@
             $(`#scheduleall_${period}_rangeCool`).text("0");
             $(`#scheduleall_${period}_controlRangeCool`).val("0");
 
-            let previousStart = null;
-
-            $(`#scheduleall_${period}_start`).on("show.datetimepicker", function () {
-                previousStart = $(`#scheduleall_${period}_start`).val(); // เก็บไว้ก่อนกรอกใหม่
+            $start.on("show.datetimepicker", function () {
+                const start = moment($start.val(), 'HH:mm');
+                const end = moment($end.val(), 'HH:mm');
+                if (start.isValid() && end.isValid() && end.isAfter(start)) {
+                    previousStart = start.format('HH:mm');
+                    previousDuration = moment.duration(end.diff(start));
+                }
             });
 
-            $(`#scheduleall_${period}_start`).on("change.datetimepicker", function (e) {
+            $start.on("change.datetimepicker", function (e) {
                 const start = moment(e.date, 'HH:mm');
-                const endVal = $(`#scheduleall_${period}_end`).val();
-
-                // if (endVal) {
-                //     const end = moment(endVal, 'HH:mm');
-                //     if (start.isSameOrAfter(end)) {
-                //         Swal.fire({
-                //             title: 'แจ้งเตือน',
-                //             html: `<h4 style="color:#333;font-weight:normal;">เวลาเริ่มต้นต้องไม่มากกว่าหรือเท่ากับเวลาสิ้นสุด</h4>`,
-                //             icon: 'warning',
-                //             confirmButtonText: 'ตกลง',
-                //             confirmButtonColor: '#d33',
-                //             background: '#fff',
-                //             customClass: {
-                //                 popup: 'swal2-modern-popup',
-                //                 title: 'swal2-modern-title',
-                //                 content: 'swal2-modern-content'
-                //             }
-                //         });
-
-                //         if (previousStart) {
-                //             $(`#scheduleall_${period}_start`).datetimepicker('date', moment(previousStart, 'HH:mm'));
-                //         }
-                //         return;
-                //     }
-                // }
-
-                const newEnd = moment(start).add(1, 'hours');
-                $(`#scheduleall_${period}_end`).datetimepicker('date', newEnd);
 
                 for (let i = 1; i < period; i++) {
                     const prevEndVal = $(`#scheduleall_${i}_end`).val();
-                    if (prevEndVal) {
-                        const prevEnd = moment(prevEndVal, 'HH:mm');
-                        if (start.isBefore(prevEnd)) {
-                            Swal.fire({
-                                title: 'แจ้งเตือน',
-                                html: `<h4 style="color:#333;font-weight:normal;">ช่วงเวลาที่ ${period} ต้องไม่เริ่มก่อนช่วงเวลาที่ ${i}</h4>`,
-                                icon: 'warning',
-                                confirmButtonText: 'ตกลง',
-                                confirmButtonColor: '#d33',
-                                background: '#fff',
-                                customClass: {
-                                    popup: 'swal2-modern-popup',
-                                    title: 'swal2-modern-title',
-                                    content: 'swal2-modern-content'
-                                }
-                            });
-
-                            if (previousStart) {
-                                $(`#scheduleall_${period}_start`).datetimepicker('date', moment(previousStart, 'HH:mm'));
-                            }
-                            return;
-                        }
-                    }
-                }
-
-                const nextPeriod = period + 1;
-                const $nextStart = $(`#scheduleall_${nextPeriod}_start`);
-                if ($nextStart.length) {
-                    const thisEndVal = $(`#scheduleall_${period}_end`).val();
-                    if (thisEndVal) {
-                        const thisEndMoment = moment(thisEndVal, 'HH:mm');
-                        if (moment($nextStart.val(), 'HH:mm').isBefore(thisEndMoment)) {
-                            $nextStart.datetimepicker('date', thisEndMoment);
-                        }
-                    }
-                }
-            });
-
-            let previousEnd = null;
-
-            $(`#scheduleall_${period}_end`).on("show.datetimepicker", function () {
-                previousEnd = $(`#scheduleall_${period}_end`).val();
-            });
-
-            $(`#scheduleall_${period}_end`).on("change.datetimepicker", function (e) {
-                const end = moment(e.date, 'HH:mm');
-                const startVal = $(`#scheduleall_${period}_start`).val();
-                if (startVal) {
-                    const start = moment(startVal, 'HH:mm');
-                    if (end.isSameOrBefore(start)) {
+                    if (prevEndVal && start.isBefore(moment(prevEndVal, 'HH:mm'))) {
                         Swal.fire({
                             title: 'แจ้งเตือน',
-                            html: `<h4 style="color:#333;font-weight:normal;">เวลาสิ้นสุดต้องไม่น้อยกว่าหรือเท่ากับเวลาเริ่มต้น</h4>`,
+                            html: `<h4 style="color:#333;font-weight:normal;">ช่วงเวลาที่ ${period} เวลาเริ่มต้นต้องไม่เริ่มก่อนเวลาสิ้นสุดของช่วงเวลาที่ ${i}</h4>`,
                             icon: 'warning',
                             confirmButtonText: 'ตกลง',
                             confirmButtonColor: '#d33',
@@ -3602,82 +3512,193 @@
                                 content: 'swal2-modern-content'
                             }
                         });
-
-                        $(`#scheduleall_${period}_end`).datetimepicker('date', moment(previousEnd, 'HH:mm'));
+                        if (previousStart) {
+                            $start.datetimepicker('date', moment(previousStart, 'HH:mm'));
+                        }
                         return;
                     }
                 }
 
-                for (let i = 1; i < period; i++) {
-                    const prevEndVal = $(`#scheduleall_${i}_end`).val();
-                    if (prevEndVal) {
-                        const prevEnd = moment(prevEndVal, 'HH:mm');
-                        if (end.isBefore(prevEnd)) {
-                            Swal.fire({
-                                title: 'แจ้งเตือน',
-                                html: `<h4 style="color:#333;font-weight:normal;">ช่วงเวลาที่ ${period} ต้องสิ้นสุดหลังจากช่วงเวลาที่ ${i}</h4>`,
-                                icon: 'warning',
-                                confirmButtonText: 'ตกลง',
-                                confirmButtonColor: '#d33',
-                                background: '#fff',
-                                customClass: {
-                                    popup: 'swal2-modern-popup',
-                                    title: 'swal2-modern-title',
-                                    content: 'swal2-modern-content'
-                                }
-                            });
-
-                            $(`#scheduleall_${period}_end`).datetimepicker('date', prevEnd); // <<< ใช้ prevEnd
-                            return;
+                if (start.isSameOrAfter(moment('00:00', 'HH:mm')) && start.isBefore(moment('01:00', 'HH:mm'))) {
+                    Swal.fire({
+                        title: 'แจ้งเตือน',
+                        html: `<h4>เวลาเริ่มต้นต้องไม่อยู่ในช่วงหลังเที่ยงคืน</h4>`,
+                        icon: 'warning',
+                        confirmButtonText: 'ตกลง',
+                        confirmButtonColor: '#d33',
+                        background: '#fff',
+                        customClass: {
+                            popup: 'swal2-modern-popup',
+                            title: 'swal2-modern-title',
+                            content: 'swal2-modern-content'
                         }
+                    });
+
+                    if (previousStart) {
+                        $start.datetimepicker('date', moment(previousStart, 'HH:mm'));
+                    } else {
+                        $start.datetimepicker('date', moment('01:00', 'HH:mm'));
+                    }
+                    return;
+                }
+
+                const newEnd = previousDuration
+                    ? moment(start).add(previousDuration)
+                    : moment(start).add(1, 'hours');
+                $end.datetimepicker('date', newEnd);
+
+                const $nextStart = $(`#scheduleall_${nextPeriod}_start`);
+                const $nextEnd = $(`#scheduleall_${nextPeriod}_end`);
+                if ($nextStart.length && $nextEnd.length) {
+                    const nextStartVal = $nextStart.val();
+                    const nextEndVal = $nextEnd.val();
+                    let nextDuration = moment.duration(1, 'hours'); // default
+
+                    if (nextStartVal && nextEndVal) {
+                        const nextStart = moment(nextStartVal, 'HH:mm');
+                        const nextEnd = moment(nextEndVal, 'HH:mm');
+                        if (nextEnd.isAfter(nextStart)) {
+                            nextDuration = moment.duration(nextEnd.diff(nextStart));
+                        }
+                    }
+
+                    $nextStart.datetimepicker('date', newEnd);
+                    $nextEnd.datetimepicker('date', moment(newEnd).add(nextDuration));
+                }
+
+            });
+
+            let previousEnd = null;
+
+            $(`#scheduleall_${period}_end`).on("show.datetimepicker", function () {
+                previousEnd = $(`#scheduleall_${period}_end`).val();
+            });
+
+            $(`#scheduleall_${period}_end`).on("change.datetimepicker", function (e) {
+                const end = moment(moment(e.date).format('HH:mm'), 'HH:mm');
+                const startVal = $(`#scheduleall_${period}_start`).val();
+
+                if (startVal) {
+                    const start = moment(startVal, 'HH:mm');
+
+                    if (end.isSameOrBefore(start)) {
+                        Swal.fire({
+                            title: 'แจ้งเตือน',
+                            html: `<h4 style="color:#333;font-weight:normal;">เวลาสิ้นสุดต้องมากกว่าเวลาเริ่มต้น</h4>`,
+                            icon: 'warning',
+                            confirmButtonText: 'ตกลง',
+                            confirmButtonColor: '#d33',
+                        }).then(() => {
+                            $(`#scheduleall_${period}_end`).datetimepicker('date', moment(previousEnd, 'HH:mm'));
+                        });
+                        return;
+                    }
+
+                    if (end.isSameOrAfter(moment('00:00', 'HH:mm')) && end.isBefore(moment('01:00', 'HH:mm'))) {
+                        Swal.fire({
+                            title: 'แจ้งเตือน',
+                            html: `<h4>เวลาสิ้นสุดต้องไม่อยู่ในช่วงหลังเที่ยงคืน</h4>`,
+                            icon: 'warning',
+                            confirmButtonText: 'ตกลง',
+                        }).then(() => {
+                            $(`#scheduleall_${period}_start`).datetimepicker('date', moment('23:00', 'HH:mm'));
+                            $(`#scheduleall_${period}_end`).datetimepicker('date', moment('23:59', 'HH:mm'));
+                        });
+                        return;
+                    }
+
+                    if (end.format('HH:mm') === '00:00') {
+                        Swal.fire({
+                            title: 'แจ้งเตือน',
+                            html: `<h4>เวลาสิ้นสุดต้องไม่เท่ากับ 00:00</h4>`,
+                            icon: 'warning',
+                            confirmButtonText: 'ตกลง',
+                        }).then(() => {
+                            $(`#scheduleall_${period}_end`).datetimepicker('date', moment('23:59', 'HH:mm'));
+                        });
+                        return;
                     }
                 }
 
-                if (period === 5) {
-                    const firstStartVal = $(`#scheduleall_1_start`).val();
-                    if (firstStartVal) {
-                        const firstStartTime = moment(firstStartVal, 'HH:mm');
-                        const endTime = moment(end.format('HH:mm'), 'HH:mm');
+                const periods = $('[id^=scheduleall_]')
+                    .map(function () {
+                        const match = this.id.match(/scheduleall_(\d+)_start/);
+                        return match ? parseInt(match[1], 10) : null;
+                    }).get();
 
-                        let endMoment = moment().set({
-                            hour: endTime.get('hour'),
-                            minute: endTime.get('minute'),
-                            second: 0,
-                            millisecond: 0
-                        });
+                const maxPeriod = Math.max(...periods.filter(Boolean));
 
-                        if (endTime.isSameOrBefore(firstStartTime)) {
-                            endMoment.add(1, 'day');
+                if (period === maxPeriod && end.format('HH:mm') === '00:00') {
+                    Swal.fire({
+                        title: 'แจ้งเตือน',
+                        html: `<h4 style="color:#333;font-weight:normal;">ช่วงเวลาสุดท้ายต้องไม่สิ้นสุดหรือมากกว่าเวลา 00:00</h4>`,
+                        icon: 'warning',
+                        confirmButtonText: 'ตกลง',
+                        confirmButtonColor: '#d33',
+                        background: '#fff',
+                        customClass: {
+                            popup: 'swal2-modern-popup',
+                            title: 'swal2-modern-title',
+                            content: 'swal2-modern-content'
                         }
+                    }).then(() => {
+                        $(`#scheduleall_${period}_end`).datetimepicker('date', moment('23:59', 'HH:mm'));
+                    });
+                    return;
+                }
 
-                        let maxEnd = moment().add(1, 'day').startOf('day');
+                const firstStartVal = $(`#scheduleall_1_start`).val();
+                const lastEndVal = $(`#scheduleall_${maxPeriod}_end`).val();
 
-                        if (endMoment.isSameOrAfter(maxEnd)) {
-                            Swal.fire({
-                                title: 'แจ้งเตือน',
-                                html: `<h4 style="color:#333;font-weight:normal;">ช่วงเวลาที่ 5 ต้องสิ้นสุดก่อนเที่ยงคืนของวันเริ่มต้นช่วงที่ 1 (ไม่สามารถตั้งเป็น 00:00 ได้)</h4>`,
-                                icon: 'warning',
-                                confirmButtonText: 'ตกลง',
-                                confirmButtonColor: '#d33',
-                                background: '#fff',
-                                customClass: {
-                                    popup: 'swal2-modern-popup',
-                                    title: 'swal2-modern-title',
-                                    content: 'swal2-modern-content'
-                                }
-                            });
+                if (firstStartVal && lastEndVal) {
+                    const firstStart = moment(firstStartVal, 'HH:mm');
+                    const firstStartNextDay = firstStart.clone().add(1, 'day');
+                    const lastEnd = moment(lastEndVal, 'HH:mm');
 
-                            const startVal = $(`#scheduleall_${period}_start`).val();
-                            if (startVal) {
-                                const startMoment = moment(startVal, 'HH:mm');
-                                const resetTime = startMoment.clone().add(1, 'hour');
-                                $(`#scheduleall_${period}_end`).datetimepicker('date', resetTime);
-                            } else {
-                                const resetTime = moment().add(1, 'hour');
-                                $(`#scheduleall_${period}_end`).datetimepicker('date', resetTime);
+                    let lastEndMoment = moment().set({
+                        hour: lastEnd.get('hour'),
+                        minute: lastEnd.get('minute'),
+                        second: 0,
+                        millisecond: 0
+                    });
+
+                    if (lastEndMoment.isSameOrBefore(firstStart)) {
+                        lastEndMoment.add(1, 'day');
+                    }
+
+                    if (lastEndMoment.isSameOrAfter(firstStartNextDay)) {
+                        Swal.fire({
+                            title: 'แจ้งเตือน',
+                            html: `<h4 style="color:#333;font-weight:normal;">เวลาสิ้นสุดของช่วงเวลาสุดท้ายต้องไม่เกินเวลาเริ่มต้นของช่วงที่ 1 ในวันถัดไป</h4>`,
+                            icon: 'warning',
+                            confirmButtonText: 'ตกลง',
+                            confirmButtonColor: '#d33',
+                            background: '#fff',
+                            customClass: {
+                                popup: 'swal2-modern-popup',
+                                title: 'swal2-modern-title',
+                                content: 'swal2-modern-content'
                             }
-                            return;
-                        }
+                        }).then(() => {
+                            for (let i = 1; i <= maxPeriod; i++) {
+                                const $start = $(`#scheduleall_${i}_start`);
+                                const $end = $(`#scheduleall_${i}_end`);
+
+                                const startVal = $start.val();
+                                const endVal = $end.val();
+
+                                if (startVal) {
+                                    const newStart = moment(startVal, 'HH:mm').subtract(1, 'hour');
+                                    $start.datetimepicker('date', newStart);
+                                }
+
+                                if (endVal) {
+                                    const newEnd = moment(endVal, 'HH:mm').subtract(1, 'hour');
+                                    $end.datetimepicker('date', newEnd);
+                                }
+                            }
+                        });
+                        return;
                     }
                 }
 
@@ -3690,6 +3711,7 @@
                     }
                 }
             });
+
         });
 
         $li.find('.remove-btn').on('click', function () {
