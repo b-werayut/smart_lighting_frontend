@@ -3519,7 +3519,7 @@
                     }
                 }
 
-                if (start.isSameOrAfter(moment('00:00', 'HH:mm')) && start.isBefore(moment('01:00', 'HH:mm'))) {
+                if (start.format('HH:mm') >= '00:00' && start.format('HH:mm') < '01:00') {
                     Swal.fire({
                         title: 'แจ้งเตือน',
                         html: `<h4>เวลาเริ่มต้นต้องไม่อยู่ในช่วงหลังเที่ยงคืน</h4>`,
@@ -3584,28 +3584,32 @@
                     if (end.isSameOrBefore(start)) {
                         Swal.fire({
                             title: 'แจ้งเตือน',
-                            html: `<h4 style="color:#333;font-weight:normal;">เวลาสิ้นสุดต้องมากกว่าเวลาเริ่มต้น</h4>`,
+                            html: `<h4 style="color:#333;font-weight:normal;">
+            เวลาสิ้นสุดต้องมากกว่าเวลาเริ่มต้น
+        </h4>`,
                             icon: 'warning',
                             confirmButtonText: 'ตกลง',
                             confirmButtonColor: '#d33',
                         }).then(() => {
                             $(`#scheduleall_${period}_end`).datetimepicker('date', moment(previousEnd, 'HH:mm'));
+                            return;
                         });
-                        return;
+
+                        if (end.isSameOrAfter(moment('00:00', 'HH:mm')) && end.isBefore(moment('01:00', 'HH:mm'))) {
+                            Swal.fire({
+                                title: 'แจ้งเตือน',
+                                html: `<h4>เวลาสิ้นสุดต้องไม่อยู่ในช่วงหลังเที่ยงคืน</h4>`,
+                                icon: 'warning',
+                                confirmButtonText: 'ตกลง',
+                            }).then(() => {
+                                $(`#scheduleall_${period}_start`).datetimepicker('date', moment('23:00', 'HH:mm'));
+                                $(`#scheduleall_${period}_end`).datetimepicker('date', moment('23:59', 'HH:mm'));
+                            });
+                            return;
+                        }
                     }
 
-                    if (end.isSameOrAfter(moment('00:00', 'HH:mm')) && end.isBefore(moment('01:00', 'HH:mm'))) {
-                        Swal.fire({
-                            title: 'แจ้งเตือน',
-                            html: `<h4>เวลาสิ้นสุดต้องไม่อยู่ในช่วงหลังเที่ยงคืน</h4>`,
-                            icon: 'warning',
-                            confirmButtonText: 'ตกลง',
-                        }).then(() => {
-                            $(`#scheduleall_${period}_start`).datetimepicker('date', moment('23:00', 'HH:mm'));
-                            $(`#scheduleall_${period}_end`).datetimepicker('date', moment('23:59', 'HH:mm'));
-                        });
-                        return;
-                    }
+
 
                     if (end.format('HH:mm') === '00:00') {
                         Swal.fire({
