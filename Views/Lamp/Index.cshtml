@@ -740,13 +740,18 @@
                         <h2 class="text-center mb-4">Configure Schedule</h2> -->
 
                         <div class="form-group col-md-12">
-                        <div class="actions">
-                        <button class="btn btn-success actionbtn" id="addschedule" type="submit">เพิ่มช่วงเวลา +</button>
+                        <div class="actions d-flex align-items-center gap-3">
+                            <button class="btn btn-success actionbtn rounded-pill d-flex align-items-center gap-2 px-4 py-2" id="addschedule" type="submit">
+                                <i class="mdi mdi-plus mr-1"></i>
+                                <span>เพิ่มช่วงเวลา</span>
+                            </button>
+                            <span class="ml-2 badge bg-light text-dark fs-5 px-3 py-2 shadow-sm rounded-pill border">เพิ่มทั้งหมด <a id="periodAll">1</a> ช่วงเวลา
+                            </span>
                         </div>
                         </div>
 
                         <div>
-                        <ul id="schedulelist" class="d-flex flex-column justify-content-center p-0">
+                        <ul id="scheduleAllList" class="d-flex flex-column justify-content-center p-0">
                         </ul>
                         </div>
                                             
@@ -927,7 +932,7 @@
 </div>
 
 <div class="modal fade" style="font-family: Kanit;" id="controlInfoModal" tabindex="-1" role="dialog" aria-labelledby="controlInfoModalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-sm-down" role="document">
+    <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-sm-down" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="controlInfoModalLongTitle">แผงควบคุม</h5>
@@ -1023,7 +1028,7 @@
                             <a class="nav-link active" id="manual-tab" data-toggle="pill" data-target="#manual" type="button" role="tab" aria-controls="manual" aria-selected="true">กำหนดการทำงานด้วยตนเอง(Manual)</a>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link" id="auto-tab" data-toggle="pill" data-target="#auto" type="button" role="tab" aria-controls="auto" aria-selected="false">ตั้งเวลาทำงานอัตโนมัติ(Schedule)</a>
+                            <a class="nav-link" id="schedule-tab" data-toggle="pill" data-target="#schedule" type="button" role="tab" aria-controls="schedule" aria-selected="false">ตั้งเวลาทำงานอัตโนมัติ(Schedule)</a>
                         </li>
                     </ul>
                     <hr>
@@ -1159,10 +1164,10 @@
                     <!-- shadow -->
                 </div>
                 </div>
-                <div class="tab-pane fade" id="auto" role="tabpanel" aria-labelledby="auto-tab">
-                    <div id="controlActionSchedule" class="">
+                <div class="tab-pane fade" id="schedule" role="tabpanel" aria-labelledby="schedule-tab">
+                    <div id="controlActionSchedule">
 
-                        <div class="form-check col-md-12 light-status-wrapper mb-3 d-none">
+                        <!-- <div class="form-check col-md-12 light-status-wrapper mb-3 d-none">
                             <div id="bulbIcon2" class="light-icon light-on">💡</div>
                             <label class="light-status-label">สถานะหลอดไฟ</label>
                             <input type="checkbox"
@@ -1174,604 +1179,14 @@
                                    data-offstyle="secondary"
                                    data-width="100"
                                    id="controlRelayState2">
-                        </div>
+                        </div> -->
 
-                        <div class="mn2">
-                            <div class="row">
-                                <label class="form-group col-md-12 has-float-label" for="schedule_1_no">
-                                    <input type="text" class="form-control" id="schedule_1_no" value="1" disabled />
-                                    <span>ลำดับ</span>
-                                </label>
+                        <div class="mn2 col-md-12">
+                                <div>
+                                <ul id="scheduleList" class="d-flex flex-column justify-content-center p-0">
+                                </ul>
                             </div>
-                            <div class="row">
-                                <label class="form-group col-md-6 has-float-label" for="schedule_1_start">
-                                    <input type="text" class="form-control datetimepicker-input" id="schedule_1_start" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_1_start" />
-                                    <span>ตั้งแต่เวลา</span>
-                                </label>
-
-                                <label class="form-group col-md-6 has-float-label" for="schedule_1_end">
-                                    <input type="text" class="form-control datetimepicker-input" id="schedule_1_end" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_1_end" />
-                                    <span>ถึงเวลา</span>
-                                </label>
-
-                                <!-- <label class="form-group col-md-3 has-float-label" for="schedule_1_duration_h">
-                                    <input type="text" class="form-control numberInputValidate" id="schedule_1_duration_h" autocomplete="off" maxlength="2" />
-                                    <span>ระยะเวลา - ชั่วโมง</span>
-                                </label>
-
-                                <label class="form-group col-md-3 has-float-label" for="schedule_1_duration_m">
-                                    <input type="text" class="form-control numberInputValidate" id="schedule_1_duration_m" autocomplete="off" maxlength="2" />
-                                    <span>นาที</span>
-                                </label> -->
-                                @*<label class="form-group col-md-6 has-float-label" for="schedule_1_duration">
-                                        <input type="text" class="form-control datetimepicker-input" id="schedule_1_duration" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_1_duration" />
-                                        <span>ระยะเวลา (ชั่วโมง:นาที)</span>
-                                    </label>*@
-                            </div>
-                            <!-- <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label for="schedule_1_controlRangeWarm">ค่าแสงอุ่น</label> <span id="schedule_1_rangeWarm">50</span>
-                                    <input type="range" class="form-control-range" id="schedule_1_controlRangeWarm" onInput="$('#schedule_1_rangeWarm').html($(this).val())">
-                                </div>
-
-                                <div class="form-group col-md-6">
-                                    <label for="schedule_1_controlRangeCool">ค่าแสงเย็น</label> <span id="schedule_1_rangeCool">50</span>
-                                    <input type="range" class="form-control-range" id="schedule_1_controlRangeCool" onInput="$('#schedule_1_rangeCool').html($(this).val())">
-                                </div>
-                            </div> -->
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input type="range" class="brightness-slider-warm py-2" id="schedule_1_controlRangeWarm" onInput="$('#schedule_1_rangeWarm').html($(this).val())">
-
-                                    <ul class="slider-marks list-unstyled d-flex justify-content-between px-1 mt-2">
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>0</div>
-                                        </li>
-                                        <li class="slider-mark text-center pl-1">
-                                            <div>|</div>
-                                            <div>20</div>
-                                        </li>
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>40</div>
-                                        </li>
-                                        <li class="slider-mark text-center pr-1">
-                                            <div>|</div>
-                                            <div>60</div>
-                                        </li>
-                                        <li class="slider-mark text-center pr-1">
-                                            <div>|</div>
-                                            <div>80</div>
-                                        </li>
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>100</div>
-                                        </li>
-                                    </ul>
-
-                                    <div class="light-info-box-warm text-center col-md-5 light-info-box shadow-custom ">
-                                        <p class="label">ค่าแสงอุ่นลำดับที่ 1</p>
-                                        <hr>
-                                        <p class="value" id="schedule_1_rangeWarm"></p> 
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6" style="border-left: 1px solid #dddddd;">
-                                    <input type="range" class="brightness-slider-cool py-2" id="schedule_1_controlRangeCool" onInput="$('#schedule_1_rangeCool').html($(this).val())">
-
-                                    <ul class="slider-marks list-unstyled d-flex justify-content-between px-1 mt-2">
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>0</div>
-                                        </li>
-                                        <li class="slider-mark text-center pl-1">
-                                            <div>|</div>
-                                            <div>20</div>
-                                        </li>
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>40</div>
-                                        </li>
-                                        <li class="slider-mark text-center pr-1">
-                                            <div>|</div>
-                                            <div>60</div>
-                                        </li>
-                                        <li class="slider-mark text-center pr-1">
-                                            <div>|</div>
-                                            <div>80</div>
-                                        </li>
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>100</div>
-                                        </li>
-                                    </ul>
-                                    <div class="light-info-box-cool text-center col-md-5 light-info-box shadow-custom">
-                                        <p class="label">ค่าแสงเย็นลำดับที่ 1</p>
-                                        <hr>
-                                        <p class="value" id="schedule_1_rangeCool"></p> 
-                                    </div>
-                                </div>
-                            </div>
-                            <hr />
-                            <br />
-                            <div class="row">
-                                <label class="form-group col-md-12 has-float-label" for="schedule_2_no">
-                                    <input type="text" class="form-control" id="schedule_2_no" value="2" disabled />
-                                    <span>ลำดับ</span>
-                                </label>
-                            </div>
-                            <div class="row">
-                                <label class="form-group col-md-6 has-float-label" for="schedule_2_start">
-                                    <input type="text" class="form-control datetimepicker-input" id="schedule_2_start" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_2_start" />
-                                    <span>ตั้งแต่เวลา</span>
-                                </label>
-
-                                <label class="form-group col-md-6 has-float-label" for="schedule_2_end">
-                                    <input type="text" class="form-control datetimepicker-input" id="schedule_2_end" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_2_end" />
-                                    <span>ถึงเวลา</span>
-                                </label>
-
-                                <!-- <label class="form-group col-md-3 has-float-label" for="schedule_2_duration_h">
-                                    <input type="text" class="form-control numberInputValidate" id="schedule_2_duration_h" autocomplete="off" maxlength="2" />
-                                    <span>ระยะเวลา - ชั่วโมง</span>
-                                </label>
-
-                                <label class="form-group col-md-3 has-float-label" for="schedule_2_duration_m">
-                                    <input type="text" class="form-control numberInputValidate" id="schedule_2_duration_m" autocomplete="off" maxlength="2" />
-                                    <span>นาที</span>
-                                </label> -->
-                                @*<label class="form-group col-md-6 has-float-label" for="schedule_2_duration">
-                                        <input type="text" class="form-control datetimepicker-input" id="schedule_2_duration" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_2_duration" />
-                                        <span>ระยะเวลา (ชั่วโมง:นาที)</span>
-                                    </label>*@
-                            </div>
-                            <!-- <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label for="schedule_2_controlRangeWarm">ค่าแสงอุ่น</label> <span id="schedule_2_rangeWarm">50</span>
-                                    <input type="range" class="form-control-range" id="schedule_2_controlRangeWarm" onInput="$('#schedule_2_rangeWarm').html($(this).val())">
-                                </div>
-
-                                <div class="form-group col-md-6">
-                                    <label for="schedule_2_controlRangeCool">ค่าแสงเย็น</label> <span id="schedule_2_rangeCool">50</span>
-                                    <input type="range" class="form-control-range" id="schedule_2_controlRangeCool" onInput="$('#schedule_2_rangeCool').html($(this).val())">
-                                </div>
-                            </div> -->
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input type="range" class="brightness-slider-warm py-2" id="schedule_2_controlRangeWarm" onInput="$('#schedule_2_rangeWarm').html($(this).val())">
-
-                                    <ul class="slider-marks list-unstyled d-flex justify-content-between px-1 mt-2">
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>0</div>
-                                        </li>
-                                        <li class="slider-mark text-center pl-1">
-                                            <div>|</div>
-                                            <div>20</div>
-                                        </li>
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>40</div>
-                                        </li>
-                                        <li class="slider-mark text-center pr-1">
-                                            <div>|</div>
-                                            <div>60</div>
-                                        </li>
-                                        <li class="slider-mark text-center pr-1">
-                                            <div>|</div>
-                                            <div>80</div>
-                                        </li>
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>100</div>
-                                        </li>
-                                    </ul>
-
-                                    <div class="light-info-box-warm text-center col-md-5 light-info-box shadow-custom ">
-                                        <p class="label">ค่าแสงอุ่นลำดับที่ 2</p>
-                                        <hr>
-                                        <p class="value" id="schedule_2_rangeWarm"></p> 
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6" style="border-left: 1px solid #dddddd;">
-                                    <input type="range" class="brightness-slider-cool py-2" id="schedule_2_controlRangeCool" onInput="$('#schedule_2_rangeCool').html($(this).val())">
-
-                                    <ul class="slider-marks list-unstyled d-flex justify-content-between px-1 mt-2">
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>0</div>
-                                        </li>
-                                        <li class="slider-mark text-center pl-1">
-                                            <div>|</div>
-                                            <div>20</div>
-                                        </li>
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>40</div>
-                                        </li>
-                                        <li class="slider-mark text-center pr-1">
-                                            <div>|</div>
-                                            <div>60</div>
-                                        </li>
-                                        <li class="slider-mark text-center pr-1">
-                                            <div>|</div>
-                                            <div>80</div>
-                                        </li>
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>100</div>
-                                        </li>
-                                    </ul>
-                                    <div class="light-info-box-cool text-center col-md-5 light-info-box shadow-custom">
-                                        <p class="label">ค่าแสงเย็นลำดับที่ 2</p>
-                                        <hr>
-                                        <p class="value" id="schedule_2_rangeCool"></p> 
-                                    </div>
-                                </div>
-                            </div>
-
-                            <hr />
-                            <br />
-                            <div class="row">
-                                <label class="form-group col-md-12 has-float-label" for="schedule_3_no">
-                                    <input type="text" class="form-control" id="schedule_3_no" value="3" disabled />
-                                    <span>ลำดับ</span>
-                                </label>
-                            </div>
-                            <div class="row">
-                                <label class="form-group col-md-6 has-float-label" for="schedule_3_start">
-                                    <input type="text" class="form-control datetimepicker-input" id="schedule_3_start" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_3_start" />
-                                    <span>ตั้งแต่เวลา</span>
-                                </label>
-
-                                <label class="form-group col-md-6 has-float-label" for="schedule_3_end">
-                                    <input type="text" class="form-control datetimepicker-input" id="schedule_3_end" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_3_end" />
-                                    <span>ถึงเวลา</span>
-                                </label>
-                                <!-- <label class="form-group col-md-3 has-float-label" for="schedule_3_duration_h">
-                                    <input type="text" class="form-control numberInputValidate" id="schedule_3_duration_h" autocomplete="off" maxlength="2" />
-                                    <span>ระยะเวลา - ชั่วโมง</span>
-                                </label>
-
-                                <label class="form-group col-md-3 has-float-label" for="schedule_3_duration_m">
-                                    <input type="text" class="form-control numberInputValidate" id="schedule_3_duration_m" autocomplete="off" maxlength="2" />
-                                    <span>นาที</span>
-                                </label> -->
-                                @*<label class="form-group col-md-6 has-float-label" for="schedule_3_duration">
-                                        <input type="text" class="form-control datetimepicker-input" id="schedule_3_duration" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_3_duration" />
-                                        <span>ระยะเวลา (ชั่วโมง:นาที)</span>
-                                    </label>*@
-                            </div>
-                            <!-- <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label for="schedule_3_controlRangeWarm">ค่าแสงอุ่น</label> <span id="schedule_3_rangeWarm">50</span>
-                                    <input type="range" class="form-control-range" id="schedule_3_controlRangeWarm" onInput="$('#schedule_3_rangeWarm').html($(this).val())">
-                                </div>
-
-                                <div class="form-group col-md-6">
-                                    <label for="schedule_3_controlRangeCool">ค่าแสงเย็น</label> <span id="schedule_3_rangeCool">50</span>
-                                    <input type="range" class="form-control-range" id="schedule_3_controlRangeCool" onInput="$('#schedule_3_rangeCool').html($(this).val())">
-                                </div>
-                            </div> -->
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input type="range" class="brightness-slider-warm py-2" id="schedule_3_controlRangeWarm" onInput="$('#schedule_3_rangeWarm').html($(this).val())">
-
-                                    <ul class="slider-marks list-unstyled d-flex justify-content-between px-1 mt-2">
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>0</div>
-                                        </li>
-                                        <li class="slider-mark text-center pl-1">
-                                            <div>|</div>
-                                            <div>20</div>
-                                        </li>
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>40</div>
-                                        </li>
-                                        <li class="slider-mark text-center pr-1">
-                                            <div>|</div>
-                                            <div>60</div>
-                                        </li>
-                                        <li class="slider-mark text-center pr-1">
-                                            <div>|</div>
-                                            <div>80</div>
-                                        </li>
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>100</div>
-                                        </li>
-                                    </ul>
-
-                                    <div class="light-info-box-warm text-center col-md-5 light-info-box shadow-custom ">
-                                        <p class="label">ค่าแสงอุ่นลำดับที่ 3</p>
-                                        <hr>
-                                        <p class="value" id="schedule_3_rangeWarm"></p> 
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6" style="border-left: 1px solid #dddddd;">
-                                    <input type="range" class="brightness-slider-cool py-2" id="schedule_3_controlRangeCool" onInput="$('#schedule_3_rangeCool').html($(this).val())">
-
-                                    <ul class="slider-marks list-unstyled d-flex justify-content-between px-1 mt-2">
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>0</div>
-                                        </li>
-                                        <li class="slider-mark text-center pl-1">
-                                            <div>|</div>
-                                            <div>20</div>
-                                        </li>
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>40</div>
-                                        </li>
-                                        <li class="slider-mark text-center pr-1">
-                                            <div>|</div>
-                                            <div>60</div>
-                                        </li>
-                                        <li class="slider-mark text-center pr-1">
-                                            <div>|</div>
-                                            <div>80</div>
-                                        </li>
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>100</div>
-                                        </li>
-                                    </ul>
-                                    <div class="light-info-box-cool text-center col-md-5 light-info-box shadow-custom">
-                                        <p class="label">ค่าแสงเย็นลำดับที่ 3</p>
-                                        <hr>
-                                        <p class="value" id="schedule_3_rangeCool"></p> 
-                                    </div>
-                                </div>
-                            </div>
-
-                            <hr />
-                            <br />
-                            <div class="row">
-                                <label class="form-group col-md-12 has-float-label" for="schedule_4_no">
-                                    <input type="text" class="form-control" id="schedule_4_no" value="4" disabled />
-                                    <span>ลำดับ</span>
-                                </label>
-                            </div>
-                            <div class="row">
-                                <label class="form-group col-md-6 has-float-label" for="schedule_4_start">
-                                    <input type="text" class="form-control datetimepicker-input" id="schedule_4_start" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_4_start" />
-                                    <span>ตั้งแต่เวลา</span>
-                                </label>
-
-                                <label class="form-group col-md-6 has-float-label" for="schedule_4_end">
-                                    <input type="text" class="form-control datetimepicker-input" id="schedule_4_end" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_4_end" />
-                                    <span>ถึงเวลา</span>
-                                </label>
-                                <!-- <label class="form-group col-md-3 has-float-label" for="schedule_4_duration_h">
-                                    <input type="text" class="form-control numberInputValidate" id="schedule_4_duration_h" autocomplete="off" maxlength="2" />
-                                    <span>ระยะเวลา - ชั่วโมง</span>
-                                </label>
-
-                                <label class="form-group col-md-3 has-float-label" for="schedule_4_duration_m">
-                                    <input type="text" class="form-control numberInputValidate" id="schedule_4_duration_m" autocomplete="off" maxlength="2" />
-                                    <span>นาที</span>
-                                </label> -->
-                                @*<label class="form-group col-md-6 has-float-label" for="schedule_4_duration">
-                                        <input type="text" class="form-control datetimepicker-input" id="schedule_4_duration" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_4_duration" />
-                                        <span>ระยะเวลา (ชั่วโมง:นาที)</span>
-                                    </label>*@
-                            </div>
-                            <!-- <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label for="schedule_4_controlRangeWarm">ค่าแสงอุ่น</label> <span id="schedule_4_rangeWarm">50</span>
-                                    <input type="range" class="form-control-range" id="schedule_4_controlRangeWarm" onInput="$('#schedule_4_rangeWarm').html($(this).val())">
-                                </div>
-
-                                <div class="form-group col-md-6">
-                                    <label for="schedule_4_controlRangeCool">ค่าแสงเย็น</label> <span id="schedule_4_rangeCool">50</span>
-                                    <input type="range" class="form-control-range" id="schedule_4_controlRangeCool" onInput="$('#schedule_4_rangeCool').html($(this).val())">
-                                </div>
-                            </div> -->
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input type="range" class="brightness-slider-warm py-2" id="schedule_4_controlRangeWarm" onInput="$('#schedule_4_rangeWarm').html($(this).val())">
-
-                                    <ul class="slider-marks list-unstyled d-flex justify-content-between px-1 mt-2">
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>0</div>
-                                        </li>
-                                        <li class="slider-mark text-center pl-1">
-                                            <div>|</div>
-                                            <div>20</div>
-                                        </li>
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>40</div>
-                                        </li>
-                                        <li class="slider-mark text-center pr-1">
-                                            <div>|</div>
-                                            <div>60</div>
-                                        </li>
-                                        <li class="slider-mark text-center pr-1">
-                                            <div>|</div>
-                                            <div>80</div>
-                                        </li>
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>100</div>
-                                        </li>
-                                    </ul>
-
-                                    <div class="light-info-box-warm text-center col-md-5 light-info-box shadow-custom ">
-                                        <p class="label">ค่าแสงอุ่นลำดับที่ 4</p>
-                                        <hr>
-                                        <p class="value" id="schedule_4_rangeWarm"></p> 
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6" style="border-left: 1px solid #dddddd;">
-                                    <input type="range" class="brightness-slider-cool py-2" id="schedule_4_controlRangeCool" onInput="$('#schedule_4_rangeCool').html($(this).val())">
-
-                                    <ul class="slider-marks list-unstyled d-flex justify-content-between px-1 mt-2">
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>0</div>
-                                        </li>
-                                        <li class="slider-mark text-center pl-1">
-                                            <div>|</div>
-                                            <div>20</div>
-                                        </li>
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>40</div>
-                                        </li>
-                                        <li class="slider-mark text-center pr-1">
-                                            <div>|</div>
-                                            <div>60</div>
-                                        </li>
-                                        <li class="slider-mark text-center pr-1">
-                                            <div>|</div>
-                                            <div>80</div>
-                                        </li>
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>100</div>
-                                        </li>
-                                    </ul>
-                                    <div class="light-info-box-cool text-center col-md-5 light-info-box shadow-custom">
-                                        <p class="label">ค่าแสงเย็นลำดับที่ 4</p>
-                                        <hr>
-                                        <p class="value" id="schedule_4_rangeCool"></p> 
-                                    </div>
-                                </div>
-                            </div>
-
-                            <hr />
-                            <br />
-                            <div class="row">
-                                <label class="form-group col-md-12 has-float-label" for="schedule_5_no">
-                                    <input type="text" class="form-control" id="schedule_5_no" value="5" disabled />
-                                    <span>ลำดับ</span>
-                                </label>
-                            </div>
-                            <div class="row">
-                                <label class="form-group col-md-6 has-float-label" for="schedule_5_start">
-                                    <input type="text" class="form-control datetimepicker-input" id="schedule_5_start" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_5_start" />
-                                    <span>ตั้งแต่เวลา</span>
-                                </label>
-
-                                <label class="form-group col-md-6 has-float-label" for="schedule_5_end">
-                                    <input type="text" class="form-control datetimepicker-input" id="schedule_5_end" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_5_end" />
-                                    <span>ถึงเวลา</span>
-                                </label>
-
-                                <!-- <label class="form-group col-md-3 has-float-label" for="schedule_5_duration_h">
-                                    <input type="text" class="form-control numberInputValidate" id="schedule_5_duration_h" autocomplete="off" maxlength="2" />
-                                    <span>ระยะเวลา - ชั่วโมง</span>
-                                </label>
-
-                                <label class="form-group col-md-3 has-float-label" for="schedule_5_duration_m">
-                                    <input type="text" class="form-control numberInputValidate" id="schedule_5_duration_m" autocomplete="off" maxlength="2" />
-                                    <span>นาที</span>
-                                </label> -->
-                                @*<label class="form-group col-md-6 has-float-label" for="schedule_5_duration">
-                                        <input type="text" class="form-control datetimepicker-input" id="schedule_5_duration" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_5_duration" />
-                                        <span>ระยะเวลา (ชั่วโมง:นาที)</span>
-                                    </label>*@
-                            </div>
-                            <!-- <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label for="schedule_5_controlRangeWarm">ค่าแสงอุ่น</label> <span id="schedule_5_rangeWarm">50</span>
-                                    <input type="range" class="form-control-range" id="schedule_5_controlRangeWarm" onInput="$('#schedule_5_rangeWarm').html($(this).val())">
-                                </div>
-
-                                <div class="form-group col-md-6">
-                                    <label for="schedule_5_controlRangeCool">ค่าแสงเย็น</label> <span id="schedule_5_rangeCool">50</span>
-                                    <input type="range" class="form-control-range" id="schedule_5_controlRangeCool" onInput="$('#schedule_5_rangeCool').html($(this).val())">
-                                </div>
-                            </div> -->
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input type="range" class="brightness-slider-warm py-2" id="schedule_5_controlRangeWarm" onInput="$('#schedule_5_rangeWarm').html($(this).val())">
-
-                                    <ul class="slider-marks list-unstyled d-flex justify-content-between px-1 mt-2">
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>0</div>
-                                        </li>
-                                        <li class="slider-mark text-center pl-1">
-                                            <div>|</div>
-                                            <div>20</div>
-                                        </li>
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>40</div>
-                                        </li>
-                                        <li class="slider-mark text-center pr-1">
-                                            <div>|</div>
-                                            <div>60</div>
-                                        </li>
-                                        <li class="slider-mark text-center pr-1">
-                                            <div>|</div>
-                                            <div>80</div>
-                                        </li>
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>100</div>
-                                        </li>
-                                    </ul>
-
-                                    <div class="light-info-box-warm text-center col-md-5 light-info-box shadow-custom ">
-                                        <p class="label">ค่าแสงอุ่นลำดับที่ 5</p>
-                                        <hr>
-                                        <p class="value" id="schedule_5_rangeWarm"></p> 
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6" style="border-left: 1px solid #dddddd;">
-                                    <input type="range" class="brightness-slider-cool py-2" id="schedule_5_controlRangeCool" onInput="$('#schedule_5_rangeCool').html($(this).val())">
-
-                                    <ul class="slider-marks list-unstyled d-flex justify-content-between px-1 mt-2">
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>0</div>
-                                        </li>
-                                        <li class="slider-mark text-center pl-1">
-                                            <div>|</div>
-                                            <div>20</div>
-                                        </li>
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>40</div>
-                                        </li>
-                                        <li class="slider-mark text-center pr-1">
-                                            <div>|</div>
-                                            <div>60</div>
-                                        </li>
-                                        <li class="slider-mark text-center pr-1">
-                                            <div>|</div>
-                                            <div>80</div>
-                                        </li>
-                                        <li class="slider-mark text-center">
-                                            <div>|</div>
-                                            <div>100</div>
-                                        </li>
-                                    </ul>
-                                    <div class="light-info-box-cool text-center col-md-5 light-info-box shadow-custom">
-                                        <p class="label">ค่าแสงเย็นลำดับที่ 5</p>
-                                        <hr>
-                                        <p class="value" id="schedule_5_rangeCool"></p> 
-                                    </div>
-                                </div>
-                            </div>
-
+aaaaaa
                         </div>
                     </div>
                 </div>
@@ -2010,6 +1425,7 @@
     <script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/i18n/defaults-*.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script> -->
+    
 }
 

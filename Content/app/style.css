@@ -24619,7 +24619,12 @@ background-color: #f8f9fa !important;
     }
 
     /* Schedul List */
-    #schedulelist {
+    #scheduleAllList li{
+  list-style: none;
+  padding: 0;
+}
+
+#scheduleList li{
   list-style: none;
   padding: 0;
 }
