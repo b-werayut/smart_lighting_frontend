@@ -450,6 +450,8 @@
             return;
         }
 
+        scheduleFunction()
+
         //     Swal.fire({
         //         title: '🔄 กำลังดึงข้อมูล...',
         //         html: `
@@ -780,66 +782,67 @@
             $(".n-pills").removeClass("d-none")
 
         } else if (obj.data[0]?.workmode === "SCHEDULE") {
-            console.log("SCHEDULE")
+            // console.log("SCHEDULE")
             let mode = obj.data[0]?.workmode
             if (mode === "SCHEDULE") {
                 mode = "SET_SCHEDULE"
             }
-            //startTime
-            const schTimeStart = {
-                schStartTime1: obj.data[0]?.schStartTime1,
-                schStartTime2: obj.data[0]?.schStartTime2,
-                schStartTime3: obj.data[0]?.schStartTime3,
-                schStartTime4: obj.data[0]?.schStartTime4,
-                schStartTime5: obj.data[0]?.schStartTime5,
-            }
 
-            //endTime
-            const schTimeEnd = {
-                schEndTime1: obj.data[0]?.schEndTime1,
-                schEndTime2: obj.data[0]?.schEndTime2,
-                schEndTime3: obj.data[0]?.schEndTime3,
-                schEndTime4: obj.data[0]?.schEndTime4,
-                schEndTime5: obj.data[0]?.schEndTime5,
-            }
+            // //startTime
+            // const schTimeStart = {
+            //     schStartTime1: obj.data[0]?.schStartTime1,
+            //     schStartTime2: obj.data[0]?.schStartTime2,
+            //     schStartTime3: obj.data[0]?.schStartTime3,
+            //     schStartTime4: obj.data[0]?.schStartTime4,
+            //     schStartTime5: obj.data[0]?.schStartTime5,
+            // }
 
-            const schPwm1 = {
-                schPwm11: obj.data[0]?.schPwm11,
-                schPwm12: obj.data[0]?.schPwm12,
-                schPwm13: obj.data[0]?.schPwm13,
-                schPwm14: obj.data[0]?.schPwm14,
-                schPwm15: obj.data[0]?.schPwm15,
-            }
+            // //endTime
+            // const schTimeEnd = {
+            //     schEndTime1: obj.data[0]?.schEndTime1,
+            //     schEndTime2: obj.data[0]?.schEndTime2,
+            //     schEndTime3: obj.data[0]?.schEndTime3,
+            //     schEndTime4: obj.data[0]?.schEndTime4,
+            //     schEndTime5: obj.data[0]?.schEndTime5,
+            // }
 
-            const schPwm2 = {
-                schPwm21: obj.data[0]?.schPwm21,
-                schPwm22: obj.data[0]?.schPwm22,
-                schPwm23: obj.data[0]?.schPwm23,
-                schPwm24: obj.data[0]?.schPwm24,
-                schPwm25: obj.data[0]?.schPwm25,
-            }
+            // const schPwm1 = {
+            //     schPwm11: obj.data[0]?.schPwm11,
+            //     schPwm12: obj.data[0]?.schPwm12,
+            //     schPwm13: obj.data[0]?.schPwm13,
+            //     schPwm14: obj.data[0]?.schPwm14,
+            //     schPwm15: obj.data[0]?.schPwm15,
+            // }
 
-            Object.values(schTimeStart).forEach((item, index) => {
-                const i = index + 1
-                $(`#schedule_${i}_start`).val(item)
-            })
+            // const schPwm2 = {
+            //     schPwm21: obj.data[0]?.schPwm21,
+            //     schPwm22: obj.data[0]?.schPwm22,
+            //     schPwm23: obj.data[0]?.schPwm23,
+            //     schPwm24: obj.data[0]?.schPwm24,
+            //     schPwm25: obj.data[0]?.schPwm25,
+            // }
 
-            Object.values(schTimeEnd).forEach((item, index) => {
-                const i = index + 1
-                $(`#schedule_${i}_end`).val(item)
-            })
+            // Object.values(schTimeStart).forEach((item, index) => {
+            //     const i = index + 1
+            //     $(`#schedule_${i}_start`).val(item)
+            // })
 
-            Object.values(schPwm1).forEach((item, index) => {
-                const i = index + 1
-                $(`#schedule_${i}_controlRangeWarm`).val(item)
-                $(`#schedule_${i}_rangeWarm`).text(item)
-            })
+            // Object.values(schTimeEnd).forEach((item, index) => {
+            //     const i = index + 1
+            //     $(`#schedule_${i}_end`).val(item)
+            // })
 
-            Object.values(schPwm2).forEach((item, index) => {
-                const i = index + 1
-                $(`#schedule_${i}_controlRangeCool`).val(item)
-                $(`#schedule_${i}_rangeCool`).text(item)
-            })
+            // Object.values(schPwm1).forEach((item, index) => {
+            //     const i = index + 1
+            //     $(`#schedule_${i}_controlRangeWarm`).val(item)
+            //     $(`#schedule_${i}_rangeWarm`).text(item)
+            // })
+
+            // Object.values(schPwm2).forEach((item, index) => {
+            //     const i = index + 1
+            //     $(`#schedule_${i}_controlRangeCool`).val(item)
+            //     $(`#schedule_${i}_rangeCool`).text(item)
+            // })
 
             $('#control-send-schedule').removeClass('d-none')
             $('#control-send-manual').addClass('d-none')
@@ -1482,8 +1485,6 @@
     `,
                                     showConfirmButton: false,
                                     timer: 1800
-                                }).then(() =>{
-                                       scheduleFunction()
                                 })
                                 // btnswitchauto.bootstrapToggle('on')
                             } else if (res.msg === "Error") {
@@ -1958,7 +1959,7 @@
             method: "GET"
         }
 
-        const addBtn = $('#addschedule')
+        const addBtn = $('#addscheduleall')
         addBtn.prop("disabled", false);
         addBtn.addClass("btn-success");
         addBtn.removeClass("btn-secondary")
@@ -2557,10 +2558,10 @@
         for (let i = 1; i <= 5; i++) {
             let no = i
             let active = true
-            let starttime = $(`#scheduleall_${no}_start`).val()
-            let endtime = $(`#scheduleall_${no}_end`).val()
-            let warmval = $(`#scheduleall_${no}_controlRangeWarm`).val()
-            let coolval = $(`#scheduleall_${no}_controlRangeCool`).val()
+            let starttime = ($(`#scheduleall_${no}_start`).val() ?? "").trim();
+            let endtime = ($(`#scheduleall_${no}_end`).val() ?? "").trim();
+            let warmval = ($(`#scheduleall_${no}_controlRangeWarm`).val() ?? "").trim();
+            let coolval = ($(`#scheduleall_${no}_controlRangeCool`).val() ?? "").trim();
 
             // if (!starttime && !endtime && !warmval && !coolval) active = false
             // if (starttime === '00:00' && endtime === '00:00' && warmval === '0' && coolval === '0') active = false
@@ -3047,15 +3048,14 @@
         const manualauto = $('#control-send-all-schedule')
 
         if (targetTabId === 'manualAll-tab') {
+            console.log("กำลังทำงานในแท็บ Manual")
             manualbtn.removeClass('d-none')
             manualauto.addClass('d-none')
             runManualFunction()
-        } else if (targetTabId === 'autoAll-tab') {
+        } else if (targetTabId === 'scheduleAll-tab') {
             manualbtn.addClass('d-none')
             manualauto.removeClass('d-none')
             scheduleAllFunction()
-        } else if (targetTabId === 'manual') {
-            console.log(`targetTabId === 'manual'`)
         }
     })
 
@@ -3063,18 +3063,740 @@
         console.log("กำลังทำงานในแท็บ Manual")
     }
 
-    $('#addtaskbtn').click(() => {
-        const taskInput = $("#taskInput");
-        const taskText = taskInput.val().trim();
-        if (taskText) {
-            addTask(taskText);
-            taskInput.val("");
+    let schedultab = true
+    let schedultabAll = true
+
+    function scheduleAllFunction() {
+
+        if (!schedultabAll) return
+
+        const currentCount = $('#scheduleAllList li').length;
+        const period = currentCount + 1
+
+        const $li = $(`
+    <li class="col-md-12 mb-3" style="display: none;">
+      <div class="config-box">
+      <div class="col-md-12 d-flex justify-content-center align-items-center">
+      <div class="col-md-4">
+        <div class="col-md-12">
+        <div class="mb-3">
+  <h2 class="text-center">🕒 ช่วงเวลาที่ ${period} </h2>
+  <input type="hidden" id="noall" value="${period}">
+</div>
+<hr>
+        <div class="form-group">
+          <label for="scheduleall_${period}_start">ตั้งแต่เวลา</label>
+          <input type="text" class="form-control datetimepicker-input" id="scheduleall_${period}_start" data-toggle="datetimepicker" autocomplete="off" data-target="#scheduleall_${period}_start"/>
+        </div>
+
+        <div class="form-group">
+        <label for="scheduleall_${period}_end">ถึงเวลา</label>
+          <input type="text" class="form-control datetimepicker-input" id="scheduleall_${period}_end" data-toggle="datetimepicker" autocomplete="off" data-target="#scheduleall_${period}_end" />
+        </div>
+        </div>
+        </div>
+
+        <div class="col-md-8">
+        <div class="sliders-wrapper">
+          <div class="slider-box">
+            <label>แสงอุ่น</label>
+            <input type="range" min="0" max="100" value="0" class="brightness-slider-warm py-2" id="scheduleall_${period}_controlRangeWarm" onInput="$('#scheduleall_${period}_rangeWarm').html($(this).val())">
+            <div class="slider-marks">
+              <div class="slider-mark"><div>|</div><div>0</div></div>
+              <div class="slider-mark"><div>|</div><div>20</div></div>
+              <div class="slider-mark"><div>|</div><div>40</div></div>
+              <div class="slider-mark"><div>|</div><div>60</div></div>
+              <div class="slider-mark"><div>|</div><div>80</div></div>
+              <div class="slider-mark"><div>|</div><div>100</div></div>
+            </div>
+            <div class="light-info-box-warm">
+              <p class="label">กำหนดค่าแสงอุ่น</p>
+              <hr>
+              <p class="value" id="scheduleall_${period}_rangeWarm">0</p>
+            </div>
+          </div>
+
+          <div class="slider-box">
+            <label>แสงเย็น</label>
+            <input type="range" min="0" max="100" value="0" class="brightness-slider-cool py-2" id="scheduleall_${period}_controlRangeCool" onInput="$('#scheduleall_${period}_rangeCool').html($(this).val())">
+            <div class="slider-marks">
+              <div class="slider-mark"><div>|</div><div>0</div></div>
+              <div class="slider-mark"><div>|</div><div>20</div></div>
+              <div class="slider-mark"><div>|</div><div>40</div></div>
+              <div class="slider-mark"><div>|</div><div>60</div></div>
+              <div class="slider-mark"><div>|</div><div>80</div></div>
+              <div class="slider-mark"><div>|</div><div>100</div></div>
+            </div>
+            <div class="light-info-box-cool">
+              <p class="label">กำหนดค่าแสงเย็น</p>
+              <hr>
+              <p class="value" id="scheduleall_${period}_rangeCool">0</p>
+            </div>
+          </div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-end mt-4">
+          <button type="button" class="btn btn-danger btn-sm remove-all-btn" title="ลบ" disabled>
+            <i class="fa fa-trash"></i>
+          </button>
+        </div>
+        </div>
+        </div>
+      </div>
+    </li>
+  `);
+
+        $('#scheduleAllList').append($li);
+        $li.fadeIn(function () {
+            const $start = $(`#scheduleall_${period}_start`);
+            const $end = $(`#scheduleall_${period}_end`);
+            const prevPeriod = period - 1;
+            const nextPeriod = period + 1;
+            let previousStart = null;
+            let previousDuration = null;
+
+            [$start, $end].forEach($el => {
+                $el.datetimepicker({
+                    format: "HH:mm",
+                    icons: {
+                        time: 'fa fa-clock',
+                        date: 'fa fa-calendar',
+                        up: 'fa fa-chevron-up',
+                        down: 'fa fa-chevron-down',
+                        previous: 'fa fa-chevron-left',
+                        next: 'fa fa-chevron-right',
+                        today: 'fa fa-calendar-check',
+                        clear: 'fa fa-trash',
+                        close: 'fa fa-times'
+                    }
+                });
+            });
+
+            if (period > 1) {
+                const prevEndVal = $(`#scheduleall_${prevPeriod}_end`).val();
+                if (prevEndVal) {
+                    const startMoment = moment(prevEndVal, 'HH:mm');
+                    $start.datetimepicker('date', startMoment);
+                    $end.datetimepicker('date', startMoment.clone().add(1, 'hours'));
+                } else {
+                    $start.datetimepicker('date', moment('00:00', 'HH:mm'));
+                    $end.datetimepicker('date', moment('01:00', 'HH:mm'));
+                }
+            } else {
+                $start.datetimepicker('date', moment('00:00', 'HH:mm'));
+                $end.datetimepicker('date', moment('01:00', 'HH:mm'));
+            }
+
+            $(`#scheduleall_${period}_rangeWarm`).text("0");
+            $(`#scheduleall_${period}_controlRangeWarm`).val("0");
+            $(`#scheduleall_${period}_rangeCool`).text("0");
+            $(`#scheduleall_${period}_controlRangeCool`).val("0");
+
+            $start.on("show.datetimepicker", function () {
+                const start = moment($start.val(), 'HH:mm');
+                const end = moment($end.val(), 'HH:mm');
+                if (start.isValid() && end.isValid() && end.isAfter(start)) {
+                    previousStart = start.format('HH:mm');
+                    previousDuration = moment.duration(end.diff(start));
+                }
+            });
+
+            $start.on("change.datetimepicker", function (e) {
+                const start = moment(e.date, 'HH:mm');
+
+                const firstStartVal = $('#scheduleall_1_start').val();
+                const firstStart = moment(firstStartVal, 'HH:mm');
+
+                if (!start.isValid() || start.isSameOrAfter(moment('23:00', 'HH:mm')) || start.hour() >= 23 || firstStart.isBefore(moment('00:00', 'HH:mm'))) {
+                    Swal.fire({
+                        title: 'แจ้งเตือน',
+                        html: '<h4 style="color:#333;font-weight:normal;">เป็นเวลาของวันที่แล้ว ไม่สามารถเลือกได้</h4>',
+                        icon: 'warning',
+                        confirmButtonText: 'ตกลง',
+                        confirmButtonColor: '#d33',
+                        background: '#fff',
+                        customClass: {
+                            popup: 'swal2-modern-popup',
+                            title: 'swal2-modern-title',
+                            content: 'swal2-modern-content'
+                        }
+                    }).then(() => {
+                        $start.datetimepicker('date', moment('00:00', 'HH:mm'));
+                    });
+                    return;
+                }
+
+                // for (let i = 1; i < period; i++) {
+                //     const prevEndVal = $(`#scheduleall_${i}_end`).val();
+                //     if (prevEndVal && start.isBefore(moment(prevEndVal, 'HH:mm'))) {
+                //         Swal.fire({
+                //             title: 'แจ้งเตือน',
+                //             html: `<h4 style="color:#333;font-weight:normal;">ช่วงเวลาที่ ${period} ต้องไม่เริ่มก่อนช่วงเวลาที่ ${i}</h4>`,
+                //             icon: 'warning',
+                //             confirmButtonText: 'ตกลง',
+                //             confirmButtonColor: '#d33',
+                //             background: '#fff',
+                //             customClass: {
+                //                 popup: 'swal2-modern-popup',
+                //                 title: 'swal2-modern-title',
+                //                 content: 'swal2-modern-content'
+                //             }
+                //         });
+                //         if (previousStart) {
+                //             $start.datetimepicker('date', moment(previousStart, 'HH:mm'));
+                //         }
+                //         return;
+                //     }
+                // }
+
+                const newEnd = previousDuration
+                    ? moment(start).add(previousDuration)
+                    : moment(start).add(1, 'hours');
+                $end.datetimepicker('date', newEnd);
+
+                const $nextStart = $(`#scheduleall_${nextPeriod}_start`);
+                const $nextEnd = $(`#scheduleall_${nextPeriod}_end`);
+                if ($nextStart.length && $nextEnd.length) {
+                    const nextStartVal = $nextStart.val();
+                    const nextEndVal = $nextEnd.val();
+                    let nextDuration = moment.duration(1, 'hours'); // default
+
+                    if (nextStartVal && nextEndVal) {
+                        const nextStart = moment(nextStartVal, 'HH:mm');
+                        const nextEnd = moment(nextEndVal, 'HH:mm');
+                        if (nextEnd.isAfter(nextStart)) {
+                            nextDuration = moment.duration(nextEnd.diff(nextStart));
+                        }
+                    }
+
+                    $nextStart.datetimepicker('date', newEnd);
+                    $nextEnd.datetimepicker('date', moment(newEnd).add(nextDuration));
+                }
+
+            });
+
+            let previousEnd = null;
+
+            $(`#scheduleall_${period}_end`).on("show.datetimepicker", function () {
+                previousEnd = $(`#scheduleall_${period}_end`).val();
+            });
+
+            $(`#scheduleall_${period}_end`).on("change.datetimepicker", function (e) {
+                const end = moment(e.date, 'HH:mm');
+                const startVal = $(`#scheduleall_${period}_start`).val();
+                if (startVal) {
+                    const start = moment(startVal, 'HH:mm');
+
+                    if (period === 1 && end.isSameOrBefore(start)) {
+                        Swal.fire({
+                            title: 'แจ้งเตือน',
+                            html: `<h4 style="color:#333;font-weight:normal;">เวลาสิ้นสุดต้องมากกว่าเวลาเริ่มต้น</h4>`,
+                            icon: 'warning',
+                            confirmButtonText: 'ตกลง',
+                            confirmButtonColor: '#d33',
+                            background: '#fff',
+                            customClass: {
+                                popup: 'swal2-modern-popup',
+                                title: 'swal2-modern-title',
+                                content: 'swal2-modern-content'
+                            }
+                        });
+
+                        const startVal = $(`#scheduleall_${period}_start`).val();
+                        if (startVal) {
+                            const newEnd = moment(startVal, 'HH:mm').add(1, 'hours');
+                            $(`#scheduleall_${period}_end`).datetimepicker('date', newEnd);
+                        }
+                        return;
+                    }
+                }
+
+                for (let i = 1; i < period; i++) {
+                    const prevEndVal = $(`#scheduleall_${i}_end`).val();
+                    if (prevEndVal) {
+                        const prevEnd = moment(prevEndVal, 'HH:mm');
+                        if (end.isBefore(prevEnd)) {
+                            Swal.fire({
+                                title: 'แจ้งเตือน',
+                                html: `<h4 style="color:#333;font-weight:normal;">ช่วงเวลาที่ ${period} ต้องสิ้นสุดหลังจากช่วงเวลาที่ ${i}</h4>`,
+                                icon: 'warning',
+                                confirmButtonText: 'ตกลง',
+                                confirmButtonColor: '#d33',
+                                background: '#fff',
+                                customClass: {
+                                    popup: 'swal2-modern-popup',
+                                    title: 'swal2-modern-title',
+                                    content: 'swal2-modern-content'
+                                }
+                            });
+
+                            $(`#scheduleall_${period}_end`).datetimepicker('date', prevEnd); // <<< ใช้ prevEnd
+                            return;
+                        }
+                    }
+                }
+
+                const nextPeriod = period + 1;
+                const $nextStart = $(`#scheduleall_${nextPeriod}_start`);
+                if ($nextStart.length) {
+                    const nextStartVal = $nextStart.val();
+                    if (!nextStartVal || moment(nextStartVal, 'HH:mm').isBefore(end)) {
+                        $nextStart.datetimepicker('date', end);
+                    }
+                }
+
+            });
+        });
+
+        schedultabAll = false
+    }
+
+    document.querySelector('#addscheduleall').addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const currentCount = $('#scheduleAllList li').length;
+        const periodall = currentCount + 1;
+
+        $('#periodAll').text(periodall)
+
+        if (periodall > 5) return
+
+        if (periodall >= 5) {
+            Swal.fire({
+                title: "จำกัดจำนวนการตั้งเวลา",
+                text: "คุณสามารถตั้งได้สูงสุด 5 ช่วงเวลาเท่านั้น",
+                icon: "warning",
+                confirmButtonText: "เข้าใจแล้ว",
+                confirmButtonColor: "#3085d6",
+                backdrop: true,
+                customClass: {
+                    popup: 'swal2-rounded',
+                }
+            });
+            const addBtn = $('#addscheduleall')
+            addBtn.prop("disabled", true);
+            addBtn.removeClass("btn-success");
+            addBtn.addClass("btn-secondary")
         }
+
+        const $li = $(`
+    <li class="col-md-12 mb-3" style="display: none;">
+      <div class="config-box">
+      <div class="col-md-12 d-flex justify-content-center align-items-center">
+      <div class="col-md-4">
+        <div class="col-md-12">
+        <div class="mb-3">
+  <h2 class="text-center">🕒 ช่วงเวลาที่ ${periodall} </h2>
+  <input type="hidden" id="noall" value="${periodall}">
+</div>
+<hr>
+        <div class="form-group">
+          <label for="scheduleall_${periodall}_start">ตั้งแต่เวลา</label>
+          <input type="text" class="form-control datetimepicker-input" id="scheduleall_${periodall}_start" data-toggle="datetimepicker" autocomplete="off" data-target="#scheduleall_${periodall}_start"/>
+        </div>
+
+        <div class="form-group">
+        <label for="scheduleall_${periodall}_end">ถึงเวลา</label>
+          <input type="text" class="form-control datetimepicker-input py-2" id="scheduleall_${periodall}_end" data-toggle="datetimepicker" autocomplete="off" data-target="#scheduleall_${periodall}_end" />
+        </div>
+        </div>
+        </div>
+
+        <div class="col-md-8">
+        <div class="sliders-wrapper">
+          <div class="slider-box">
+            <label>แสงอุ่น</label>
+            <input type="range" min="0" max="100" value="0" class="brightness-slider-warm" id="scheduleall_${periodall}_controlRangeWarm" onInput="$('#scheduleall_${periodall}_rangeWarm').html($(this).val())">
+            <div class="slider-marks">
+              <div class="slider-mark"><div>|</div><div>0</div></div>
+              <div class="slider-mark"><div>|</div><div>20</div></div>
+              <div class="slider-mark"><div>|</div><div>40</div></div>
+              <div class="slider-mark"><div>|</div><div>60</div></div>
+              <div class="slider-mark"><div>|</div><div>80</div></div>
+              <div class="slider-mark"><div>|</div><div>100</div></div>
+            </div>
+            <div class="light-info-box-warm">
+              <p class="label">กำหนดค่าแสงอุ่น</p>
+              <hr>
+              <p class="value" id="scheduleall_${periodall}_rangeWarm">0</p>
+            </div>
+          </div>
+
+          <div class="slider-box">
+            <label>แสงเย็น</label>
+            <input type="range" min="0" max="100" value="0" class="brightness-slider-cool py-2" id="scheduleall_${periodall}_controlRangeCool" onInput="$('#scheduleall_${periodall}_rangeCool').html($(this).val())">
+            <div class="slider-marks">
+              <div class="slider-mark"><div>|</div><div>0</div></div>
+              <div class="slider-mark"><div>|</div><div>20</div></div>
+              <div class="slider-mark"><div>|</div><div>40</div></div>
+              <div class="slider-mark"><div>|</div><div>60</div></div>
+              <div class="slider-mark"><div>|</div><div>80</div></div>
+              <div class="slider-mark"><div>|</div><div>100</div></div>
+            </div>
+            <div class="light-info-box-cool">
+              <p class="label">กำหนดค่าแสงเย็น</p>
+              <hr>
+              <p class="value" id="scheduleall_${periodall}_rangeCool">0</p>
+            </div>
+          </div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-end mt-4">
+          <button type="button" class="btn btn-danger btn-sm remove-all-btn" title="ลบ">
+            <i class="fa fa-trash"></i>
+          </button>
+        </div>
+        </div>
+        </div>
+      </div>
+    </li>
+  `);
+
+        $('#scheduleAllList').append($li);
+        $li.fadeIn(function () {
+            const $start = $(`#scheduleall_${periodall}_start`);
+            const $end = $(`#scheduleall_${periodall}_end`);
+            const prevPeriod = periodall - 1;
+            const nextPeriod = periodall + 1;
+            let previousStart = null;
+            let previousDuration = null;
+
+            $(`#scheduleall_${period}_rangeWarm`).text("0");
+            $(`#scheduleall_${period}_controlRangeWarm`).val("0");
+            $(`#scheduleall_${period}_rangeCool`).text("0");
+            $(`#scheduleall_${period}_controlRangeCool`).val("0");
+
+            [$start, $end].forEach($el => {
+                $el.datetimepicker({
+                    format: "HH:mm",
+                    icons: {
+                        time: 'fa fa-clock',
+                        date: 'fa fa-calendar',
+                        up: 'fa fa-chevron-up',
+                        down: 'fa fa-chevron-down',
+                        previous: 'fa fa-chevron-left',
+                        next: 'fa fa-chevron-right',
+                        today: 'fa fa-calendar-check',
+                        clear: 'fa fa-trash',
+                        close: 'fa fa-times'
+                    }
+                });
+            });
+
+
+            if (periodall > 1) {
+                const prevEndVal = $(`#scheduleall_${prevPeriod}_end`).val();
+                if (prevEndVal) {
+                    const startMoment = moment(prevEndVal, 'HH:mm');
+                    $start.datetimepicker('date', startMoment);
+                    $end.datetimepicker('date', startMoment.clone().add(1, 'hours'));
+                } else {
+                    $start.datetimepicker('date', moment('00:00', 'HH:mm'));
+                    $end.datetimepicker('date', moment('01:00', 'HH:mm'));
+                }
+            } else {
+                $start.datetimepicker('date', moment('00:00', 'HH:mm'));
+                $end.datetimepicker('date', moment('01:00', 'HH:mm'));
+            }
+
+
+
+            $start.on("show.datetimepicker", function () {
+                const start = moment($start.val(), 'HH:mm');
+                const end = moment($end.val(), 'HH:mm');
+                if (start.isValid() && end.isValid() && end.isAfter(start)) {
+                    previousStart = start.format('HH:mm');
+                    previousDuration = moment.duration(end.diff(start));
+                }
+            });
+
+            $start.on("change.datetimepicker", function (e) {
+                const start = moment(e.date, 'HH:mm');
+
+                for (let i = 1; i < periodall; i++) {
+                    const prevEndVal = $(`#scheduleall_${i}_end`).val();
+                    if (prevEndVal && start.isBefore(moment(prevEndVal, 'HH:mm'))) {
+                        Swal.fire({
+                            title: 'แจ้งเตือน',
+                            html: `<h4 style="color:#333;font-weight:normal;">ช่วงเวลาที่ ${periodall} เวลาเริ่มต้นต้องไม่เริ่มก่อนเวลาสิ้นสุดของช่วงเวลาที่ ${i}</h4>`,
+                            icon: 'warning',
+                            confirmButtonText: 'ตกลง',
+                            confirmButtonColor: '#d33',
+                            background: '#fff',
+                            customClass: {
+                                popup: 'swal2-modern-popup',
+                                title: 'swal2-modern-title',
+                                content: 'swal2-modern-content'
+                            }
+                        });
+                        if (previousStart) {
+                            $start.datetimepicker('date', moment(previousStart, 'HH:mm'));
+                        }
+                        return;
+                    }
+                }
+
+                if (start.format('HH:mm') >= '00:00' && start.format('HH:mm') < '01:00') {
+                    Swal.fire({
+                        title: 'แจ้งเตือน',
+                        html: `<h4>เวลาเริ่มต้นต้องไม่อยู่ในช่วงหลังเที่ยงคืน</h4>`,
+                        icon: 'warning',
+                        confirmButtonText: 'ตกลง',
+                        confirmButtonColor: '#d33',
+                        background: '#fff',
+                        customClass: {
+                            popup: 'swal2-modern-popup',
+                            title: 'swal2-modern-title',
+                            content: 'swal2-modern-content'
+                        }
+                    });
+
+                    if (previousStart) {
+                        $start.datetimepicker('date', moment(previousStart, 'HH:mm'));
+                    } else {
+                        $start.datetimepicker('date', moment('01:00', 'HH:mm'));
+                    }
+                    return;
+                }
+
+                const newEnd = previousDuration
+                    ? moment(start).add(previousDuration)
+                    : moment(start).add(1, 'hours');
+                $end.datetimepicker('date', newEnd);
+
+                const $nextStart = $(`#scheduleall_${nextPeriod}_start`);
+                const $nextEnd = $(`#scheduleall_${nextPeriod}_end`);
+                if ($nextStart.length && $nextEnd.length) {
+                    const nextStartVal = $nextStart.val();
+                    const nextEndVal = $nextEnd.val();
+                    let nextDuration = moment.duration(1, 'hours'); // default
+
+                    if (nextStartVal && nextEndVal) {
+                        const nextStart = moment(nextStartVal, 'HH:mm');
+                        const nextEnd = moment(nextEndVal, 'HH:mm');
+                        if (nextEnd.isAfter(nextStart)) {
+                            nextDuration = moment.duration(nextEnd.diff(nextStart));
+                        }
+                    }
+
+                    $nextStart.datetimepicker('date', newEnd);
+                    $nextEnd.datetimepicker('date', moment(newEnd).add(nextDuration));
+                }
+
+            });
+
+            let previousEnd = null;
+
+            $(`#scheduleall_${periodall}_end`).on("show.datetimepicker", function () {
+                previousEnd = $(`#scheduleall_${periodall}_end`).val();
+            });
+
+            $(`#scheduleall_${periodall}_end`).on("change.datetimepicker", function (e) {
+                const end = moment(moment(e.date).format('HH:mm'), 'HH:mm');
+                const startVal = $(`#scheduleall_${periodall}_start`).val();
+
+                if (startVal) {
+                    const start = moment(startVal, 'HH:mm');
+
+                    if (end.isSameOrBefore(start)) {
+                        Swal.fire({
+                            title: 'แจ้งเตือน',
+                            html: `<h4 style="color:#333;font-weight:normal;">
+            เวลาสิ้นสุดต้องมากกว่าเวลาเริ่มต้น
+        </h4>`,
+                            icon: 'warning',
+                            confirmButtonText: 'ตกลง',
+                            confirmButtonColor: '#d33',
+                        }).then(() => {
+                            $(`#scheduleall_${periodall}_end`).datetimepicker('date', moment(previousEnd, 'HH:mm'));
+                            return;
+                        });
+
+                        if (end.isSameOrAfter(moment('00:00', 'HH:mm')) && end.isBefore(moment('01:00', 'HH:mm'))) {
+                            Swal.fire({
+                                title: 'แจ้งเตือน',
+                                html: `<h4>เวลาสิ้นสุดของช่วงเวลาสุดท้าย ต้องไม่อยู่หลังเที่ยงคืน</h4>`,
+                                icon: 'warning',
+                                confirmButtonText: 'ตกลง',
+                                confirmButtonColor: '#d33',
+                            }).then(() => {
+                                $(`#scheduleall_${periodall}_start`).datetimepicker('date', moment('23:00', 'HH:mm'));
+                                $(`#scheduleall_${periodall}_end`).datetimepicker('date', moment('23:59', 'HH:mm'));
+                            });
+                            return;
+                        }
+                    }
+                }
+
+                const periodsall = $('[id^=scheduleall_]')
+                    .map(function () {
+                        const match = this.id.match(/scheduleall_(\d+)_start/);
+                        return match ? parseInt(match[1], 10) : null;
+                    }).get();
+
+                const maxPeriod = Math.max(...periodsall.filter(Boolean));
+
+                if (periodall === maxPeriod && end.format('HH:mm') === '00:00') {
+                    Swal.fire({
+                        title: 'แจ้งเตือน',
+                        html: `<h4 style="color:#333;font-weight:normal;">ช่วงเวลาสุดท้ายต้องไม่สิ้นสุดหรือมากกว่าเวลา 00:00</h4>`,
+                        icon: 'warning',
+                        confirmButtonText: 'ตกลง',
+                        confirmButtonColor: '#d33',
+                        background: '#fff',
+                        customClass: {
+                            popup: 'swal2-modern-popup',
+                            title: 'swal2-modern-title',
+                            content: 'swal2-modern-content'
+                        }
+                    }).then(() => {
+                        $(`#scheduleall_${periodall}_end`).datetimepicker('date', moment('23:59', 'HH:mm'));
+                    });
+                    return;
+                }
+
+                const firstStartVal = $(`#scheduleall_1_start`).val();
+                const lastEndVal = $(`#scheduleall_${maxPeriod}_end`).val();
+
+                if (firstStartVal && lastEndVal) {
+                    const firstStart = moment(firstStartVal, 'HH:mm');
+                    const firstStartNextDay = firstStart.clone().add(1, 'day');
+                    const lastEnd = moment(lastEndVal, 'HH:mm');
+
+                    let lastEndMoment = moment().set({
+                        hour: lastEnd.get('hour'),
+                        minute: lastEnd.get('minute'),
+                        second: 0,
+                        millisecond: 0
+                    });
+
+                    if (lastEndMoment.isSameOrBefore(firstStart)) {
+                        lastEndMoment.add(1, 'day');
+                    }
+
+                    if (lastEndMoment.isSameOrAfter(firstStartNextDay)) {
+                        Swal.fire({
+                            title: 'แจ้งเตือน',
+                            html: `<h4 style="color:#333;font-weight:normal;">เวลาสิ้นสุดของช่วงเวลาสุดท้ายต้องไม่เกินเวลาเริ่มต้นของช่วงที่ 1 ในวันถัดไป</h4>`,
+                            icon: 'warning',
+                            confirmButtonText: 'ตกลง',
+                            confirmButtonColor: '#d33',
+                            background: '#fff',
+                            customClass: {
+                                popup: 'swal2-modern-popup',
+                                title: 'swal2-modern-title',
+                                content: 'swal2-modern-content'
+                            }
+                        }).then(() => {
+                            for (let i = 1; i <= maxPeriod; i++) {
+                                const $start = $(`#scheduleall_${i}_start`);
+                                const $end = $(`#scheduleall_${i}_end`);
+
+                                const startVal = $start.val();
+                                const endVal = $end.val();
+
+                                if (startVal) {
+                                    const newStart = moment(startVal, 'HH:mm').subtract(1, 'hour');
+                                    $start.datetimepicker('date', newStart);
+                                }
+
+                                if (endVal) {
+                                    const newEnd = moment(endVal, 'HH:mm').subtract(1, 'hour');
+                                    $end.datetimepicker('date', newEnd);
+                                }
+                            }
+                        });
+                        return;
+                    }
+                }
+
+                const nextPeriod = periodall + 1;
+                const $nextStart = $(`#scheduleall_${nextPeriod}_start`);
+                if ($nextStart.length) {
+                    const nextStartVal = $nextStart.val();
+                    if (!nextStartVal || moment(nextStartVal, 'HH:mm').isBefore(end)) {
+                        $nextStart.datetimepicker('date', end);
+                    }
+                }
+
+            });
+
+        });
+
+        $li.find('.remove-all-btn').on('click', function () {
+
+            if (periodall <= 1) return
+
+            $li.fadeOut(function () {
+                $li.remove();
+                updatePeriodNumbersAll();
+            });
+        });
     });
 
-    let schedultab = true
+    function updatePeriodNumbersAll() {
+        $('#scheduleAllList li').each(function (index) {
+            const $li = $(this);
+            const newPeriod = index + 1;
+
+            if (newPeriod < 5) {
+                const addBtn = $('#addscheduleall')
+                addBtn.prop("disabled", false);
+                addBtn.addClass("btn-success");
+                addBtn.removeClass("btn-secondary")
+            }
+
+            $('#periodAll').text(newPeriod)
+
+            $li.find('h2.text-center').html(`🕒 ช่วงเวลาที่ ${newPeriod}`);
+            $li.find('input#no').val(newPeriod);
+
+            const $startInput = $li.find('input[id^="scheduleall_"][id$="_start"]');
+            $startInput.attr('id', `scheduleall_${newPeriod}_start`);
+            $startInput.attr('data-target', `#scheduleall_${newPeriod}_start`);
+            $li.find(`label[for^="scheduleall_"][for$="_start"]`).attr('for', `scheduleall_${newPeriod}_start`);
+
+            const $endInput = $li.find('input[id^="scheduleall_"][id$="_end"]');
+            $endInput.attr('id', `scheduleall_${newPeriod}_end`);
+            $endInput.attr('data-target', `#scheduleall_${newPeriod}_end`);
+            $li.find(`label[for^="scheduleall_"][for$="_end"]`).attr('for', `scheduleall_${newPeriod}_end`);
+
+            $li.find('input.brightness-slider-warm')
+                .attr('id', `scheduleall_${newPeriod}_controlRangeWarm`)
+                .attr('oninput', `$('#scheduleall_${newPeriod}_rangeWarm').html($(this).val())`);
+            $li.find('#' + $li.find('.light-info-box-warm .value').attr('id'))
+                .attr('id', `scheduleall_${newPeriod}_rangeWarm`)
+            // .text('0');
+
+            $li.find('input.brightness-slider-cool')
+                .attr('id', `scheduleall_${newPeriod}_controlRangeCool`)
+                .attr('oninput', `$('#scheduleall_${newPeriod}_rangeCool').html($(this).val())`);
+            $li.find('#' + $li.find('.light-info-box-cool .value').attr('id'))
+                .attr('id', `scheduleall_${newPeriod}_rangeCool`)
+            // .text('0');
+        });
+    }
+
+    $('#clearAllSchedules').on('click', function () {
+        $('#scheduleAllList li').slice(1).remove();
+
+        $('#periodAll').text('1')
+
+        const $firstLi = $('#scheduleAllList li').first();
+
+        $firstLi.find('input[id^="scheduleall_"][id$="_start"]').datetimepicker('date', moment('00:00', 'HH:mm'));
+
+        $firstLi.find('input[id^="scheduleall_"][id$="_end"]').datetimepicker('date', moment('01:00', 'HH:mm'));
+
+        $firstLi.find('input[id^="scheduleall_"][id$="_controlRangeWarm"]').val(0).trigger('input');
+        $firstLi.find('p[id^="scheduleall_"][id$="_rangeWarm"]').text('0');
+
+        $firstLi.find('input[id^="scheduleall_"][id$="_controlRangeCool"]').val(0).trigger('input');
+        $firstLi.find('p[id^="scheduleall_"][id$="_rangeCool"]').text('0');
+    });
 
     function scheduleFunction() {
+
         if (!schedultab) return
 
         const currentCount = $('#scheduleList li').length;
@@ -3088,7 +3810,7 @@
         <div class="col-md-12">
         <div class="mb-3">
   <h2 class="text-center">🕒 ช่วงเวลาที่ ${period} </h2>
-  <input type="hidden" id="noperiod" value="${period}">
+  <input type="hidden" id="no" value="${period}">
 </div>
 <hr>
         <div class="form-group">
@@ -3358,313 +4080,13 @@
         schedultab = false
     }
 
-    function scheduleAllFunction() {
-
-        if (!schedultab) return
-
-        const currentCount = $('#scheduleAllList li').length;
-        const period = currentCount + 1
-
-        const $li = $(`
-    <li class="col-md-12 mb-3" style="display: none;">
-      <div class="config-box">
-      <div class="col-md-12 d-flex justify-content-center align-items-center">
-      <div class="col-md-4">
-        <div class="col-md-12">
-        <div class="mb-3">
-  <h2 class="text-center">🕒 ช่วงเวลาที่ ${period} </h2>
-  <input type="hidden" id="no" value="${period}">
-</div>
-<hr>
-        <div class="form-group">
-          <label for="scheduleall_${period}_start">ตั้งแต่เวลา</label>
-          <input type="text" class="form-control datetimepicker-input" id="scheduleall_${period}_start" data-toggle="datetimepicker" autocomplete="off" data-target="#scheduleall_${period}_start"/>
-        </div>
-
-        <div class="form-group">
-        <label for="scheduleall_${period}_end">ถึงเวลา</label>
-          <input type="text" class="form-control datetimepicker-input" id="scheduleall_${period}_end" data-toggle="datetimepicker" autocomplete="off" data-target="#scheduleall_${period}_end" />
-        </div>
-        </div>
-        </div>
-
-        <div class="col-md-8">
-        <div class="sliders-wrapper">
-          <div class="slider-box">
-            <label>แสงอุ่น</label>
-            <input type="range" min="0" max="100" value="0" class="brightness-slider-warm py-2" id="scheduleall_${period}_controlRangeWarm" onInput="$('#scheduleall_${period}_rangeWarm').html($(this).val())">
-            <div class="slider-marks">
-              <div class="slider-mark"><div>|</div><div>0</div></div>
-              <div class="slider-mark"><div>|</div><div>20</div></div>
-              <div class="slider-mark"><div>|</div><div>40</div></div>
-              <div class="slider-mark"><div>|</div><div>60</div></div>
-              <div class="slider-mark"><div>|</div><div>80</div></div>
-              <div class="slider-mark"><div>|</div><div>100</div></div>
-            </div>
-            <div class="light-info-box-warm">
-              <p class="label">กำหนดค่าแสงอุ่น</p>
-              <hr>
-              <p class="value" id="scheduleall_${period}_rangeWarm">0</p>
-            </div>
-          </div>
-
-          <div class="slider-box">
-            <label>แสงเย็น</label>
-            <input type="range" min="0" max="100" value="0" class="brightness-slider-cool py-2" id="scheduleall_${period}_controlRangeCool" onInput="$('#scheduleall_${period}_rangeCool').html($(this).val())">
-            <div class="slider-marks">
-              <div class="slider-mark"><div>|</div><div>0</div></div>
-              <div class="slider-mark"><div>|</div><div>20</div></div>
-              <div class="slider-mark"><div>|</div><div>40</div></div>
-              <div class="slider-mark"><div>|</div><div>60</div></div>
-              <div class="slider-mark"><div>|</div><div>80</div></div>
-              <div class="slider-mark"><div>|</div><div>100</div></div>
-            </div>
-            <div class="light-info-box-cool">
-              <p class="label">กำหนดค่าแสงเย็น</p>
-              <hr>
-              <p class="value" id="scheduleall_${period}_rangeCool">0</p>
-            </div>
-          </div>
-          </div>
-        </div>
-        <div class="d-flex justify-content-end mt-4">
-          <button type="button" class="btn btn-danger btn-sm remove-btn" title="ลบ" disabled>
-            <i class="fa fa-trash"></i>
-          </button>
-        </div>
-        </div>
-        </div>
-      </div>
-    </li>
-  `);
-
-        $('#scheduleAllList').append($li);
-        $li.fadeIn(function () {
-            const $start = $(`#scheduleall_${period}_start`);
-            const $end = $(`#scheduleall_${period}_end`);
-            const prevPeriod = period - 1;
-            const nextPeriod = period + 1;
-            let previousStart = null;
-            let previousDuration = null;
-
-            [$start, $end].forEach($el => {
-                $el.datetimepicker({
-                    format: "HH:mm",
-                    icons: {
-                        time: 'fa fa-clock',
-                        date: 'fa fa-calendar',
-                        up: 'fa fa-chevron-up',
-                        down: 'fa fa-chevron-down',
-                        previous: 'fa fa-chevron-left',
-                        next: 'fa fa-chevron-right',
-                        today: 'fa fa-calendar-check',
-                        clear: 'fa fa-trash',
-                        close: 'fa fa-times'
-                    }
-                });
-            });
-
-            if (period > 1) {
-                const prevEndVal = $(`#scheduleall_${prevPeriod}_end`).val();
-                if (prevEndVal) {
-                    const startMoment = moment(prevEndVal, 'HH:mm');
-                    $start.datetimepicker('date', startMoment);
-                    $end.datetimepicker('date', startMoment.clone().add(1, 'hours'));
-                } else {
-                    $start.datetimepicker('date', moment('00:00', 'HH:mm'));
-                    $end.datetimepicker('date', moment('01:00', 'HH:mm'));
-                }
-            } else {
-                $start.datetimepicker('date', moment('00:00', 'HH:mm'));
-                $end.datetimepicker('date', moment('01:00', 'HH:mm'));
-            }
-
-            $(`#scheduleall_${period}_rangeWarm`).text("0");
-            $(`#scheduleall_${period}_controlRangeWarm`).val("0");
-            $(`#scheduleall_${period}_rangeCool`).text("0");
-            $(`#scheduleall_${period}_controlRangeCool`).val("0");
-
-            $start.on("show.datetimepicker", function () {
-                const start = moment($start.val(), 'HH:mm');
-                const end = moment($end.val(), 'HH:mm');
-                if (start.isValid() && end.isValid() && end.isAfter(start)) {
-                    previousStart = start.format('HH:mm');
-                    previousDuration = moment.duration(end.diff(start));
-                }
-            });
-
-            $start.on("change.datetimepicker", function (e) {
-                const start = moment(e.date, 'HH:mm');
-
-                const firstStartVal = $('#scheduleall_1_start').val();
-                const firstStart = moment(firstStartVal, 'HH:mm');
-
-                if (!start.isValid() || start.isSameOrAfter(moment('23:00', 'HH:mm')) || start.hour() >= 23 || firstStart.isBefore(moment('00:00', 'HH:mm'))) {
-                    Swal.fire({
-                        title: 'แจ้งเตือน',
-                        html: '<h4 style="color:#333;font-weight:normal;">เป็นเวลาของวันที่แล้ว ไม่สามารถเลือกได้</h4>',
-                        icon: 'warning',
-                        confirmButtonText: 'ตกลง',
-                        confirmButtonColor: '#d33',
-                        background: '#fff',
-                        customClass: {
-                            popup: 'swal2-modern-popup',
-                            title: 'swal2-modern-title',
-                            content: 'swal2-modern-content'
-                        }
-                    }).then(() => {
-                        $start.datetimepicker('date', moment('00:00', 'HH:mm'));
-                    });
-                    return;
-                }
-
-                // for (let i = 1; i < period; i++) {
-                //     const prevEndVal = $(`#scheduleall_${i}_end`).val();
-                //     if (prevEndVal && start.isBefore(moment(prevEndVal, 'HH:mm'))) {
-                //         Swal.fire({
-                //             title: 'แจ้งเตือน',
-                //             html: `<h4 style="color:#333;font-weight:normal;">ช่วงเวลาที่ ${period} ต้องไม่เริ่มก่อนช่วงเวลาที่ ${i}</h4>`,
-                //             icon: 'warning',
-                //             confirmButtonText: 'ตกลง',
-                //             confirmButtonColor: '#d33',
-                //             background: '#fff',
-                //             customClass: {
-                //                 popup: 'swal2-modern-popup',
-                //                 title: 'swal2-modern-title',
-                //                 content: 'swal2-modern-content'
-                //             }
-                //         });
-                //         if (previousStart) {
-                //             $start.datetimepicker('date', moment(previousStart, 'HH:mm'));
-                //         }
-                //         return;
-                //     }
-                // }
-
-                const newEnd = previousDuration
-                    ? moment(start).add(previousDuration)
-                    : moment(start).add(1, 'hours');
-                $end.datetimepicker('date', newEnd);
-
-                const $nextStart = $(`#scheduleall_${nextPeriod}_start`);
-                const $nextEnd = $(`#scheduleall_${nextPeriod}_end`);
-                if ($nextStart.length && $nextEnd.length) {
-                    const nextStartVal = $nextStart.val();
-                    const nextEndVal = $nextEnd.val();
-                    let nextDuration = moment.duration(1, 'hours'); // default
-
-                    if (nextStartVal && nextEndVal) {
-                        const nextStart = moment(nextStartVal, 'HH:mm');
-                        const nextEnd = moment(nextEndVal, 'HH:mm');
-                        if (nextEnd.isAfter(nextStart)) {
-                            nextDuration = moment.duration(nextEnd.diff(nextStart));
-                        }
-                    }
-
-                    $nextStart.datetimepicker('date', newEnd);
-                    $nextEnd.datetimepicker('date', moment(newEnd).add(nextDuration));
-                }
-
-            });
-
-            let previousEnd = null;
-
-            $(`#scheduleall_${period}_end`).on("show.datetimepicker", function () {
-                previousEnd = $(`#scheduleall_${period}_end`).val();
-            });
-
-            $(`#scheduleall_${period}_end`).on("change.datetimepicker", function (e) {
-                const end = moment(e.date, 'HH:mm');
-                const startVal = $(`#scheduleall_${period}_start`).val();
-                if (startVal) {
-                    const start = moment(startVal, 'HH:mm');
-
-                    if (period === 1 && end.isSameOrBefore(start)) {
-                        Swal.fire({
-                            title: 'แจ้งเตือน',
-                            html: `<h4 style="color:#333;font-weight:normal;">เวลาสิ้นสุดต้องมากกว่าเวลาเริ่มต้น</h4>`,
-                            icon: 'warning',
-                            confirmButtonText: 'ตกลง',
-                            confirmButtonColor: '#d33',
-                            background: '#fff',
-                            customClass: {
-                                popup: 'swal2-modern-popup',
-                                title: 'swal2-modern-title',
-                                content: 'swal2-modern-content'
-                            }
-                        });
-
-                        const startVal = $(`#scheduleall_${period}_start`).val();
-                        if (startVal) {
-                            const newEnd = moment(startVal, 'HH:mm').add(1, 'hours');
-                            $(`#scheduleall_${period}_end`).datetimepicker('date', newEnd);
-                        }
-                        return;
-                    }
-                }
-
-                for (let i = 1; i < period; i++) {
-                    const prevEndVal = $(`#scheduleall_${i}_end`).val();
-                    if (prevEndVal) {
-                        const prevEnd = moment(prevEndVal, 'HH:mm');
-                        if (end.isBefore(prevEnd)) {
-                            Swal.fire({
-                                title: 'แจ้งเตือน',
-                                html: `<h4 style="color:#333;font-weight:normal;">ช่วงเวลาที่ ${period} ต้องสิ้นสุดหลังจากช่วงเวลาที่ ${i}</h4>`,
-                                icon: 'warning',
-                                confirmButtonText: 'ตกลง',
-                                confirmButtonColor: '#d33',
-                                background: '#fff',
-                                customClass: {
-                                    popup: 'swal2-modern-popup',
-                                    title: 'swal2-modern-title',
-                                    content: 'swal2-modern-content'
-                                }
-                            });
-
-                            $(`#scheduleall_${period}_end`).datetimepicker('date', prevEnd); // <<< ใช้ prevEnd
-                            return;
-                        }
-                    }
-                }
-
-                const nextPeriod = period + 1;
-                const $nextStart = $(`#scheduleall_${nextPeriod}_start`);
-                if ($nextStart.length) {
-                    const nextStartVal = $nextStart.val();
-                    if (!nextStartVal || moment(nextStartVal, 'HH:mm').isBefore(end)) {
-                        $nextStart.datetimepicker('date', end);
-                    }
-                }
-
-            });
-        });
-
-        schedultab = false
-    }
-
-    function addTask(taskText) {
-        const taskList = $('#tasklist');
-
-        const li = $("<li></li>");
-        const spanText = $("<span></span>").text(taskText).on("click", function () {
-            $(this).parent().toggleClass("done");
-        });
-        const spanRemove = $("<span class='remove'>×</span>").on("click", function () {
-            $(this).parent().remove();
-        });
-
-        li.append(spanText, spanRemove);
-        taskList.append(li);
-    }
-
     document.querySelector('#addschedule').addEventListener('click', function (e) {
         e.preventDefault();
 
-        const currentCount = $('#scheduleAllList li').length;
+        const currentCount = $('#scheduleList li').length;
         const period = currentCount + 1;
 
-        $('#periodAll').text(period)
+        $('#period').text(period)
 
         if (period > 5) return
 
@@ -3698,13 +4120,13 @@
 </div>
 <hr>
         <div class="form-group">
-          <label for="scheduleall_${period}_start">ตั้งแต่เวลา</label>
-          <input type="text" class="form-control datetimepicker-input" id="scheduleall_${period}_start" data-toggle="datetimepicker" autocomplete="off" data-target="#scheduleall_${period}_start"/>
+          <label for="schedule_${period}_start">ตั้งแต่เวลา</label>
+          <input type="text" class="form-control datetimepicker-input" id="schedule_${period}_start" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_${period}_start"/>
         </div>
 
         <div class="form-group">
-        <label for="scheduleall_${period}_end">ถึงเวลา</label>
-          <input type="text" class="form-control datetimepicker-input py-2" id="scheduleall_${period}_end" data-toggle="datetimepicker" autocomplete="off" data-target="#scheduleall_${period}_end" />
+        <label for="schedule_${period}_end">ถึงเวลา</label>
+          <input type="text" class="form-control datetimepicker-input py-2" id="schedule_${period}_end" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_${period}_end" />
         </div>
         </div>
         </div>
@@ -3713,7 +4135,7 @@
         <div class="sliders-wrapper">
           <div class="slider-box">
             <label>แสงอุ่น</label>
-            <input type="range" min="0" max="100" value="0" class="brightness-slider-warm" id="scheduleall_${period}_controlRangeWarm" onInput="$('#scheduleall_${period}_rangeWarm').html($(this).val())">
+            <input type="range" min="0" max="100" value="0" class="brightness-slider-warm" id="schedule_${period}_controlRangeWarm" onInput="$('#schedule_${period}_rangeWarm').html($(this).val())">
             <div class="slider-marks">
               <div class="slider-mark"><div>|</div><div>0</div></div>
               <div class="slider-mark"><div>|</div><div>20</div></div>
@@ -3725,13 +4147,13 @@
             <div class="light-info-box-warm">
               <p class="label">กำหนดค่าแสงอุ่น</p>
               <hr>
-              <p class="value" id="scheduleall_${period}_rangeWarm">0</p>
+              <p class="value" id="schedule_${period}_rangeWarm">0</p>
             </div>
           </div>
 
           <div class="slider-box">
             <label>แสงเย็น</label>
-            <input type="range" min="0" max="100" value="0" class="brightness-slider-cool py-2" id="scheduleall_${period}_controlRangeCool" onInput="$('#scheduleall_${period}_rangeCool').html($(this).val())">
+            <input type="range" min="0" max="100" value="0" class="brightness-slider-cool py-2" id="schedule_${period}_controlRangeCool" onInput="$('#schedule_${period}_rangeCool').html($(this).val())">
             <div class="slider-marks">
               <div class="slider-mark"><div>|</div><div>0</div></div>
               <div class="slider-mark"><div>|</div><div>20</div></div>
@@ -3743,7 +4165,7 @@
             <div class="light-info-box-cool">
               <p class="label">กำหนดค่าแสงเย็น</p>
               <hr>
-              <p class="value" id="scheduleall_${period}_rangeCool">0</p>
+              <p class="value" id="schedule_${period}_rangeCool">0</p>
             </div>
           </div>
           </div>
@@ -3759,19 +4181,19 @@
     </li>
   `);
 
-        $('#scheduleAllList').append($li);
+        $('#scheduleList').append($li);
         $li.fadeIn(function () {
-            const $start = $(`#scheduleall_${period}_start`);
-            const $end = $(`#scheduleall_${period}_end`);
+            const $start = $(`#schedule_${period}_start`);
+            const $end = $(`#schedule_${period}_end`);
             const prevPeriod = period - 1;
             const nextPeriod = period + 1;
             let previousStart = null;
             let previousDuration = null;
 
-            $(`#scheduleall_${period}_rangeWarm`).text("0");
-            $(`#scheduleall_${period}_controlRangeWarm`).val("0");
-            $(`#scheduleall_${period}_rangeCool`).text("0");
-            $(`#scheduleall_${period}_controlRangeCool`).val("0");
+            $(`#schedule_${period}_rangeWarm`).text("0");
+            $(`#schedule_${period}_controlRangeWarm`).val("0");
+            $(`#schedule_${period}_rangeCool`).text("0");
+            $(`#schedule_${period}_controlRangeCool`).val("0");
 
             [$start, $end].forEach($el => {
                 $el.datetimepicker({
@@ -3792,7 +4214,7 @@
 
 
             if (period > 1) {
-                const prevEndVal = $(`#scheduleall_${prevPeriod}_end`).val();
+                const prevEndVal = $(`#schedule_${prevPeriod}_end`).val();
                 if (prevEndVal) {
                     const startMoment = moment(prevEndVal, 'HH:mm');
                     $start.datetimepicker('date', startMoment);
@@ -3821,7 +4243,7 @@
                 const start = moment(e.date, 'HH:mm');
 
                 for (let i = 1; i < period; i++) {
-                    const prevEndVal = $(`#scheduleall_${i}_end`).val();
+                    const prevEndVal = $(`#schedule_${i}_end`).val();
                     if (prevEndVal && start.isBefore(moment(prevEndVal, 'HH:mm'))) {
                         Swal.fire({
                             title: 'แจ้งเตือน',
@@ -3871,8 +4293,8 @@
                     : moment(start).add(1, 'hours');
                 $end.datetimepicker('date', newEnd);
 
-                const $nextStart = $(`#scheduleall_${nextPeriod}_start`);
-                const $nextEnd = $(`#scheduleall_${nextPeriod}_end`);
+                const $nextStart = $(`#schedule_${nextPeriod}_start`);
+                const $nextEnd = $(`#schedule_${nextPeriod}_end`);
                 if ($nextStart.length && $nextEnd.length) {
                     const nextStartVal = $nextStart.val();
                     const nextEndVal = $nextEnd.val();
@@ -3894,13 +4316,13 @@
 
             let previousEnd = null;
 
-            $(`#scheduleall_${period}_end`).on("show.datetimepicker", function () {
-                previousEnd = $(`#scheduleall_${period}_end`).val();
+            $(`#schedule_${period}_end`).on("show.datetimepicker", function () {
+                previousEnd = $(`#schedule_${period}_end`).val();
             });
 
-            $(`#scheduleall_${period}_end`).on("change.datetimepicker", function (e) {
+            $(`#schedule_${period}_end`).on("change.datetimepicker", function (e) {
                 const end = moment(moment(e.date).format('HH:mm'), 'HH:mm');
-                const startVal = $(`#scheduleall_${period}_start`).val();
+                const startVal = $(`#schedule_${period}_start`).val();
 
                 if (startVal) {
                     const start = moment(startVal, 'HH:mm');
@@ -3915,7 +4337,7 @@
                             confirmButtonText: 'ตกลง',
                             confirmButtonColor: '#d33',
                         }).then(() => {
-                            $(`#scheduleall_${period}_end`).datetimepicker('date', moment(previousEnd, 'HH:mm'));
+                            $(`#schedule_${period}_end`).datetimepicker('date', moment(previousEnd, 'HH:mm'));
                             return;
                         });
 
@@ -3927,17 +4349,17 @@
                                 confirmButtonText: 'ตกลง',
                                 confirmButtonColor: '#d33',
                             }).then(() => {
-                                $(`#scheduleall_${period}_start`).datetimepicker('date', moment('23:00', 'HH:mm'));
-                                $(`#scheduleall_${period}_end`).datetimepicker('date', moment('23:59', 'HH:mm'));
+                                $(`#schedule_${period}_start`).datetimepicker('date', moment('23:00', 'HH:mm'));
+                                $(`#schedule_${period}_end`).datetimepicker('date', moment('23:59', 'HH:mm'));
                             });
                             return;
                         }
                     }
                 }
 
-                const periods = $('[id^=scheduleall_]')
+                const periods = $('[id^=schedule_]')
                     .map(function () {
-                        const match = this.id.match(/scheduleall_(\d+)_start/);
+                        const match = this.id.match(/schedule_(\d+)_start/);
                         return match ? parseInt(match[1], 10) : null;
                     }).get();
 
@@ -3957,13 +4379,13 @@
                             content: 'swal2-modern-content'
                         }
                     }).then(() => {
-                        $(`#scheduleall_${period}_end`).datetimepicker('date', moment('23:59', 'HH:mm'));
+                        $(`#schedule_${period}_end`).datetimepicker('date', moment('23:59', 'HH:mm'));
                     });
                     return;
                 }
 
-                const firstStartVal = $(`#scheduleall_1_start`).val();
-                const lastEndVal = $(`#scheduleall_${maxPeriod}_end`).val();
+                const firstStartVal = $(`#schedule_1_start`).val();
+                const lastEndVal = $(`#schedule_${maxPeriod}_end`).val();
 
                 if (firstStartVal && lastEndVal) {
                     const firstStart = moment(firstStartVal, 'HH:mm');
@@ -3996,8 +4418,8 @@
                             }
                         }).then(() => {
                             for (let i = 1; i <= maxPeriod; i++) {
-                                const $start = $(`#scheduleall_${i}_start`);
-                                const $end = $(`#scheduleall_${i}_end`);
+                                const $start = $(`#schedule_${i}_start`);
+                                const $end = $(`#schedule_${i}_end`);
 
                                 const startVal = $start.val();
                                 const endVal = $end.val();
@@ -4018,7 +4440,7 @@
                 }
 
                 const nextPeriod = period + 1;
-                const $nextStart = $(`#scheduleall_${nextPeriod}_start`);
+                const $nextStart = $(`#schedule_${nextPeriod}_start`);
                 if ($nextStart.length) {
                     const nextStartVal = $nextStart.val();
                     if (!nextStartVal || moment(nextStartVal, 'HH:mm').isBefore(end)) {
@@ -4042,7 +4464,7 @@
     });
 
     function updatePeriodNumbers() {
-        $('#scheduleAllList li').each(function (index) {
+        $('#scheduleList li').each(function (index) {
             const $li = $(this);
             const newPeriod = index + 1;
 
@@ -4053,54 +4475,53 @@
                 addBtn.removeClass("btn-secondary")
             }
 
-            $('#periodAll').text(newPeriod)
+            $('#period').text(newPeriod)
 
             $li.find('h2.text-center').html(`🕒 ช่วงเวลาที่ ${newPeriod}`);
             $li.find('input#no').val(newPeriod);
 
-            const $startInput = $li.find('input[id^="scheduleall_"][id$="_start"]');
-            $startInput.attr('id', `scheduleall_${newPeriod}_start`);
-            $startInput.attr('data-target', `#scheduleall_${newPeriod}_start`);
-            $li.find(`label[for^="scheduleall_"][for$="_start"]`).attr('for', `scheduleall_${newPeriod}_start`);
+            const $startInput = $li.find('input[id^="schedule_"][id$="_start"]');
+            $startInput.attr('id', `schedule_${newPeriod}_start`);
+            $startInput.attr('data-target', `#schedule_${newPeriod}_start`);
+            $li.find(`label[for^="schedule_"][for$="_start"]`).attr('for', `schedule_${newPeriod}_start`);
 
-            const $endInput = $li.find('input[id^="scheduleall_"][id$="_end"]');
-            $endInput.attr('id', `scheduleall_${newPeriod}_end`);
-            $endInput.attr('data-target', `#scheduleall_${newPeriod}_end`);
-            $li.find(`label[for^="scheduleall_"][for$="_end"]`).attr('for', `scheduleall_${newPeriod}_end`);
+            const $endInput = $li.find('input[id^="schedule_"][id$="_end"]');
+            $endInput.attr('id', `schedule_${newPeriod}_end`);
+            $endInput.attr('data-target', `#schedule_${newPeriod}_end`);
+            $li.find(`label[for^="schedule_"][for$="_end"]`).attr('for', `schedule_${newPeriod}_end`);
 
             $li.find('input.brightness-slider-warm')
-                .attr('id', `scheduleall_${newPeriod}_controlRangeWarm`)
-                .attr('oninput', `$('#scheduleall_${newPeriod}_rangeWarm').html($(this).val())`);
+                .attr('id', `schedule_${newPeriod}_controlRangeWarm`)
+                .attr('oninput', `$('#schedule_${newPeriod}_rangeWarm').html($(this).val())`);
             $li.find('#' + $li.find('.light-info-box-warm .value').attr('id'))
-                .attr('id', `scheduleall_${newPeriod}_rangeWarm`)
+                .attr('id', `schedule_${newPeriod}_rangeWarm`)
             // .text('0');
 
             $li.find('input.brightness-slider-cool')
-                .attr('id', `scheduleall_${newPeriod}_controlRangeCool`)
-                .attr('oninput', `$('#scheduleall_${newPeriod}_rangeCool').html($(this).val())`);
+                .attr('id', `schedule_${newPeriod}_controlRangeCool`)
+                .attr('oninput', `$('#schedule_${newPeriod}_rangeCool').html($(this).val())`);
             $li.find('#' + $li.find('.light-info-box-cool .value').attr('id'))
-                .attr('id', `scheduleall_${newPeriod}_rangeCool`)
+                .attr('id', `schedule_${newPeriod}_rangeCool`)
             // .text('0');
         });
     }
 
-    $('#clearAllSchedules').on('click', function () {
-        $('#scheduleAllList li').slice(1).remove();
+    $('#clearSchedules').on('click', function () {
+        $('#scheduleList li').slice(1).remove();
 
-        const $firstLi = $('#scheduleAllList li').first();
+        $('#period').text('1')
 
-        $firstLi.find('input[id^="scheduleall_"][id$="_start"]').datetimepicker('date', moment('00:00', 'HH:mm'));
+        const $firstLi = $('#scheduleList li').first();
 
-        $firstLi.find('input[id^="scheduleall_"][id$="_end"]').datetimepicker('date', moment('01:00', 'HH:mm'));
+        $firstLi.find('input[id^="schedule_"][id$="_start"]').datetimepicker('date', moment('00:00', 'HH:mm'));
 
-        $firstLi.find('input[id^="scheduleall_"][id$="_controlRangeWarm"]').val(0).trigger('input');
-        $firstLi.find('p[id^="scheduleall_"][id$="_rangeWarm"]').text('0');
+        $firstLi.find('input[id^="schedule_"][id$="_end"]').datetimepicker('date', moment('01:00', 'HH:mm'));
 
-        $firstLi.find('input[id^="scheduleall_"][id$="_controlRangeCool"]').val(0).trigger('input');
-        $firstLi.find('p[id^="scheduleall_"][id$="_rangeCool"]').text('0');
+        $firstLi.find('input[id^="schedule_"][id$="_controlRangeWarm"]').val(0).trigger('input');
+        $firstLi.find('p[id^="schedule_"][id$="_rangeWarm"]').text('0');
+
+        $firstLi.find('input[id^="schedule_"][id$="_controlRangeCool"]').val(0).trigger('input');
+        $firstLi.find('p[id^="schedule_"][id$="_rangeCool"]').text('0');
     });
-
-
-
 
 })

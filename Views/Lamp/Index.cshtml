@@ -150,7 +150,7 @@
                             <a class="nav-link active" id="manualAll-tab" data-toggle="pill" data-target="#manualAll" type="button" role="tab" aria-controls="manualAll" aria-selected="true">กำหนดการทำงานด้วยตนเอง(Manual)</a>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link" id="autoAll-tab" data-toggle="pill" data-target="#autoAll" type="button" role="tab" aria-controls="autoAll" aria-selected="false">ตั้งเวลาทำงานอัตโนมัติ(Schedule)</a>
+                            <a class="nav-link" id="scheduleAll-tab" data-toggle="pill" data-target="#autoAll" type="button" role="tab" aria-controls="autoAll" aria-selected="false">ตั้งเวลาทำงานอัตโนมัติ(Schedule)</a>
                         </li>
                     </ul>
                     <hr>
@@ -253,7 +253,7 @@
                     </div>
                 </div>
                     </div>
-                    <div class="tab-pane fade" id="autoAll" role="tabpanel" aria-labelledby="autoAll-tab">
+                    <div class="tab-pane fade" id="autoAll" role="tabpanel" aria-labelledby="scheduleAll-tab">
                     <!-- <div class="mn4">
                             <div class="row">
                                 <label class="form-group col-md-12 has-float-label" for="scheduleall_1_no">
@@ -728,12 +728,6 @@
                         </div>
                     </div> --> 
                     <!-- //mn4 -->
-                
-                    <!-- <div class="input-section">
-                    <input type="text" id="taskInput" placeholder="Add new task..." />
-                    <button id="addtaskbtn">Add</button>
-                    </div>
-                    <ul id="tasklist"></ul> -->
 
                     <div class="d-flex flex-column justify-content-center">
                      <!-- <div class="config-box col-md-6">
@@ -741,7 +735,7 @@
 
                         <div class="form-group col-md-12">
                         <div class="actions d-flex align-items-center gap-3">
-                            <button class="btn btn-success actionbtn rounded-pill d-flex align-items-center gap-2 px-4 py-2" id="addschedule" type="submit">
+                            <button class="btn btn-success actionbtn rounded-pill d-flex align-items-center gap-2 px-4 py-2" id="addscheduleall" type="submit">
                                 <i class="mdi mdi-plus mr-1"></i>
                                 <span>เพิ่มช่วงเวลา</span>
                             </button>
@@ -1165,7 +1159,7 @@
                 </div>
                 </div>
                 <div class="tab-pane fade" id="schedule" role="tabpanel" aria-labelledby="schedule-tab">
-                    <div id="controlActionSchedule">
+                   <div id="controlActionSchedule" class="row g-3">
 
                         <!-- <div class="form-check col-md-12 light-status-wrapper mb-3 d-none">
                             <div id="bulbIcon2" class="light-icon light-on">💡</div>
@@ -1180,13 +1174,19 @@
                                    data-width="100"
                                    id="controlRelayState2">
                         </div> -->
+                        
+                        <div class="col-12 d-flex flex-wrap align-items-center gap-3 mb-3">
+                            <button class="btn btn-success actionbtn rounded-pill d-flex align-items-center gap-2 px-4 py-2" id="addschedule" type="submit">
+                                <i class="mdi mdi-plus"></i>
+                                <span>เพิ่มช่วงเวลา</span>
+                            </button>
+                            <span class="ml-2 badge bg-light text-dark fs-5 px-3 py-2 shadow-sm rounded-pill border">เพิ่มทั้งหมด <a id="period">1</a> ช่วงเวลา
+                            </span>
+                        </div>
 
-                        <div class="mn2 col-md-12">
-                                <div>
-                                <ul id="scheduleList" class="d-flex flex-column justify-content-center p-0">
-                                </ul>
-                            </div>
-aaaaaa
+                        <div class="col-12">
+                            <ul id="scheduleList" class="list-unstyled d-flex flex-column gap-3">
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -1402,7 +1402,7 @@ aaaaaa
                 <div class="flex-fill">
                     <p id="controlUpdatedAt" class="text-secondary d-none"></p>
                 </div>
-                <button type="button" class="btn btn-outline-secondary btn-sm md-close" data-dismiss="modal">
+                <button type="button" id="clearSchedules" class="btn btn-outline-secondary btn-sm md-close" data-dismiss="modal">
                     <i class="mdi mdi-close"></i>
                 </button>
                 <button id="control-send-manual" type="button" class="btn btn-success btn-sm d-none">
