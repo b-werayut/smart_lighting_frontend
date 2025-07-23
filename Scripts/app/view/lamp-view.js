@@ -2448,7 +2448,7 @@
         let datasarr = []
 
         for (let i = 1; i <= 5; i++) {
-            const no = $(`#schedule_${i}_no`).val()
+            const no = i
             const start = $(`#schedule_${i}_start`).val()
             const end = $(`#schedule_${i}_end`).val()
             if (no && start && end) {
@@ -2462,14 +2462,14 @@
             }
         }
 
-        let datas = { macAddress: mac, schedule: datasarr }
+        let payload = { macAddress: mac, schedule: datasarr }
         console.log(datas)
         const options = {
             method: "POST",
             headers: {
                 "Content-Type": "application/json; charset=utf-8"
             },
-            body: JSON.stringify(datas)
+            body: JSON.stringify(payload)
         };
 
         Swal.fire({
@@ -2584,11 +2584,11 @@
 
         }
 
-        schedulDatas.forEach(items => {
-            console.log(items)
-        })
+        // schedulDatas.forEach(items => {
+        //     console.log(items)
+        // })
 
-        const datas = { group: group, schedule: schedulDatas }
+        const payload = { group: group, schedule: schedulDatas }
         console.log('datas', datas)
 
         // schedulDatas.forEach(items =>{
@@ -2600,7 +2600,7 @@
             headers: {
                 "Content-Type": "application/json; charset=utf-8"
             },
-            body: JSON.stringify(datas)
+            body: JSON.stringify(payload)
         }
 
         Swal.fire({
