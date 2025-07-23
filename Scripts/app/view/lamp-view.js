@@ -2445,222 +2445,245 @@
         const macAddress = $('#controlLampSerialNo').val()
         const endpoint = "http://85.204.247.82:3002/api/setschedule"
         const mac = macAddress
-        let datasarr = []
+        let schedulDatas = [];
+        let filledCount = 0;
+
+        const totalActiveSlots = $('#scheduleList li').length;
 
         for (let i = 1; i <= 5; i++) {
-            const no = i
-            const start = $(`#schedule_${i}_start`).val()
-            const end = $(`#schedule_${i}_end`).val()
-            if (no && start && end) {
-                datasarr.push({
-                    no: no,
-                    starttime: start,
-                    endtime: end,
-                    warmval: $(`#schedule_${i}_controlRangeWarm`).val(),
-                    coolval: $(`#schedule_${i}_controlRangeCool`).val()
-                })
+            let starttime = ($(`#schedule_${i}_start`).val() ?? "").trim();
+            let endtime = ($(`#schedule_${i}_end`).val() ?? "").trim();
+            let warmval = ($(`#schedule_${i}_controlRangeWarm`).val() ?? "").trim();
+            let coolval = ($(`#schedule_${i}_controlRangeCool`).val() ?? "").trim();
+
+            let hasData = starttime || endtime || warmval || coolval;
+
+            let active = false;
+
+            if (hasData && filledCount < totalActiveSlots) {
+                active = true;
+                filledCount++;
             }
-        }
 
-        let payload = { macAddress: mac, schedule: datasarr }
-        console.log(datas)
-        const options = {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json; charset=utf-8"
-            },
-            body: JSON.stringify(payload)
-        };
-
-        Swal.fire({
-            title: '🔄 กำลังส่งคำสั่ง...',
-            html: `
-                <div style="font-size: 16px; color: #555;">
-                    กำลังส่งคำสั่งให้อุปกรณ์ <strong>${macAddress}</strong><br>
-                    กรุณารอสักครู่...
-                </div>
-            `,
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            showConfirmButton: false,
-            timerProgressBar: true,
-            didOpen: () => {
-                Swal.showLoading()
-            }
-        });
-
-        try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            const resp = await fetch(endpoint, options);
-            const obj = await resp.json();
-
-            Swal.fire({
-                position: "center",
-                icon: 'success',
-                title: "สำเร็จ",
-                html: `<div style="padding: 12px; background-color: #e6f4ea; border: 1px solid #a3d9a5; border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2e7d32;">
-          ✅ ส่งคำสั่งสำเร็จ <strong style="color: #1b5e20;">${macAddress}</strong> สำเร็จ
-        </div>`,
-                showConfirmButton: false,
-                timer: 1500
-            })
-            // setTimeout(() => {
-            //     $('#controlInfoModal').modal('hide')
-            // }, 1500);
-            $(this).prop('disabled', true);
-            setTimeout(() => {
-                $(this).prop('disabled', false);
-            }, 7000);
-
-        } catch (err) {
-            console.error("เกิดข้อผิดพลาด:", err);
-            Swal.fire({
-                position: "center",
-                icon: 'error',
-                title: "❌ ผิดพลาด!",
-                html: `
-                <div style="font-size: 16px; color: #b71c1c;">
-                    🚫 <strong>ส่งคำสั่งไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
-                </div>
-            `,
-                showConfirmButton: false,
-                timer: 1500
+            schedulDatas.push({
+                no: i,
+                active,
+                starttime: starttime || "00:00",
+                endtime: endtime || "00:00",
+                warmval: warmval || "0",
+                coolval: coolval || "0"
             });
         }
+
+        let payload = { macAddress: mac, schedule: schedulDatas }
+        console.log(payload)
+
+        // const options = {
+        //     method: "POST",
+        //     headers: {
+        //         "Content-Type": "application/json; charset=utf-8"
+        //     },
+        //     body: JSON.stringify(payload)
+        // };
+
+        // Swal.fire({
+        //     title: '🔄 กำลังส่งคำสั่ง...',
+        //     html: `
+        //         <div style="font-size: 16px; color: #555;">
+        //             กำลังส่งคำสั่งให้อุปกรณ์ <strong>${macAddress}</strong><br>
+        //             กรุณารอสักครู่...
+        //         </div>
+        //     `,
+        //     allowOutsideClick: false,
+        //     allowEscapeKey: false,
+        //     showConfirmButton: false,
+        //     timerProgressBar: true,
+        //     didOpen: () => {
+        //         Swal.showLoading()
+        //     }
+        // });
+
+        // try {
+        //     await new Promise(resolve => setTimeout(resolve, 1000));
+
+        //     const resp = await fetch(endpoint, options);
+        //     const obj = await resp.json();
+
+        //     Swal.fire({
+        //         position: "center",
+        //         icon: 'success',
+        //         title: "สำเร็จ",
+        //         html: `<div style="padding: 12px; background-color: #e6f4ea; border: 1px solid #a3d9a5; border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2e7d32;">
+        //   ✅ ส่งคำสั่งสำเร็จ <strong style="color: #1b5e20;">${macAddress}</strong> สำเร็จ
+        // </div>`,
+        //         showConfirmButton: false,
+        //         timer: 1500
+        //     })
+        //     // setTimeout(() => {
+        //     //     $('#controlInfoModal').modal('hide')
+        //     // }, 1500);
+        //     $(this).prop('disabled', true);
+        //     setTimeout(() => {
+        //         $(this).prop('disabled', false);
+        //     }, 7000);
+
+        // } catch (err) {
+        //     console.error("เกิดข้อผิดพลาด:", err);
+        //     Swal.fire({
+        //         position: "center",
+        //         icon: 'error',
+        //         title: "❌ ผิดพลาด!",
+        //         html: `
+        //         <div style="font-size: 16px; color: #b71c1c;">
+        //             🚫 <strong>ส่งคำสั่งไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
+        //         </div>
+        //     `,
+        //         showConfirmButton: false,
+        //         timer: 1500
+        //     });
+        // }
     })
 
     $('#control-send-all-schedule').click(async function () {
         const group = $('#groupSelect').val()
         const endpoint = 'http://85.204.247.82:3002/api/setallschedule'
-        const schedulDatas = []
+        let schedulDatas = [];
+        let filledCount = 0;
 
-        // $('#schedulelist li').each(function (index) {
-        //     const no = index + 1
-        //     const starttime = $(`#scheduleall_${no}_start`).val()
-        //     const endtime = $(`#scheduleall_${no}_end`).val()
-        //     const warmval = $(`#scheduleall_${no}_controlRangeWarm`).val()
-        //     const coolval = $(`#scheduleall_${no}_controlRangeCool`).val()
+        const totalActiveSlots = $('#scheduleAllList li').length;
 
-        //     const schedulVal = {
+        for (let i = 1; i <= 5; i++) {
+            let starttime = ($(`#scheduleall_${i}_start`).val() ?? "").trim();
+            let endtime = ($(`#scheduleall_${i}_end`).val() ?? "").trim();
+            let warmval = ($(`#scheduleall_${i}_controlRangeWarm`).val() ?? "").trim();
+            let coolval = ($(`#scheduleall_${i}_controlRangeCool`).val() ?? "").trim();
+
+            let hasData = starttime || endtime || warmval || coolval;
+
+            let active = false;
+
+            if (hasData && filledCount < totalActiveSlots) {
+                active = true;
+                filledCount++;
+            }
+
+            schedulDatas.push({
+                no: i,
+                active,
+                starttime: starttime || "00:00",
+                endtime: endtime || "00:00",
+                warmval: warmval || "0",
+                coolval: coolval || "0"
+            });
+        }
+
+        //new logic
+        // for (let i = 1; i <= 5; i++) {
+        //     let no = i
+        //     let active = true
+        //     let starttime = ($(`#scheduleall_${no}_start`).val() ?? "").trim();
+        //     let endtime = ($(`#scheduleall_${no}_end`).val() ?? "").trim();
+        //     let warmval = ($(`#scheduleall_${no}_controlRangeWarm`).val() ?? "").trim();
+        //     let coolval = ($(`#scheduleall_${no}_controlRangeCool`).val() ?? "").trim();
+
+        //     if (!starttime && !endtime && !warmval && !coolval) active = false
+        //     // if (starttime === '00:00' && endtime === '00:00' && warmval === '0' && coolval === '0') active = false
+        //     // if (endtime <= starttime) starttime = '00:00', endtime = '00:00', active = false
+        //     // if (!starttime && !endtime) starttime = '00:00', endtime = '00:00'
+        //     // if (!warmval && !coolval) warmval = '0', coolval = '0'
+
+        //     // if (warmval === '0' && coolval === '0') active = false
+
+        //     const datas = {
         //         no,
+        //         active,
         //         starttime,
         //         endtime,
         //         warmval,
         //         coolval
         //     }
 
-        //     schedulDatas.push(schedulVal)
-        // })
+        //     schedulDatas.push(datas)
 
-
-        //new logic
-        for (let i = 1; i <= 5; i++) {
-            let no = i
-            let active = true
-            let starttime = ($(`#scheduleall_${no}_start`).val() ?? "").trim();
-            let endtime = ($(`#scheduleall_${no}_end`).val() ?? "").trim();
-            let warmval = ($(`#scheduleall_${no}_controlRangeWarm`).val() ?? "").trim();
-            let coolval = ($(`#scheduleall_${no}_controlRangeCool`).val() ?? "").trim();
-
-            // if (!starttime && !endtime && !warmval && !coolval) active = false
-            // if (starttime === '00:00' && endtime === '00:00' && warmval === '0' && coolval === '0') active = false
-            // if (endtime <= starttime) starttime = '00:00', endtime = '00:00', active = false
-            // if (!starttime && !endtime) starttime = '00:00', endtime = '00:00'
-            // if (!warmval && !coolval) warmval = '0', coolval = '0'
-
-            // if (warmval === '0' && coolval === '0') active = false
-
-            const datas = {
-                no,
-                active,
-                starttime,
-                endtime,
-                warmval,
-                coolval
-            }
-
-            schedulDatas.push(datas)
-
-        }
+        // }
 
         // schedulDatas.forEach(items => {
         //     console.log(items)
         // })
 
         const payload = { group: group, schedule: schedulDatas }
-        console.log('datas', datas)
+        console.log('payload', payload)
 
         // schedulDatas.forEach(items =>{
         //     console.log(items)
         // })
 
-        const options = {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json; charset=utf-8"
-            },
-            body: JSON.stringify(payload)
-        }
+        // const options = {
+        //     method: "POST",
+        //     headers: {
+        //         "Content-Type": "application/json; charset=utf-8"
+        //     },
+        //     body: JSON.stringify(payload)
+        // }
 
-        Swal.fire({
-            title: '<span>🔄 กำลังดำเนินการ...</span>',
-            html: `
-            <div style="font-size: 16px; color: #555;">
-                กำลังส่งคำสั่งทุกอุปกรณ์<br>
-                กรุณารอสักครู่...
-            </div>
-        `,
-            timerProgressBar: true,
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            showConfirmButton: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        })
+        // Swal.fire({
+        //     title: '<span>🔄 กำลังดำเนินการ...</span>',
+        //     html: `
+        //     <div style="font-size: 16px; color: #555;">
+        //         กำลังส่งคำสั่งทุกอุปกรณ์<br>
+        //         กรุณารอสักครู่...
+        //     </div>
+        // `,
+        //     timerProgressBar: true,
+        //     allowOutsideClick: false,
+        //     allowEscapeKey: false,
+        //     showConfirmButton: false,
+        //     didOpen: () => {
+        //         Swal.showLoading();
+        //     }
+        // })
 
-        try {
-            const resp = await fetch(endpoint, options);
-            const obj = await resp.json();
-            console.log('response', obj.status)
+        // try {
+        //     const resp = await fetch(endpoint, options);
+        //     const obj = await resp.json();
+        //     console.log('response', obj.status)
 
-            Swal.fire({
-                position: "center",
-                icon: 'success',
-                title: '✅ สำเร็จ!',
-                html: `
-            <div style="font-size: 16px; color: #2e7d32;">
-                ส่งคำสั่งไปยังทุกอุปกรณ์ <strong>สำเร็จ</strong>
-            </div>
-        `,
-                showConfirmButton: false,
-                timer: 2000
-            })
+        //     Swal.fire({
+        //         position: "center",
+        //         icon: 'success',
+        //         title: '✅ สำเร็จ!',
+        //         html: `
+        //     <div style="font-size: 16px; color: #2e7d32;">
+        //         ส่งคำสั่งไปยังทุกอุปกรณ์ <strong>สำเร็จ</strong>
+        //     </div>
+        // `,
+        //         showConfirmButton: false,
+        //         timer: 2000
+        //     })
 
-            // setTimeout(() => {
-            //     $('#controlInfoModal').modal('hide')
-            // }, 1500);
-            $(this).prop('disabled', true);
-            setTimeout(() => {
-                $(this).prop('disabled', false);
-            }, 15000);
+        //     // setTimeout(() => {
+        //     //     $('#controlInfoModal').modal('hide')
+        //     // }, 1500);
+        //     $(this).prop('disabled', true);
+        //     setTimeout(() => {
+        //         $(this).prop('disabled', false);
+        //     }, 15000);
 
-        } catch (err) {
-            console.error("เกิดข้อผิดพลาด:", err);
-            Swal.fire({
-                position: "center",
-                icon: 'error',
-                title: "❌ ผิดพลาด!",
-                html: `
-                    <div style="font-size: 16px; color: #b71c1c;">
-                        🚫 <strong>ส่งคำสั่งไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
-                    </div>
-                `,
-                showConfirmButton: false,
-                timer: 1500
-            });
-        }
+        // } catch (err) {
+        //     console.error("เกิดข้อผิดพลาด:", err);
+        //     Swal.fire({
+        //         position: "center",
+        //         icon: 'error',
+        //         title: "❌ ผิดพลาด!",
+        //         html: `
+        //             <div style="font-size: 16px; color: #b71c1c;">
+        //                 🚫 <strong>ส่งคำสั่งไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
+        //             </div>
+        //         `,
+        //         showConfirmButton: false,
+        //         timer: 1500
+        //     });
+        // }
 
     })
 
