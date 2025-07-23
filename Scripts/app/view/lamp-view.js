@@ -2004,7 +2004,7 @@
 
 
                 // setTimeout(() => {
-                obj.groupdevices.forEach(item => {
+                obj.forEach(item => {
                     const row = tableBody.insertRow();
                     row.insertCell().textContent = item?.macAddress;
                     row.insertCell().textContent = item?.tag;
@@ -2023,7 +2023,7 @@
                 table.find("tbody").empty();
 
 
-                obj.groupdevices.forEach(item => {
+                obj.forEach(item => {
                     const row = $("<tr>");
                     row.append(`<td>${item?.macAddress}</td>`)
                     row.append(`<td>${item?.tag}</td>`)
@@ -2066,7 +2066,7 @@
 
                 $('#controlAllRelayStateModal').modal('show');
 
-                // if (parseInt(statarr.length) !== parseInt(obj.groupdevices.length)) {
+                // if (parseInt(statarr.length) !== parseInt(obj.length)) {
                 //     const endpointoff = "http://85.204.247.82:3002/api/turnoffalllight"
                 //     const options = {
                 //         method: "POST"
@@ -2981,7 +2981,9 @@
             const response = await fetch(endpointgetgroupdatas)
             const obj = await response.json()
 
-            obj.groupdevices.forEach(item => {
+            console.log('obj', obj)
+
+            obj.forEach(item => {
                 const row = tableBody.insertRow();
                 row.insertCell().textContent = item?.macAddress
                 row.insertCell().textContent = item?.tag
@@ -2995,7 +2997,7 @@
                 table.DataTable().clear().destroy()
             }
 
-            obj.groupdevices.forEach(item => {
+            obj.forEach(item => {
                 const row = $("<tr>");
                 row.append(`<td>${item?.macAddress}</td>`)
                 row.append(`<td>${item?.tag}</td>`)
