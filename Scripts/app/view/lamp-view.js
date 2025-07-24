@@ -2441,6 +2441,7 @@
         }, 500)
     })
 
+    //sendsingle
     $('#control-send-schedule').click(async function () {
         const macAddress = $('#controlLampSerialNo').val()
         const endpoint = "http://85.204.247.82:3002/api/setschedule"
@@ -2476,74 +2477,72 @@
         }
 
         let payload = { macAddress: mac, schedule: schedulDatas }
-        console.log(payload)
+        console.log('payload:', payload)
 
-        // const options = {
-        //     method: "POST",
-        //     headers: {
-        //         "Content-Type": "application/json; charset=utf-8"
-        //     },
-        //     body: JSON.stringify(payload)
-        // };
+        const options = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            body: JSON.stringify(payload)
+        };
 
-        // Swal.fire({
-        //     title: '🔄 กำลังส่งคำสั่ง...',
-        //     html: `
-        //         <div style="font-size: 16px; color: #555;">
-        //             กำลังส่งคำสั่งให้อุปกรณ์ <strong>${macAddress}</strong><br>
-        //             กรุณารอสักครู่...
-        //         </div>
-        //     `,
-        //     allowOutsideClick: false,
-        //     allowEscapeKey: false,
-        //     showConfirmButton: false,
-        //     timerProgressBar: true,
-        //     didOpen: () => {
-        //         Swal.showLoading()
-        //     }
-        // });
+        Swal.fire({
+            title: '🔄 กำลังส่งคำสั่ง...',
+            html: `
+                <div style="font-size: 16px; color: #555;">
+                    กำลังส่งคำสั่งให้อุปกรณ์ <strong>${macAddress}</strong><br>
+                    กรุณารอสักครู่...
+                </div>
+            `,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading()
+            }
+        });
 
-        // try {
-        //     await new Promise(resolve => setTimeout(resolve, 1000));
+        try {
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
-        //     const resp = await fetch(endpoint, options);
-        //     const obj = await resp.json();
+            const resp = await fetch(endpoint, options);
+            const obj = await resp.json();
 
-        //     Swal.fire({
-        //         position: "center",
-        //         icon: 'success',
-        //         title: "สำเร็จ",
-        //         html: `<div style="padding: 12px; background-color: #e6f4ea; border: 1px solid #a3d9a5; border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2e7d32;">
-        //   ✅ ส่งคำสั่งสำเร็จ <strong style="color: #1b5e20;">${macAddress}</strong> สำเร็จ
-        // </div>`,
-        //         showConfirmButton: false,
-        //         timer: 1500
-        //     })
-        //     // setTimeout(() => {
-        //     //     $('#controlInfoModal').modal('hide')
-        //     // }, 1500);
-        //     $(this).prop('disabled', true);
-        //     setTimeout(() => {
-        //         $(this).prop('disabled', false);
-        //     }, 7000);
+            Swal.fire({
+                position: "center",
+                icon: 'success',
+                title: "สำเร็จ",
+                html: `<div style="padding: 12px; background-color: #e6f4ea; border: 1px solid #a3d9a5; border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2e7d32;">
+          ✅ ส่งคำสั่งสำเร็จ <strong style="color: #1b5e20;">${macAddress}</strong> สำเร็จ
+        </div>`,
+                showConfirmButton: false,
+                timer: 1500
+            })
+            $(this).prop('disabled', true);
+            setTimeout(() => {
+                $(this).prop('disabled', false);
+            }, 7000);
 
-        // } catch (err) {
-        //     console.error("เกิดข้อผิดพลาด:", err);
-        //     Swal.fire({
-        //         position: "center",
-        //         icon: 'error',
-        //         title: "❌ ผิดพลาด!",
-        //         html: `
-        //         <div style="font-size: 16px; color: #b71c1c;">
-        //             🚫 <strong>ส่งคำสั่งไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
-        //         </div>
-        //     `,
-        //         showConfirmButton: false,
-        //         timer: 1500
-        //     });
-        // }
+        } catch (err) {
+            console.error("เกิดข้อผิดพลาด:", err);
+            Swal.fire({
+                position: "center",
+                icon: 'error',
+                title: "❌ ผิดพลาด!",
+                html: `
+                <div style="font-size: 16px; color: #b71c1c;">
+                    🚫 <strong>ส่งคำสั่งไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
+                </div>
+            `,
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
     })
 
+    //sendall
     $('#control-send-all-schedule').click(async function () {
         const group = $('#groupSelect').val()
         const endpoint = 'http://85.204.247.82:3002/api/setallschedule'
@@ -2577,113 +2576,76 @@
             });
         }
 
-        //new logic
-        // for (let i = 1; i <= 5; i++) {
-        //     let no = i
-        //     let active = true
-        //     let starttime = ($(`#scheduleall_${no}_start`).val() ?? "").trim();
-        //     let endtime = ($(`#scheduleall_${no}_end`).val() ?? "").trim();
-        //     let warmval = ($(`#scheduleall_${no}_controlRangeWarm`).val() ?? "").trim();
-        //     let coolval = ($(`#scheduleall_${no}_controlRangeCool`).val() ?? "").trim();
-
-        //     if (!starttime && !endtime && !warmval && !coolval) active = false
-        //     // if (starttime === '00:00' && endtime === '00:00' && warmval === '0' && coolval === '0') active = false
-        //     // if (endtime <= starttime) starttime = '00:00', endtime = '00:00', active = false
-        //     // if (!starttime && !endtime) starttime = '00:00', endtime = '00:00'
-        //     // if (!warmval && !coolval) warmval = '0', coolval = '0'
-
-        //     // if (warmval === '0' && coolval === '0') active = false
-
-        //     const datas = {
-        //         no,
-        //         active,
-        //         starttime,
-        //         endtime,
-        //         warmval,
-        //         coolval
-        //     }
-
-        //     schedulDatas.push(datas)
-
-        // }
-
-        // schedulDatas.forEach(items => {
-        //     console.log(items)
-        // })
-
         const payload = { group: group, schedule: schedulDatas }
         console.log('payload', payload)
 
-        // schedulDatas.forEach(items =>{
-        //     console.log(items)
-        // })
+        schedulDatas.forEach(items =>{
+            console.log(items)
+        })
 
-        // const options = {
-        //     method: "POST",
-        //     headers: {
-        //         "Content-Type": "application/json; charset=utf-8"
-        //     },
-        //     body: JSON.stringify(payload)
-        // }
+        const options = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            body: JSON.stringify(payload)
+        }
 
-        // Swal.fire({
-        //     title: '<span>🔄 กำลังดำเนินการ...</span>',
-        //     html: `
-        //     <div style="font-size: 16px; color: #555;">
-        //         กำลังส่งคำสั่งทุกอุปกรณ์<br>
-        //         กรุณารอสักครู่...
-        //     </div>
-        // `,
-        //     timerProgressBar: true,
-        //     allowOutsideClick: false,
-        //     allowEscapeKey: false,
-        //     showConfirmButton: false,
-        //     didOpen: () => {
-        //         Swal.showLoading();
-        //     }
-        // })
+        Swal.fire({
+            title: '<span>🔄 กำลังดำเนินการ...</span>',
+            html: `
+            <div style="font-size: 16px; color: #555;">
+                กำลังส่งคำสั่งทุกอุปกรณ์<br>
+                กรุณารอสักครู่...
+            </div>
+        `,
+            timerProgressBar: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        })
 
-        // try {
-        //     const resp = await fetch(endpoint, options);
-        //     const obj = await resp.json();
-        //     console.log('response', obj.status)
+        try {
+            const resp = await fetch(endpoint, options);
+            const obj = await resp.json();
+            console.log('response', obj.status)
 
-        //     Swal.fire({
-        //         position: "center",
-        //         icon: 'success',
-        //         title: '✅ สำเร็จ!',
-        //         html: `
-        //     <div style="font-size: 16px; color: #2e7d32;">
-        //         ส่งคำสั่งไปยังทุกอุปกรณ์ <strong>สำเร็จ</strong>
-        //     </div>
-        // `,
-        //         showConfirmButton: false,
-        //         timer: 2000
-        //     })
+            Swal.fire({
+                position: "center",
+                icon: 'success',
+                title: '✅ สำเร็จ!',
+                html: `
+            <div style="font-size: 16px; color: #2e7d32;">
+                ส่งคำสั่งไปยังทุกอุปกรณ์ <strong>สำเร็จ</strong>
+            </div>
+        `,
+                showConfirmButton: false,
+                timer: 2000
+            })
 
-        //     // setTimeout(() => {
-        //     //     $('#controlInfoModal').modal('hide')
-        //     // }, 1500);
-        //     $(this).prop('disabled', true);
-        //     setTimeout(() => {
-        //         $(this).prop('disabled', false);
-        //     }, 15000);
+            $(this).prop('disabled', true);
+            setTimeout(() => {
+                $(this).prop('disabled', false);
+            }, 15000);
 
-        // } catch (err) {
-        //     console.error("เกิดข้อผิดพลาด:", err);
-        //     Swal.fire({
-        //         position: "center",
-        //         icon: 'error',
-        //         title: "❌ ผิดพลาด!",
-        //         html: `
-        //             <div style="font-size: 16px; color: #b71c1c;">
-        //                 🚫 <strong>ส่งคำสั่งไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
-        //             </div>
-        //         `,
-        //         showConfirmButton: false,
-        //         timer: 1500
-        //     });
-        // }
+        } catch (err) {
+            console.error("เกิดข้อผิดพลาด:", err);
+            Swal.fire({
+                position: "center",
+                icon: 'error',
+                title: "❌ ผิดพลาด!",
+                html: `
+                    <div style="font-size: 16px; color: #b71c1c;">
+                        🚫 <strong>ส่งคำสั่งไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
+                    </div>
+                `,
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
 
     })
 
@@ -2938,7 +2900,7 @@
         try {
             const response = await fetch(endpoint, options)
             const result = await response.json()
-
+            // console.log('result group:', result)
             result?.devices?.forEach(item => {
                 const group = item?.mid
                 if (!group || checkArr.has(group)) return
@@ -3309,8 +3271,33 @@
             $(`#scheduleall_${period}_end`).on("change.datetimepicker", function (e) {
                 const end = moment(e.date, 'HH:mm');
                 const startVal = $(`#scheduleall_${period}_start`).val();
+                const limitMoment = moment('23:59', 'HH:mm');
+
                 if (startVal) {
                     const start = moment(startVal, 'HH:mm');
+
+                    if (period === 1 && end.isSameOrAfter(limitMoment)) {
+                        Swal.fire({
+                            title: 'แจ้งเตือน',
+                            html: `<h4 style="color:#333;font-weight:normal;">เวลาสิ้นสุดต้องไม่เกินเที่ยงคืนหรือเท่ากับ 23:59 </h4>`,
+                            icon: 'warning',
+                            confirmButtonText: 'ตกลง',
+                            confirmButtonColor: '#d33',
+                            background: '#fff',
+                            customClass: {
+                                popup: 'swal2-modern-popup',
+                                title: 'swal2-modern-title',
+                                content: 'swal2-modern-content'
+                            }
+                        });
+
+                        const startVal = $(`#scheduleall_${period}_start`).val();
+                        if (startVal) {
+                            const newEnd = moment(startVal, 'HH:mm').add(1, 'hours');
+                            $(`#scheduleall_${period}_end`).datetimepicker('date', newEnd);
+                        }
+                        return;
+                    }
 
                     if (period === 1 && end.isSameOrBefore(start)) {
                         Swal.fire({
@@ -3476,6 +3463,74 @@
       </div>
     </li>
   `);
+
+        if (periodall > 1) {
+            const $start = $(`#scheduleall_${periodall}_start`);
+            const $end = $(`#scheduleall_${periodall}_end`);
+
+            [$start, $end].forEach($el => {
+                $el.datetimepicker({
+                    format: "HH:mm",
+                    icons: {
+                        time: 'fa fa-clock',
+                        date: 'fa fa-calendar',
+                        up: 'fa fa-chevron-up',
+                        down: 'fa fa-chevron-down',
+                        previous: 'fa fa-chevron-left',
+                        next: 'fa fa-chevron-right',
+                        today: 'fa fa-calendar-check',
+                        clear: 'fa fa-trash',
+                        close: 'fa fa-times'
+                    }
+                })
+            })
+
+            const endInputValue = $(`#scheduleall_${periodall}_end`).val();
+
+            if (!endInputValue || !moment(endInputValue, 'HH:mm', true).isValid()) {
+                console.warn('ยังไม่ได้กรอกเวลาสิ้นสุด หรือรูปแบบเวลาไม่ถูกต้อง');
+
+                const prevEndValue = $(`#scheduleall_${periodall - 1}_end`).val();
+
+                if (prevEndValue && moment(prevEndValue, 'HH:mm', true).isValid()) {
+                    const limitMoment = moment('23:59', 'HH:mm');
+                    const startMoment = moment(prevEndValue, 'HH:mm').add(1, 'hours');
+
+                    if (startMoment.isAfter(limitMoment)) {
+                        startMoment.set({ hour: 23, minute: 59 });
+                    }
+
+                    $(`#scheduleall_${periodall}_start`).datetimepicker('date', startMoment);
+
+                    if (startMoment.isSameOrAfter(limitMoment)) {
+                        Swal.fire({
+                            title: 'แจ้งเตือน',
+                            html: `<h4>เวลาเริ่มต้นของช่วงเวลาถัดไปต้องไม่เกิน 23:59</h4>`,
+                            icon: 'warning',
+                            confirmButtonText: 'ตกลง',
+                            confirmButtonColor: '#d33',
+                            background: '#fff',
+                            customClass: {
+                                popup: 'swal2-modern-popup',
+                                title: 'swal2-modern-title',
+                                content: 'swal2-modern-content'
+                            }
+                        });
+                        return;
+                    }
+
+                } else {
+                    console.warn('ไม่สามารถหาค่าเวลาสิ้นสุดจากช่วงก่อนหน้าได้');
+                }
+            }
+
+            if (periodall < 5) {
+                const addBtn = $('#addscheduleall');
+                addBtn.prop("disabled", false);
+                addBtn.addClass("btn-success");
+                addBtn.removeClass("btn-secondary");
+            }
+        }
 
         $('#scheduleAllList').append($li);
         $li.fadeIn(function () {
@@ -4038,8 +4093,33 @@
             $(`#schedule_${period}_end`).on("change.datetimepicker", function (e) {
                 const end = moment(e.date, 'HH:mm');
                 const startVal = $(`#schedule_${period}_start`).val();
+                const limitMoment = moment('23:59', 'HH:mm');
+
                 if (startVal) {
                     const start = moment(startVal, 'HH:mm');
+
+                    if (period === 1 && end.isSameOrAfter(limitMoment)) {
+                        Swal.fire({
+                            title: 'แจ้งเตือน',
+                            html: `<h4 style="color:#333;font-weight:normal;">เวลาสิ้นสุดต้องไม่เกินเที่ยงคืนหรือเท่ากับ 23:59 </h4>`,
+                            icon: 'warning',
+                            confirmButtonText: 'ตกลง',
+                            confirmButtonColor: '#d33',
+                            background: '#fff',
+                            customClass: {
+                                popup: 'swal2-modern-popup',
+                                title: 'swal2-modern-title',
+                                content: 'swal2-modern-content'
+                            }
+                        });
+
+                        const startVal = $(`#schedule_${period}_start`).val();
+                        if (startVal) {
+                            const newEnd = moment(startVal, 'HH:mm').add(1, 'hours');
+                            $(`#schedule_${period}_end`).datetimepicker('date', newEnd);
+                        }
+                        return;
+                    }
 
                     if (period === 1 && end.isSameOrBefore(start)) {
                         Swal.fire({
@@ -4206,7 +4286,75 @@
     </li>
   `);
 
-        $('#scheduleList').append($li);
+        if (period > 1) {
+            const $start = $(`#schedule_${period}_start`);
+            const $end = $(`#schedule_${period}_end`);
+
+            [$start, $end].forEach($el => {
+                $el.datetimepicker({
+                    format: "HH:mm",
+                    icons: {
+                        time: 'fa fa-clock',
+                        date: 'fa fa-calendar',
+                        up: 'fa fa-chevron-up',
+                        down: 'fa fa-chevron-down',
+                        previous: 'fa fa-chevron-left',
+                        next: 'fa fa-chevron-right',
+                        today: 'fa fa-calendar-check',
+                        clear: 'fa fa-trash',
+                        close: 'fa fa-times'
+                    }
+                })
+            })
+
+            const endInputValue = $(`#schedule_${period}_end`).val();
+
+            if (!endInputValue || !moment(endInputValue, 'HH:mm', true).isValid()) {
+                // console.warn('ยังไม่ได้กรอกเวลาสิ้นสุด หรือรูปแบบเวลาไม่ถูกต้อง');
+
+                const prevEndValue = $(`#schedule_${period - 1}_end`).val();
+
+                if (prevEndValue && moment(prevEndValue, 'HH:mm', true).isValid()) {
+                    const limitMoment = moment('23:59', 'HH:mm');
+                    const startMoment = moment(prevEndValue, 'HH:mm').add(1, 'hours');
+
+                    if (startMoment.isAfter(limitMoment)) {
+                        startMoment.set({ hour: 23, minute: 59 });
+                    }
+
+                    $(`#schedule_${period}_start`).datetimepicker('date', startMoment);
+
+                    if (startMoment.isSameOrAfter(limitMoment)) {
+                        Swal.fire({
+                            title: 'แจ้งเตือน',
+                            html: `<h4>เวลาเริ่มต้นของช่วงเวลาถัดไปต้องไม่เกิน 23:59</h4>`,
+                            icon: 'warning',
+                            confirmButtonText: 'ตกลง',
+                            confirmButtonColor: '#d33',
+                            background: '#fff',
+                            customClass: {
+                                popup: 'swal2-modern-popup',
+                                title: 'swal2-modern-title',
+                                content: 'swal2-modern-content'
+                            }
+                        });
+                        return;
+                    }
+
+                } else {
+                    console.warn('ไม่สามารถหาค่าเวลาสิ้นสุดจากช่วงก่อนหน้าได้');
+                }
+            }
+
+            if (period < 5) {
+                const addBtn = $('#addscheduleall');
+                addBtn.prop("disabled", false);
+                addBtn.addClass("btn-success");
+                addBtn.removeClass("btn-secondary");
+            }
+        }
+
+        $('#scheduleList').append($li)
         $li.fadeIn(function () {
             const $start = $(`#schedule_${period}_start`);
             const $end = $(`#schedule_${period}_end`);
