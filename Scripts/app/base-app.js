@@ -48,6 +48,7 @@ const ENDPOINT_URL = {
     LAMP_DELETE: "/Lamp/Delete",
     LAMP_LIST: "/Lamp/getLampOnPagedList",
     LAMP_STATUS: "/Lamp/getLampStatus",
+    LAMP_GroupList:"/Lamp/getLampGroupList",
 
     JOB_CREATE: "/Job/Create",
     JOB_UPDATE: "/Job/Update",

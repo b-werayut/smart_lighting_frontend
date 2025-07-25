@@ -16,7 +16,7 @@
 
     var defaultPagingOptions = {
         onPageClick: function (e, page) {
-            getLampData($("#controllerCode option:selected").val(), page, $("#lampTextSearch").val());
+            getLampData($("#controllerCode option:selected").val(), page, $("#lampTextSearch").val(), $("#groupDevices").val());
         }
     };
 
@@ -69,7 +69,7 @@
             if (!($("#lampInfoModal").data('bs.modal') || {})._isShown && !($("#controlInfoModal").data('bs.modal') || {})._isShown && !($("#controlAllRelayStateModal").data('bs.modal') || {})._isShown) {
                 if ($("#projectCode option:selected").attr("data-valkey") != "2") {
                     console.log("interval activate !");
-                    getLampData($("#controllerCode option:selected").val(), $("#bottomPagination").twbsPagination("getCurrentPage"), $("#lampTextSearch").val());
+                    getLampData($("#controllerCode option:selected").val(), $("#bottomPagination").twbsPagination("getCurrentPage"), $("#lampTextSearch").val(), $("#groupDevices").val());
                 }
             }
         }
@@ -83,7 +83,7 @@
         );
 
         $("#controllerCode").val(queryString["projectCode"]).change(
-            getLampData(queryString["controllerCode"], 1, "")
+            getLampData(queryString["controllerCode"], 1, "", $("#groupDevices").val())
         );
 
         bindingAddButtonState();
@@ -257,19 +257,26 @@
     };
 
     $("#controllerCode").change(function (e) {
-        getLampData($("#controllerCode option:selected").val(), 1, "");
+        getLampData($("#controllerCode option:selected").val(), 1, "", $("#groupDevices").val());
     });
 
-    function getLampData(controllerCode, currentPage, searchText) {
+    $("#groupDevices").change(function (e) {
+        getLampData($("#controllerCode option:selected").val(), 1, "", $("#groupDevices").val());
+    });
+
+    function getLampData(controllerCode, currentPage, searchText, groupCode) {
         if ($("#projectCode option:selected").attr("data-valkey") != "2") {
             // $("#no-more-tables").LoadingOverlay("show");
+            console.log("controllerCode", controllerCode);
+            console.log("groupCode",groupCode);
 
             currentPage = typeof currentPage == "number" ? currentPage : 1;
 
             let lampData = {
                 controllerCode: controllerCode,
                 page: currentPage,
-                searchText: searchText
+                searchText: searchText,
+                groupCode: groupCode
             };
 
             fetch(ENDPOINT_URL.LAMP_LIST, {
@@ -582,7 +589,7 @@
                             confirmButtonColor: "#3085d6"
                         }).then((result) => {
                             if (viewModel.state == "success") {
-                                getLampData($("#controllerCode option:selected").val(), $("#bottomPagination").twbsPagination("getCurrentPage"), $("#lampTextSearch").val());
+                                getLampData($("#controllerCode option:selected").val(), $("#bottomPagination").twbsPagination("getCurrentPage"), $("#lampTextSearch").val(), $("#groupDevices").val());
                             }
                         });
                     } else {
@@ -637,7 +644,8 @@
             lampSerialNo: $("#lampSerialNo").val(),
             latitude: $("#lampLat").val(),
             longitude: $("#lampLong").val(),
-            allowNotify: $("#isWarning").is(":checked")
+            allowNotify: $("#isWarning").is(":checked"),
+            groupCode: $("#groupDevices_addmodal").val(),
         };
 
         fetch(postToUrl, {
@@ -663,7 +671,7 @@
                 confirmButtonColor: "#3085d6"
             }).then((result) => {
                 if (viewModel.state == "success") {
-                    getLampData($("#controllerCode option:selected").val(), $("#bottomPagination").twbsPagination("getCurrentPage"), $("#lampTextSearch").val());
+                    getLampData($("#controllerCode option:selected").val(), $("#bottomPagination").twbsPagination("getCurrentPage"), $("#lampTextSearch").val(), $("#groupDevices").val());
                 }
             });
         }).catch(error => {
@@ -695,7 +703,7 @@
     });
 
     $("#lampSearchSubmit").on("click", function (e) {
-        getLampData($("#controllerCode option:selected").val(), 1, $("#lampTextSearch").val());
+        getLampData($("#controllerCode option:selected").val(), 1, $("#lampTextSearch").val(), $("#groupDevices").val());
     });
 
     // function bindControlPanelViewModelToModal(viewModel) {
@@ -2403,7 +2411,7 @@
             fetch(endpoint, options)
                 .then(resp => resp.json())
                 .then(obj => {
-                    getLampData($("#controllerCode option:selected").val(), $("#bottomPagination").twbsPagination("getCurrentPage"), $("#lampTextSearch").val());
+                    getLampData($("#controllerCode option:selected").val(), $("#bottomPagination").twbsPagination("getCurrentPage"), $("#lampTextSearch").val(), $("#groupDevices").val());
                     Swal.fire({
                         position: "center",
                         icon: 'success',
@@ -2848,6 +2856,7 @@
             alldevicesbtn.addClass('d-none')
             alldevicesbtn.removeClass('d-flex')
             groupdropdown.addClass('d-none')
+            $('#groupDevices').val("");
         } else {
             alldevicesbtn.fadeIn()
             alldevicesbtn.addClass('d-flex')
@@ -2861,7 +2870,8 @@
         const ctrlcode = $('#controllerCode option:selected').val()
         const paging = $("#bottomPagination").twbsPagination("getCurrentPage")
         const textsearch = $("#lampTextSearch").val()
-        getLampData(ctrlcode, paging, textsearch);
+        const groupCode = $("#groupDevices").val()
+        getLampData(ctrlcode, paging, textsearch, groupCode);
     }
 
     $('.md-close').on('click', getLampOnClick);
@@ -2893,16 +2903,19 @@
     const getGroupDevices = async () => {
         const inputGroup = $("#groupDevices")
         const inputGroup_addmodal = $("#groupDevices_addmodal")
-        const endpoint = "http://85.204.247.82:3002/api/getalldevices"
+        //const endpoint = "http://85.204.247.82:3002/api/getalldevices"
+        const endpoint = ENDPOINT_URL.LAMP_GroupList
         const checkArr = new Set()
-        const options = { method: "GET" }
+        //const options = { method: "GET" }
+        const options = { method: "POST" }
 
         try {
             const response = await fetch(endpoint, options)
             const result = await response.json()
-            // console.log('result group:', result)
-            result?.devices?.forEach(item => {
-                const group = item?.mid
+            $(`<option value="">ALL</option>`).appendTo(inputGroup)
+            result?.data?.forEach(item => {
+                const group = item
+                //const group = item?.mid
                 if (!group || checkArr.has(group)) return
 
                 checkArr.add(group)
@@ -3035,7 +3048,7 @@
         const manualauto = $('#control-send-all-schedule')
 
         if (targetTabId === 'manualAll-tab') {
-            console.log("กำลังทำงานในแท็บ Manual")
+            // console.log("กำลังทำงานในแท็บ Manual")
             manualbtn.removeClass('d-none')
             manualauto.addClass('d-none')
             runManualFunction()
@@ -3047,7 +3060,7 @@
     })
 
     function runManualFunction() {
-        console.log("กำลังทำงานในแท็บ Manual")
+        // console.log("กำลังทำงานในแท็บ Manual")
     }
 
     let schedultab = true
@@ -3488,7 +3501,7 @@
             const endInputValue = $(`#scheduleall_${periodall}_end`).val();
 
             if (!endInputValue || !moment(endInputValue, 'HH:mm', true).isValid()) {
-                console.warn('ยังไม่ได้กรอกเวลาสิ้นสุด หรือรูปแบบเวลาไม่ถูกต้อง');
+                // console.warn('ยังไม่ได้กรอกเวลาสิ้นสุด หรือรูปแบบเวลาไม่ถูกต้อง');
 
                 const prevEndValue = $(`#scheduleall_${periodall - 1}_end`).val();
 
