@@ -2553,7 +2553,7 @@
     //sendall
     $('#control-send-all-schedule').click(async function () {
         let group = $('#groupSelect').val()
-        const endpoint = `http://85.204.247.82:3002/api/setallschedule?v=${Date.now()}`
+        let endpoint = `http://85.204.247.82:3002/api/setallschedule?v=${Date.now()}`
 
         let schedulData = [];
         let filledCount = 0;
@@ -2599,6 +2599,7 @@
 
             if (!Array.isArray(group)) {
                 group = [group];
+                endpoint = `http://85.204.247.82:3002/api/setallgroupschedulelight?v=${Date.now()}`
             }
         }
 
