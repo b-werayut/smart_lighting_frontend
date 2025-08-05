@@ -267,8 +267,8 @@
     function getLampData(controllerCode, currentPage, searchText, groupCode) {
         if ($("#projectCode option:selected").attr("data-valkey") != "2") {
             // $("#no-more-tables").LoadingOverlay("show");
-            console.log("controllerCode", controllerCode);
-            console.log("groupCode",groupCode);
+            // console.log("controllerCode", controllerCode);
+            // console.log("groupCode",groupCode);
 
             currentPage = typeof currentPage == "number" ? currentPage : 1;
 
@@ -1957,7 +1957,7 @@
     $('#controlAllRelayState').click(function () {
         const groupval = $('#groupDevices').val()
         const endpoint = `http://85.204.247.82:3002/api/getgroupdevices/${groupval}`
-        const endpointAllDevices = `http://85.204.247.82:3002/api/getalldevices`
+        const endpointAllDevices = `http://85.204.247.82:3002/api/getalldevices?v=${Date.now()}`
         const table = $('#alldevice');
         const tableBody = document.querySelector("#alldevice tbody")
         const transbox = $('#tb')
@@ -2552,9 +2552,10 @@
 
     //sendall
     $('#control-send-all-schedule').click(async function () {
-        const group = $('#groupSelect').val()
-        const endpoint = 'http://85.204.247.82:3002/api/setallschedule'
-        let schedulDatas = [];
+        let group = $('#groupSelect').val()
+        const endpoint = `http://85.204.247.82:3002/api/setallschedule?v=${Date.now()}`
+
+        let schedulData = [];
         let filledCount = 0;
 
         const totalActiveSlots = $('#scheduleAllList li').length;
@@ -2574,7 +2575,7 @@
                 filledCount++;
             }
 
-            schedulDatas.push({
+            schedulData.push({
                 no: i,
                 active,
                 starttime: starttime || "00:00",
@@ -2584,10 +2585,27 @@
             });
         }
 
-        const payload = { group: group, schedule: schedulDatas }
+        if (Number(group) === 0 || !group) {
+            let groupArr = [];
+
+            $('#groupSelect option').each(function () {
+                const values = Number($(this).val());
+                if (!values || values === 0) { return; }
+                groupArr.push(Number($(this).val()));
+            });
+
+            groupArr.sort((a, b) => a - b);
+            group = groupArr;
+
+            if (!Array.isArray(group)) {
+                group = [group];
+            }
+        }
+
+        const payload = { group: group, schedule: schedulData }
         console.log('payload', payload)
 
-        schedulDatas.forEach(items =>{
+        schedulData.forEach(items => {
             console.log(items)
         })
 
@@ -2599,61 +2617,61 @@
             body: JSON.stringify(payload)
         }
 
-        Swal.fire({
-            title: '<span>🔄 กำลังดำเนินการ...</span>',
-            html: `
-            <div style="font-size: 16px; color: #555;">
-                กำลังส่งคำสั่งทุกอุปกรณ์<br>
-                กรุณารอสักครู่...
-            </div>
-        `,
-            timerProgressBar: true,
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            showConfirmButton: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        })
+        // Swal.fire({
+        //     title: '<span>🔄 กำลังดำเนินการ...</span>',
+        //     html: `
+        //     <div style="font-size: 16px; color: #555;">
+        //         กำลังส่งคำสั่งทุกอุปกรณ์<br>
+        //         กรุณารอสักครู่...
+        //     </div>
+        // `,
+        //     timerProgressBar: true,
+        //     allowOutsideClick: false,
+        //     allowEscapeKey: false,
+        //     showConfirmButton: false,
+        //     didOpen: () => {
+        //         Swal.showLoading();
+        //     }
+        // })
 
-        try {
-            const resp = await fetch(endpoint, options);
-            const obj = await resp.json();
-            console.log('response', obj.status)
+        // try {
+        //     const resp = await fetch(endpoint, options);
+        //     const obj = await resp.json();
+        //     console.log('response', obj.status)
 
-            Swal.fire({
-                position: "center",
-                icon: 'success',
-                title: '✅ สำเร็จ!',
-                html: `
-            <div style="font-size: 16px; color: #2e7d32;">
-                ส่งคำสั่งไปยังทุกอุปกรณ์ <strong>สำเร็จ</strong>
-            </div>
-        `,
-                showConfirmButton: false,
-                timer: 2000
-            })
+        //     Swal.fire({
+        //         position: "center",
+        //         icon: 'success',
+        //         title: '✅ สำเร็จ!',
+        //         html: `
+        //     <div style="font-size: 16px; color: #2e7d32;">
+        //         ส่งคำสั่งไปยังทุกอุปกรณ์ <strong>สำเร็จ</strong>
+        //     </div>
+        // `,
+        //         showConfirmButton: false,
+        //         timer: 2000
+        //     })
 
-            $(this).prop('disabled', true);
-            setTimeout(() => {
-                $(this).prop('disabled', false);
-            }, 15000);
+        //     $(this).prop('disabled', true);
+        //     setTimeout(() => {
+        //         $(this).prop('disabled', false);
+        //     }, 15000);
 
-        } catch (err) {
-            console.error("เกิดข้อผิดพลาด:", err);
-            Swal.fire({
-                position: "center",
-                icon: 'error',
-                title: "❌ ผิดพลาด!",
-                html: `
-                    <div style="font-size: 16px; color: #b71c1c;">
-                        🚫 <strong>ส่งคำสั่งไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
-                    </div>
-                `,
-                showConfirmButton: false,
-                timer: 1500
-            });
-        }
+        // } catch (err) {
+        //     console.error("เกิดข้อผิดพลาด:", err);
+        //     Swal.fire({
+        //         position: "center",
+        //         icon: 'error',
+        //         title: "❌ ผิดพลาด!",
+        //         html: `
+        //             <div style="font-size: 16px; color: #b71c1c;">
+        //                 🚫 <strong>ส่งคำสั่งไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
+        //             </div>
+        //         `,
+        //         showConfirmButton: false,
+        //         timer: 1500
+        //     });
+        // }
 
     })
 
@@ -2912,7 +2930,7 @@
         try {
             const response = await fetch(endpoint, options)
             const result = await response.json()
-            $(`<option value="">ALL</option>`).appendTo(inputGroup)
+            $(`<option value="0">ALL</option>`).appendTo(inputGroup)
             result?.data?.forEach(item => {
                 const group = item
                 //const group = item?.mid
@@ -2936,7 +2954,7 @@
         const dropdown = $(`
         <div class="col-md-3 d-flex align-items-center justify-content-center groupSelect">
             <select id="groupSelect" class="selectpicker form-control border-secondary text-dark" data-live-search="true" title="เลือกกลุ่ม" style="min-width: 200px; border: 1px solid;">
-                <option value="0">เลือกทั้งหมด</option>
+                <option value="0" selected>เลือกทั้งหมด</option>
             </select>
         </div>
     `);
@@ -2956,7 +2974,7 @@
             const response = await fetch(endpointgetgroupdatas)
             const obj = await response.json()
 
-            console.log('obj', obj)
+            // console.log('obj', obj)
 
             obj.forEach(item => {
                 const row = tableBody.insertRow();
@@ -3006,7 +3024,7 @@
 
     $(document).on('change', '#groupSelect', async function () {
         const group = $('#groupSelect').val()
-        console.log('groupSelect', group)
+        // console.log('groupSelect', group)
         await selectGroupDevices(group)
     })
 
@@ -3203,7 +3221,6 @@
 
             $start.on("change.datetimepicker", function (e) {
                 const start = moment(e.date, 'HH:mm');
-
                 const firstStartVal = $('#scheduleall_1_start').val();
                 const firstStart = moment(firstStartVal, 'HH:mm');
 
@@ -3226,40 +3243,22 @@
                     return;
                 }
 
-                // for (let i = 1; i < period; i++) {
-                //     const prevEndVal = $(`#scheduleall_${i}_end`).val();
-                //     if (prevEndVal && start.isBefore(moment(prevEndVal, 'HH:mm'))) {
-                //         Swal.fire({
-                //             title: 'แจ้งเตือน',
-                //             html: `<h4 style="color:#333;font-weight:normal;">ช่วงเวลาที่ ${period} ต้องไม่เริ่มก่อนช่วงเวลาที่ ${i}</h4>`,
-                //             icon: 'warning',
-                //             confirmButtonText: 'ตกลง',
-                //             confirmButtonColor: '#d33',
-                //             background: '#fff',
-                //             customClass: {
-                //                 popup: 'swal2-modern-popup',
-                //                 title: 'swal2-modern-title',
-                //                 content: 'swal2-modern-content'
-                //             }
-                //         });
-                //         if (previousStart) {
-                //             $start.datetimepicker('date', moment(previousStart, 'HH:mm'));
-                //         }
-                //         return;
-                //     }
-                // }
-
+                // คำนวณเวลา end ของช่วงนี้
                 const newEnd = previousDuration
                     ? moment(start).add(previousDuration)
                     : moment(start).add(1, 'hours');
+
                 $end.datetimepicker('date', newEnd);
 
+                // คำนวณเวลา start และ end ของช่วงถัดไป
                 const $nextStart = $(`#scheduleall_${nextPeriod}_start`);
                 const $nextEnd = $(`#scheduleall_${nextPeriod}_end`);
+
                 if ($nextStart.length && $nextEnd.length) {
                     const nextStartVal = $nextStart.val();
                     const nextEndVal = $nextEnd.val();
-                    let nextDuration = moment.duration(1, 'hours'); // default
+
+                    let nextDuration = moment.duration(1, 'hours'); // ค่า default
 
                     if (nextStartVal && nextEndVal) {
                         const nextStart = moment(nextStartVal, 'HH:mm');
@@ -3269,11 +3268,15 @@
                         }
                     }
 
-                    $nextStart.datetimepicker('date', newEnd);
-                    $nextEnd.datetimepicker('date', moment(newEnd).add(nextDuration));
-                }
+                    // newEnd + 1 นาที สำหรับ start ของช่วงถัดไป
+                    const nextStartNew = moment(newEnd).add(1, 'minutes');
+                    const nextEndNew = moment(nextStartNew).add(nextDuration);
 
+                    $nextStart.datetimepicker('date', nextStartNew);
+                    $nextEnd.datetimepicker('date', nextEndNew);
+                }
             });
+
 
             let previousEnd = null;
 
@@ -3312,7 +3315,7 @@
                         return;
                     }
 
-                    if (period === 1 && end.isSameOrBefore(start)) {
+                    if (period === 1 && end.isBefore(start)) {
                         Swal.fire({
                             title: 'แจ้งเตือน',
                             html: `<h4 style="color:#333;font-weight:normal;">เวลาสิ้นสุดต้องมากกว่าเวลาเริ่มต้น</h4>`,
@@ -3580,9 +3583,9 @@
             if (periodall > 1) {
                 const prevEndVal = $(`#scheduleall_${prevPeriod}_end`).val();
                 if (prevEndVal) {
-                    const startMoment = moment(prevEndVal, 'HH:mm');
+                    const startMoment = moment(prevEndVal, 'HH:mm').add(1, 'minute');
                     $start.datetimepicker('date', startMoment);
-                    $end.datetimepicker('date', startMoment.clone().add(1, 'hours'));
+                    $end.datetimepicker('date', startMoment.clone().add(59, 'minute'));
                 } else {
                     $start.datetimepicker('date', moment('00:00', 'HH:mm'));
                     $end.datetimepicker('date', moment('01:00', 'HH:mm'));
@@ -3691,7 +3694,7 @@
                 if (startVal) {
                     const start = moment(startVal, 'HH:mm');
 
-                    if (end.isSameOrBefore(start)) {
+                    if (end.isBefore(start)) {
                         Swal.fire({
                             title: 'แจ้งเตือน',
                             html: `<h4 style="color:#333;font-weight:normal;">
@@ -4134,7 +4137,7 @@
                         return;
                     }
 
-                    if (period === 1 && end.isSameOrBefore(start)) {
+                    if (period === 1 && end.isBefore(start)) {
                         Swal.fire({
                             title: 'แจ้งเตือน',
                             html: `<h4 style="color:#333;font-weight:normal;">เวลาสิ้นสุดต้องมากกว่าเวลาเริ่มต้น</h4>`,
@@ -4513,7 +4516,7 @@
                 if (startVal) {
                     const start = moment(startVal, 'HH:mm');
 
-                    if (end.isSameOrBefore(start)) {
+                    if (end.isBefore(start)) {
                         Swal.fire({
                             title: 'แจ้งเตือน',
                             html: `<h4 style="color:#333;font-weight:normal;">
@@ -4709,5 +4712,25 @@
         $firstLi.find('input[id^="schedule_"][id$="_controlRangeCool"]').val(0).trigger('input');
         $firstLi.find('p[id^="schedule_"][id$="_rangeCool"]').text('0');
     });
+
+    $('#resetSchedules').on('click', function () {
+        $('#scheduleAllList li').slice(1).fadeOut(300, function () {
+            $(this).remove();
+        });
+
+        $('#period').text('1');
+
+        const $firstLi = $('#scheduleAllList li').first();
+
+        $firstLi.find('input[id^="scheduleall_"][id$="_start"]').datetimepicker('date', moment('00:00', 'HH:mm'));
+        $firstLi.find('input[id^="scheduleall_"][id$="_end"]').datetimepicker('date', moment('01:00', 'HH:mm'));
+
+        $firstLi.find('input[id^="scheduleall_"][id$="_controlRangeWarm"]').val(0).trigger('input');
+        $firstLi.find('p[id^="scheduleall_"][id$="_rangeWarm"]').text('0');
+
+        $firstLi.find('input[id^="schedule_"][id$="_controlRangeCool"]').val(0).trigger('input');
+        $firstLi.find('p[id^="scheduleall_"][id$="_rangeCool"]').text('0');
+    });
+
 
 })

@@ -78,16 +78,8 @@
                                 <th class="col-md-4">
                                     ชื่อหลอดไฟ
                                 </th>
-                                @*<th class="col-md-3">
-                                    สถานะ
-                                </th>*@
                                 <th class="col-md-3">
-                                    <!-- <div class="d-flex justify-content-end">
-                                        <button id="controlAllRelayState" type="button" class="btn btn-primary d-flex align-items-center gap-2 px-3">
-                                            <i class="bi bi-list-check mr-2"></i>
-                                            เปิด/ปิด ไฟทั้งหมด
-                                        </button>
-                                    </div> -->
+                                    สถานะ
                                 </th>
                             </tr>
                         </thead>
@@ -262,7 +254,7 @@
                 <div class="row">
                     <label class="form-group col-md-12 has-float-label" for="lampSerialNo">
                         <input type="text" class="form-control" id="lampSerialNo" autocomplete="off" />
-                        <span>Mac Address</span>
+                        <span>S/N</span>
                     </label>
                 </div>
                 <div class="row">
@@ -291,15 +283,6 @@
                         </label>
                     </div>
                 </div>
-                <div class="row">
-                <div class="col-md-6 groupDevices">
-                    <label class="form-group has-float-label" id="groupDeviceslebel" for="groupDevices">
-                    <select id="groupDevices_addmodal" class="form-control">
-                    </select>
-                    <span>กลุ่ม</span>
-                </label>
-                </div>
-                </div>
                 <!-- <div class="px-2 py-2">
                     <p>สถานะ</p>
                 </div> -->
@@ -312,97 +295,21 @@
                     </div>
                     <div id="light" class="light align-items-start"></div>
                 </div> -->
-                <div class="form-check col-md-12">
+                <!-- <div class="form-check col-md-12">
                     <label class="form-check-label ">
                         <input type="checkbox" class="form-check-input" id="isWarning" checked>
                         อนุญาตแจ้งเตือน
                         <i class="input-helper"></i>
                     </label>
-                </div>
-                <div class="modal-footer d-flex justify-content-end flex-wrap">
-                    <button type="button" class="btn btn-outline-secondary btn-sm md-close" data-dismiss="modal">
-                        <i class="mdi mdi-close"></i>
-                    </button>
-                    <button id="modal-save-button" type="button" class="btn btn-success btn-sm">
-                        <i class="mdi mdi-content-save"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                </div> -->
 
-<div class="modal fade" id="lampInfoModalEdit" tabindex="-1" role="dialog" aria-labelledby="lampInfoModalEditTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-sm-down" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="lampInfoModalEditLongTitle">Modal Title</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-
-            <div class="modal-body">
-                <div class="row">
-                    <label class="form-group col-md-12 has-float-label" for="lampSerialNo">
-                        <input type="text" class="form-control" id="lampSerialNoEdit" autocomplete="off" />
-                        <span>Mac Address</span>
-                    </label>
-                </div>
-                <div class="row">
-                    <label class="form-group col-md-12 has-float-label" for="lampName">
-                        <input type="text" class="form-control" id="lampNameEdit" autocomplete="off" />
-                        <span>ชื่อหลอดไฟ</span>
-                    </label>
-                </div>
-                <div class="row">
-                    <label class="form-group col-md-12 has-float-label" for="lampDescription">
-                        <input type="text" class="form-control" id="lampDescriptionEdit" autocomplete="off" />
-                        <span>รายละเอียด</span>
-                    </label>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <label class="form-group has-float-label" for="lampLat">
-                            <input type="text" class="form-control" id="lampLatEdit" autocomplete="off" />
-                            <span>ละติจูด</span>
-                        </label>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-group has-float-label" for="lampLong">
-                            <input type="text" class="form-control" id="lampLongEdit" autocomplete="off" />
-                            <span>ลองจิจูด</span>
-                        </label>
-                    </div>
-                </div>
-                <div class="row">
-                <div class="col-md-6 groupDevicesEdit">
-                    <label class="form-group has-float-label" for="groupDevices_modalEdit">
-                    <select id="groupDevices_modalEdit" class="form-control" disabled>
-                    </select>
+                <div class="form-check col-md-6">
+                <label class="form-group has-float-label" id="groupDevicesEditlebel" for="groupDevicesEdit">
+                    <input id="groupDevicesEdit" class="form-control" disabled>
                     <span>กลุ่ม</span>
                 </label>
                 </div>
-                </div>
-                <!-- <div class="px-2 py-2">
-                    <p>สถานะ</p>
-                </div> -->
-                <!-- <div class="d-flex ">
-                    <div>
-                        <label class="switch">
-                            <input type="checkbox" id="toggle" onchange="toggleLight()">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    <div id="light" class="light align-items-start"></div>
-                </div> -->
-                <div class="form-check col-md-12">
-                    <label class="form-check-label ">
-                        <input type="checkbox" class="form-check-input" id="isWarning" checked>
-                        อนุญาตแจ้งเตือน
-                        <i class="input-helper"></i>
-                    </label>
-                </div>
+
                 <div class="modal-footer d-flex justify-content-end flex-wrap">
                     <button type="button" class="btn btn-outline-secondary btn-sm md-close" data-dismiss="modal">
                         <i class="mdi mdi-close"></i>

@@ -16,7 +16,7 @@
 
     var defaultPagingOptions = {
         onPageClick: function (e, page) {
-            getLampData($("#controllerCode option:selected").val(), page, $("#lampTextSearch").val());
+            getLampData($("#controllerCode option:selected").val(), page, $("#lampTextSearch").val(), $("#groupDevices").val());
         }
     };
 
@@ -68,7 +68,7 @@
             if (!($("#lampInfoModal").data('bs.modal') || {})._isShown && !($("#controlInfoModal").data('bs.modal') || {})._isShown && !($("#controlAllRelayStateModal").data('bs.modal') || {})._isShown) {
                 if ($("#projectCode option:selected").attr("data-valkey") != "2") {
                     console.log("interval activate !");
-                    getLampData($("#controllerCode option:selected").val(), $("#bottomPagination").twbsPagination("getCurrentPage"), $("#lampTextSearch").val());
+                    getLampData($("#controllerCode option:selected").val(), $("#bottomPagination").twbsPagination("getCurrentPage"), $("#lampTextSearch").val(), $("#groupDevices").val());
                 }
             }
         }
@@ -82,7 +82,7 @@
         );
 
         $("#controllerCode").val(queryString["projectCode"]).change(
-            getLampData(queryString["controllerCode"], 1, "")
+            getLampData(queryString["controllerCode"], 1, "", $("#groupDevices").val())
         );
 
         bindingAddButtonState();
@@ -256,19 +256,26 @@
     };
 
     $("#controllerCode").change(function (e) {
-        getLampData($("#controllerCode option:selected").val(), 1, "");
+        getLampData($("#controllerCode option:selected").val(), 1, "", $("#groupDevices").val());
     });
 
-    function getLampData(controllerCode, currentPage, searchText) {
+    $("#groupDevices").change(function (e) {
+        getLampData($("#controllerCode option:selected").val(), 1, "", $("#groupDevices").val());
+    });
+
+    function getLampData(controllerCode, currentPage, searchText, groupCode) {
         if ($("#projectCode option:selected").attr("data-valkey") != "2") {
             // $("#no-more-tables").LoadingOverlay("show");
+            // console.log("controllerCode", controllerCode);
+            // console.log("groupCode", groupCode);
 
             currentPage = typeof currentPage == "number" ? currentPage : 1;
 
             let lampData = {
                 controllerCode: controllerCode,
                 page: currentPage,
-                searchText: searchText
+                searchText: searchText,
+                groupCode: groupCode
             };
 
             fetch(ENDPOINT_URL.LAMP_LIST, {
@@ -325,20 +332,20 @@
                 let serialNoCol = jQuery("<td></td>").attr("data-title", "Mac Address").html(item.lampCode).appendTo(tableRow);
                 let lampNameCol = jQuery("<td></td>").attr("data-title", "ชื่อหลอดไฟ").html(item.lampName).appendTo(tableRow);
 
-                //let statusBadge;
-                //switch (item.lampStatus) {
-                //    case 0:
-                //        statusBadge = "badge-dark";
-                //        break;
-                //    case 1:
-                //        statusBadge = "badge-warning";
-                //        break;
-                //    case 2:
-                //        statusBadge = "badge-danger";
-                //        break;
-                //}
-                /*let badgeHtml = "<span class=\"badge badge-pill " + statusBadge + "\">" + item.lampStatusText + "</span>";*/
-                /*let lampStatusCol = jQuery("<td></td>").attr("data-title", "สถานะ").html(badgeHtml).appendTo(tableRow);*/
+                let statusBadge;
+                switch (item.lampStatus) {
+                    case 0:
+                        statusBadge = "badge-dark";
+                        break;
+                    case 1:
+                        statusBadge = "badge-warning";
+                        break;
+                    case 2:
+                        statusBadge = "badge-danger";
+                        break;
+                }
+                let badgeHtml = "<span class=\"badge badge-pill " + statusBadge + "\">" + item.lampStatusText + "</span>";
+                let lampStatusCol = jQuery("<td></td>").attr("data-title", "สถานะ").html(badgeHtml).appendTo(tableRow);
 
                 let buttonCol = jQuery("<td></td>").appendTo(tableRow);
 
@@ -346,23 +353,23 @@
                     class: "d-flex justify-content-end flex-wrap"
                 }).appendTo(buttonCol);
 
-                //let controlButton = jQuery("<button></button>", {
-                //    type: "button",
-                //    class: "btn btn-light btn-icon"
-                //})
-                //    .attr("data-valkey", item.lampCode).html("<i class=\"mdi mdi-tune-vertical\"></i>")
-                //    .attr("data-status", item.lampStatus)
-                //    .on("click", showControlModal)
-                //    .appendTo(buttonArea);
-                //controlButton.tooltip({ title: "แผงควบคุม", boundary: "window", placement: "left" });
+                let controlButton = jQuery("<button></button>", {
+                    type: "button",
+                    class: "btn btn-light btn-icon"
+                })
+                    // .attr("data-valkey", item.lampCode).html("<i class=\"mdi mdi-tune-vertical\"></i>")
+                    // .attr("data-status", item.lampStatus)
+                    // .on("click", showControlModal)
+                    // .appendTo(buttonArea);
+                controlButton.tooltip({ title: "แผงควบคุม", boundary: "window", placement: "left" });
 
                 let editButton = jQuery("<button></button>", {
                     type: "button",
                     class: "btn btn-light btn-icon ml-3"
                 })
-                    .attr("data-valkey", item.lampCode).html("<i class=\"mdi mdi-pencil\"></i>")
-                    .on("click", showLampModalInEditMode)
-                    .appendTo(buttonArea);
+                .attr("data-valkey", item.lampCode).html("<i class=\"mdi mdi-pencil\"></i>")
+                .on("click", showLampModalInEditMode)
+                .appendTo(buttonArea);
                 editButton.tooltip({ title: "แก้ไขข้อมูล", boundary: "window", placement: "left" });
 
                 if ($("#parentRole").attr("data-valkey") != "1") {
@@ -516,8 +523,8 @@
     function showLampModalInEditMode() {
         modalState = MODAL_STATE.UPDATE;
 
-        $("#lampInfoModalEditLongTitle").text("ข้อมูลหลอดไฟ");
-        $("#lampInfoModalEdit").LoadingOverlay("show");
+        $("#lampInfoModalLongTitle").text("ข้อมูลหลอดไฟ");
+        $("#lampInfoModal").LoadingOverlay("show");
 
         fetch(ENDPOINT_URL.LAMP_INFO, {
             method: "POST",
@@ -526,14 +533,14 @@
             },
             body: JSON.stringify({ "lampCode": $(this).attr("data-valkey") })
         }).then(response => {
-            $("#lampInfoModalEdit").LoadingOverlay("hide");
+            $("#lampInfoModal").LoadingOverlay("hide");
             return response.json();
         }).then(result => {
             let viewModel = JSON.parse(JSON.stringify(result));
 
             if (viewModel.state == "success") {
                 bindLampViewModelToModal(viewModel.data);
-                $("#lampInfoModalEdit").modal("show");
+                $("#lampInfoModal").modal("show");
             } else {
                 showDialog(viewModel.state, viewModel.title, viewModel.message);
             }
@@ -579,7 +586,7 @@
                             confirmButtonColor: "#3085d6"
                         }).then((result) => {
                             if (viewModel.state == "success") {
-                                getLampData($("#controllerCode option:selected").val(), $("#bottomPagination").twbsPagination("getCurrentPage"), $("#lampTextSearch").val());
+                                getLampData($("#controllerCode option:selected").val(), $("#bottomPagination").twbsPagination("getCurrentPage"), $("#lampTextSearch").val(), $("#groupDevices").val());
                             }
                         });
                     } else {
@@ -594,19 +601,21 @@
     };
 
     function bindLampViewModelToModal(viewModel) {
-        $("#lampSerialNoEdit").val(viewModel.lampCode);
-        $("#lampSerialNoEdit").prop("disabled", true);
-
-        $("#lampNameEdit").val(viewModel.lampName);
-        $("#lampDescriptionEdit").val(viewModel.lampDescription);
-        $("#lampLatEdit").val(viewModel.latitude);
-        $("#lampLongEdit").val(viewModel.longitude);
+        // console.log('bindLampViewModelToModal', viewModel )
+        
+        $("#lampSerialNo").val(viewModel.lampCode);
+        $("#lampSerialNo").prop("disabled", true);
+        $('#groupDevicesEdit').val(viewModel.groupCode)
+        $("#lampName").val(viewModel.lampName);
+        $("#lampDescription").val(viewModel.lampDescription);
+        $("#lampLat").val(viewModel.latitude);
+        $("#lampLong").val(viewModel.longitude);
         $("#isWarning").prop("checked", viewModel.allowNotify);
     };
 
     $(".modal-state-create").on("click", function (e) {
         modalState = MODAL_STATE.CREATE;
-        $("#lampInfoModalEditLongTitle").text("เพิ่มหลอดไฟใหม่");
+        $("#lampInfoModalLongTitle").text("เพิ่มหลอดไฟใหม่");
     });
 
     $("#modal-save-button").on("click", function (e) {
@@ -614,7 +623,7 @@
             return;
         }
 
-        $("#lampInfoModalEdit").LoadingOverlay("show");
+        $("#lampInfoModal").LoadingOverlay("show");
 
         let postToUrl;
         switch (modalState) {
@@ -634,7 +643,8 @@
             lampSerialNo: $("#lampSerialNo").val(),
             latitude: $("#lampLat").val(),
             longitude: $("#lampLong").val(),
-            allowNotify: $("#isWarning").is(":checked")
+            allowNotify: $("#isWarning").is(":checked"),
+            groupCode: $("#groupDevices_addmodal").val(),
         };
 
         fetch(postToUrl, {
@@ -644,13 +654,13 @@
             },
             body: JSON.stringify(controllerData)
         }).then(response => {
-            $("#lampInfoModalEdit").LoadingOverlay("hide");
+            $("#lampInfoModal").LoadingOverlay("hide");
             return response.json();
         }).then(result => {
             let viewModel = JSON.parse(JSON.stringify(result));
 
             if (viewModel.state == "success") {
-                $("#lampInfoModalEdit").modal("hide");
+                $("#lampInfoModal").modal("hide");
             }
 
             Swal.fire({
@@ -660,7 +670,7 @@
                 confirmButtonColor: "#3085d6"
             }).then((result) => {
                 if (viewModel.state == "success") {
-                    getLampData($("#controllerCode option:selected").val(), $("#bottomPagination").twbsPagination("getCurrentPage"), $("#lampTextSearch").val());
+                    getLampData($("#controllerCode option:selected").val(), $("#bottomPagination").twbsPagination("getCurrentPage"), $("#lampTextSearch").val(), $("#groupDevices").val());
                 }
             });
         }).catch(error => {
@@ -692,7 +702,7 @@
     });
 
     $("#lampSearchSubmit").on("click", function (e) {
-        getLampData($("#controllerCode option:selected").val(), 1, $("#lampTextSearch").val());
+        getLampData($("#controllerCode option:selected").val(), 1, $("#lampTextSearch").val(), $("#groupDevices").val());
     });
 
     // function bindControlPanelViewModelToModal(viewModel) {
@@ -1902,176 +1912,6 @@
     //         }
     //     });
 
-    $('#controlAllRelayState').click(function () {
-        const endpoint = "http://85.204.247.82:3002/api/getalldevices"
-        const table = $('#alldevice');
-        const tableBody = document.querySelector("#alldevice tbody")
-        const transbox = $('#tb')
-        const subtransbox = $('#stb')
-
-        let statarr = []
-
-        tableBody.innerHTML = "";
-
-        Swal.fire({
-            title: '🔄 กำลังดึงข้อมูล...',
-            html: `
-        <div style="font-size: 16px; color: #555;">
-            กำลังดึงข้อมูลอุปกรณ์ทั้งหมด<br>
-            กรุณารอสักครู่...
-        </div>
-    `,
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            showConfirmButton: false,
-            timerProgressBar: true,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
-
-
-        setTimeout(() => {
-            fetch(endpoint)
-                .then(res => res.json())
-                .then(obj => {
-                    Swal.fire({
-                        position: "center",
-                        icon: 'success',
-                        title: '✅ สำเร็จ!',
-                        html: `
-        <div style="padding: 12px; background-color: #e6f4ea; border: 1px solid #a3d9a5; border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2e7d32;">
-            ระบบดึงข้อมูลอุปกรณ์ เรียบร้อยแล้ว
-        </div>
-    `,
-                        showConfirmButton: false,
-                        timer: 2000
-                    });
-
-
-                    setTimeout(() => {
-                        obj.devices.forEach(item => {
-                            if (item.relay === "ON") {
-                                statarr.push(item.relay)
-                            }
-                            const row = tableBody.insertRow();
-                            row.insertCell().textContent = item.macAddress;
-                            row.insertCell().textContent = item.tag;
-                            row.insertCell().textContent = item.relay;
-                            row.insertCell().textContent = item.pwm_freq;
-                            row.insertCell().textContent = item.mid;
-                            row.insertCell().textContent = item.workmode;
-                        });
-
-
-                        if ($.fn.DataTable.isDataTable(table)) {
-                            table.DataTable().clear().destroy();
-                        }
-
-                        table.find("tbody").empty();
-
-                        obj.devices.forEach(item => {
-                            const row = $("<tr>");
-                            row.append(`<td>${item.macAddress}</td>`);
-                            row.append(`<td>${item.tag}</td>`);
-                            row.append(`<td>${item.relay}</td>`);
-                            row.append(`<td>${item.pwm_freq}</td>`);
-                            row.append(`<td>${item.mid}</td>`);
-                            row.append(`<td>${item.workmode}</td>`);
-                            table.find("tbody").append(row);
-                        });
-
-                        table.DataTable({
-                            language: {
-                                search: "ค้นหา:",
-                                lengthMenu: "แสดง _MENU_ รายการต่อหน้า",
-                                zeroRecords: "ไม่พบข้อมูล",
-                                info: "แสดง _START_ ถึง _END_ จาก _TOTAL_ รายการ",
-                                infoEmpty: "แสดง 0 ถึง 0 จาก 0 รายการ",
-                                infoFiltered: "(กรองจากทั้งหมด _MAX_ รายการ)"
-                            }
-                        });
-
-                        $('#controlAllRelayStateModal').modal('show');
-
-                        if (parseInt(statarr.length) !== parseInt(obj.devices.length)) {
-                            const endpointoff = "http://85.204.247.82:3002/api/turnoffalllight"
-                            const options = {
-                                method: "POST"
-                            }
-                            setTimeout(() => {
-                                fetch(endpointoff, options)
-                                    .then(res => res.json())
-                                    .then(obj => {
-                                        console.log("Turn off all Devices Status: ", obj.status)
-                                    })
-                                    .catch(err => {
-                                        console.error("เกิดข้อผิดพลาด:", err);
-                                        Swal.fire({
-                                            position: "center",
-                                            icon: 'error',
-                                            title: "❌ ผิดพลาด!",
-                                            html: `
-        <div style="font-size: 16px; color: #b71c1c;">
-            🚫 ไม่สามารถ <strong>ปิดไฟทุกอุปกรณ์</strong> ได้<br>
-            กรุณาติดต่อผู้ดูแลระบบ
-        </div>
-    `,
-                                            showConfirmButton: false,
-                                            timer: 2000
-                                        });
-
-                                    });
-                            }, 1000);
-                            firstloadall = true
-                            $('#controlAllRelayStatebtn').bootstrapToggle('off')
-                            const btn = $('#control-send-all')
-
-                            // subtransbox.removeClass('move-left')
-                            // transbox.addClass('justify-content-center')
-                            // subtransbox.addClass('col-md-12')
-                            // subtransbox.removeClass('col-md-3')
-                            btn.attr('disabled', true);
-                            btn.removeClass('btn-success');
-                            btn.addClass('btn-secondary');
-                            $(".mn3").fadeOut()
-                        } else {
-                            firstloadall = true
-                            $('#controlAllRelayStatebtn').bootstrapToggle('on')
-                            const btn = $('#control-send-all')
-
-                            subtransbox.addClass('move-left')
-                            transbox.removeClass('justify-content-center')
-                            subtransbox.removeClass('col-md-12')
-                            subtransbox.addClass('col-md-3')
-                            btn.removeClass('btn-secondary');
-                            btn.addClass('btn-success');
-                            btn.removeAttr('disabled');
-                            $(".mn3").fadeIn()
-                        }
-
-                    }, 1500);
-                })
-                .catch(err => {
-                    console.error("เกิดข้อผิดพลาด:", err);
-                    Swal.fire({
-                        position: "center",
-                        icon: 'error',
-                        title: "❌ ผิดพลาด!",
-                        html: `
-        <div style="font-size: 16px; color: #b71c1c;">
-            🚫 ไม่สามารถดึงข้อมูลได้ในขณะนี้<br>
-            กรุณาติดต่อ <strong>ผู้ดูแลระบบ</strong>
-        </div>
-    `,
-                        showConfirmButton: false,
-                        timer: 2000
-                    });
-
-                });
-        }, 5000);
-    });
-
     $('#controlAllRelayStatebtn').change(function () {
         if (firstloadall) {
             firstloadall = false;
@@ -2632,26 +2472,19 @@
     updateBulbStatus(toggle3.checked);
 
     $('#controllerCode').on('change', function () {
-        const alldevicesbtn = $('#controlAllRelayState')
         const groupDevies = $('#groupDeviceslebel')
         const groupdropdown = $('.groupDevices')
-        const groupdropdownedit = $('.groupDevicesEdit')
         let value = $(this).val()
         let text = $(this).find('option:selected').text()
         if (value !== 'CTL25-00002') {
             groupDevies.addClass('d-none')
             groupDevies.removeClass('d-flex')
-            alldevicesbtn.addClass('d-none')
-            alldevicesbtn.removeClass('d-flex')
             groupdropdown.addClass('d-none')
-            groupdropdownedit.addClass('d-none')
+            $('#groupDevices').val("");
         } else {
-            alldevicesbtn.fadeIn()
-            alldevicesbtn.addClass('d-flex')
             groupDevies.fadeIn()
             groupDevies.addClass('d-flex')
             groupdropdown.removeClass('d-none')
-            groupdropdownedit.removeClass('d-none')
         }
     });
 
@@ -2691,54 +2524,29 @@
     const getGroupDevices = async () => {
         const inputGroup = $("#groupDevices")
         const inputGroup_addmodal = $("#groupDevices_addmodal")
-        const inputGroup_addmodalEdit = $("#groupDevices_modalEdit")
-        const endpoint = "http://85.204.247.82:3002/api/getalldevices"
+        //const endpoint = "http://85.204.247.82:3002/api/getalldevices"
+        const endpoint = ENDPOINT_URL.LAMP_GroupList
         const checkArr = new Set()
-        const options = { method: "GET" }
+        //const options = { method: "GET" }
+        const options = { method: "POST" }
 
         try {
             const response = await fetch(endpoint, options)
             const result = await response.json()
-
-            result?.devices?.forEach(item => {
-                const group = item?.mid
+            $(`<option value="0">ALL</option>`).appendTo(inputGroup)
+            result?.data?.forEach(item => {
+                const group = item
+                //const group = item?.mid
                 if (!group || checkArr.has(group)) return
 
                 checkArr.add(group)
                 $(`<option value="${group}">${group}</option>`).appendTo(inputGroup)
                 $(`<option value="${group}">${group}</option>`).appendTo(inputGroup_addmodal)
-                $(`<option value="${group}">${group}</option>`).appendTo(inputGroup_addmodalEdit)
             })
         } catch (error) {
             console.error("Error fetching group devices:", error)
         }
     }
-
-
     getGroupDevices()
-
-    // const selectGroupDevices = async () => {
-    //     const groupdevices = $("#groupDevices").val()
-    //     const endpoint = `http://85.204.247.82:3002/api/getgroupdevices/${groupdevices}`
-    //     const options = {
-    //         method: "GET",
-    //         headers: {
-    //             "Content-Type": "application/json; charset=utf-8"
-    //         },
-    //     }
-
-    //     fetch(endpoint, options)
-    //         .then(obj => obj.json())
-    //         .then(result => {
-    //             // inputdatas.val(result?.macAddress)
-    //             console.log(result?.macAddress)
-    //         })
-
-    // }
-
-    // $("#groupDevices").click(function () {
-    //     console.log('$(this).val():', $(this).val())
-    //     selectGroupDevices()
-    // })
 
 })
