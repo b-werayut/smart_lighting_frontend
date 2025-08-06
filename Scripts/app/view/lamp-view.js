@@ -2606,9 +2606,9 @@
         const payload = { group: group, schedule: schedulData }
         console.log('payload', payload)
 
-        schedulData.forEach(items => {
-            console.log(items)
-        })
+        // schedulData.forEach(items => {
+        //     console.log(items)
+        // })
 
         const options = {
             method: "POST",
