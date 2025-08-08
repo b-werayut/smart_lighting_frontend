@@ -758,6 +758,7 @@
         // $("#controlProjectType").val(viewModel.projectType);
         // $("#controlControllerCode").val(viewModel.controllerCode);
         $("#controlLampSerialNo").val(obj.data[0]?.macAddress);
+        $("#controlGroup").val(obj.data[0]?.mid);
         $("#controlLampName").val(obj.data[0]?.tag);
         $("#controlStaRelay").val(relay);
         $("#controlStaMode").val(workmode);
@@ -2451,8 +2452,9 @@
 
     //sendsingle
     $('#control-send-schedule').click(async function () {
-        const macAddress = $('#controlLampSerialNo').val()
-        const endpoint = "http://85.204.247.82:3002/api/setschedule"
+        const macAddress = $('#controlLampSerialNo').val();
+        const endpoint = "http://85.204.247.82:3002/api/setschedule";
+        const group = $('#controlGroup').val()
         const mac = macAddress
         let schedulDatas = [];
         let filledCount = 0;
@@ -2484,7 +2486,7 @@
             });
         }
 
-        let payload = { macAddress: mac, schedule: schedulDatas }
+        let payload = { group: group, macAddress: mac, schedule: schedulDatas }
         console.log('payload:', payload)
 
         const options = {
@@ -2599,7 +2601,7 @@
 
             if (!Array.isArray(group)) {
                 group = [group];
-                endpoint = `http://85.204.247.82:3002/api/setallgroupschedulelight?v=${Date.now()}`
+                // endpoint = `http://85.204.247.82:3002/api/setallgroupschedule?v=${Date.now()}`
             }
         }
 
@@ -2618,61 +2620,61 @@
             body: JSON.stringify(payload)
         }
 
-        // Swal.fire({
-        //     title: '<span>🔄 กำลังดำเนินการ...</span>',
-        //     html: `
-        //     <div style="font-size: 16px; color: #555;">
-        //         กำลังส่งคำสั่งทุกอุปกรณ์<br>
-        //         กรุณารอสักครู่...
-        //     </div>
-        // `,
-        //     timerProgressBar: true,
-        //     allowOutsideClick: false,
-        //     allowEscapeKey: false,
-        //     showConfirmButton: false,
-        //     didOpen: () => {
-        //         Swal.showLoading();
-        //     }
-        // })
+        Swal.fire({
+            title: '<span>🔄 กำลังดำเนินการ...</span>',
+            html: `
+            <div style="font-size: 16px; color: #555;">
+                กำลังส่งคำสั่งทุกอุปกรณ์<br>
+                กรุณารอสักครู่...
+            </div>
+        `,
+            timerProgressBar: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        })
 
-        // try {
-        //     const resp = await fetch(endpoint, options);
-        //     const obj = await resp.json();
-        //     console.log('response', obj.status)
+        try {
+            const resp = await fetch(endpoint, options);
+            const obj = await resp.json();
+            console.log('response', obj)
 
-        //     Swal.fire({
-        //         position: "center",
-        //         icon: 'success',
-        //         title: '✅ สำเร็จ!',
-        //         html: `
-        //     <div style="font-size: 16px; color: #2e7d32;">
-        //         ส่งคำสั่งไปยังทุกอุปกรณ์ <strong>สำเร็จ</strong>
-        //     </div>
-        // `,
-        //         showConfirmButton: false,
-        //         timer: 2000
-        //     })
+            Swal.fire({
+                position: "center",
+                icon: 'success',
+                title: '✅ สำเร็จ!',
+                html: `
+            <div style="font-size: 16px; color: #2e7d32;">
+                ส่งคำสั่งไปยังทุกอุปกรณ์ <strong>สำเร็จ</strong>
+            </div>
+        `,
+                showConfirmButton: false,
+                timer: 2000
+            })
 
-        //     $(this).prop('disabled', true);
-        //     setTimeout(() => {
-        //         $(this).prop('disabled', false);
-        //     }, 15000);
+            $(this).prop('disabled', true);
+            setTimeout(() => {
+                $(this).prop('disabled', false);
+            }, 15000);
 
-        // } catch (err) {
-        //     console.error("เกิดข้อผิดพลาด:", err);
-        //     Swal.fire({
-        //         position: "center",
-        //         icon: 'error',
-        //         title: "❌ ผิดพลาด!",
-        //         html: `
-        //             <div style="font-size: 16px; color: #b71c1c;">
-        //                 🚫 <strong>ส่งคำสั่งไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
-        //             </div>
-        //         `,
-        //         showConfirmButton: false,
-        //         timer: 1500
-        //     });
-        // }
+        } catch (err) {
+            console.error("เกิดข้อผิดพลาด:", err);
+            Swal.fire({
+                position: "center",
+                icon: 'error',
+                title: "❌ ผิดพลาด!",
+                html: `
+                    <div style="font-size: 16px; color: #b71c1c;">
+                        🚫 <strong>ส่งคำสั่งไม่สำเร็จ กรุณาติดต่อผู้ดูแลระบบ</strong>
+                    </div>
+                `,
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
 
     })
 
@@ -2681,7 +2683,7 @@
         const warmVal = $('#controlAllRangeWarm').val()
         const coolVal = $('#controlAllRangeCool').val()
         const relaybtn = $('#controlAllRelayStatebtn')
-        const group = $('#groupSelect').val()
+        let group = $('#groupSelect').val()
         let relay
 
         if (relaybtn.prop('checked')) {
@@ -2690,18 +2692,38 @@
             relay = "OFF"
         }
 
-        const datas = {
-            relay,
+        if (Number(group) === 0 || !group) {
+            let groupArr = [];
+
+            $('#groupSelect option').each(function () {
+                const values = Number($(this).val());
+                if (!values || values === 0) { return; }
+                groupArr.push(Number($(this).val()));
+            });
+
+            groupArr.sort((a, b) => a - b);
+            group = groupArr;
+
+            if (!Array.isArray(group)) {
+                group = [group];
+            }
+        }
+
+        const payload = {
             group,
+            relay,
             warmVal,
             coolVal
         }
+
+        console.log('Payload send all manual', payload)
+
         const options = {
             method: "POST",
             headers: {
                 "Content-Type": "application/json; charset=utf-8"
             },
-            body: JSON.stringify(datas)
+            body: JSON.stringify(payload)
         }
 
         Swal.fire({
@@ -2737,7 +2759,7 @@
                     showConfirmButton: false,
                     timer: 2000
                 })
-
+                console.log('response:', obj)
                 setTimeout(() => {
                     // $('#controlAllRelayStateModal').modal('hide')
                 }, 1500);
@@ -3380,13 +3402,15 @@
         schedultabAll = false
     }
 
-    document.querySelector('#addscheduleall').addEventListener('click', function (e) {
+    document.querySelector('#addscheduleall').addEventListener('click', async function (e) {
         e.preventDefault();
+
+        await new Promise(resolve => setTimeout(resolve, 700));
 
         const currentCount = $('#scheduleAllList li').length;
         const periodall = currentCount + 1;
 
-        $('#periodAll').text(periodall)
+
 
         if (periodall > 5) return
 
@@ -3407,6 +3431,8 @@
             addBtn.removeClass("btn-success");
             addBtn.addClass("btn-secondary")
         }
+
+        $('#periodAll').text(periodall)
 
         const $li = $(`
     <li class="col-md-12 mb-3" style="display: none;">
@@ -3536,8 +3562,6 @@
                         return;
                     }
 
-                } else {
-                    console.warn('ไม่สามารถหาค่าเวลาสิ้นสุดจากช่วงก่อนหน้าได้');
                 }
             }
 
@@ -3550,6 +3574,7 @@
         }
 
         $('#scheduleAllList').append($li);
+
         $li.fadeIn(function () {
             const $start = $(`#scheduleall_${periodall}_start`);
             const $end = $(`#scheduleall_${periodall}_end`);
@@ -3595,8 +3620,6 @@
                 $start.datetimepicker('date', moment('00:00', 'HH:mm'));
                 $end.datetimepicker('date', moment('01:00', 'HH:mm'));
             }
-
-
 
             $start.on("show.datetimepicker", function () {
                 const start = moment($start.val(), 'HH:mm');
@@ -3832,6 +3855,7 @@
     });
 
     function updatePeriodNumbersAll() {
+
         $('#scheduleAllList li').each(function (index) {
             const $li = $(this);
             const newPeriod = index + 1;
@@ -4202,8 +4226,10 @@
         schedultab = false
     }
 
-    document.querySelector('#addschedule').addEventListener('click', function (e) {
+    document.querySelector('#addschedule').addEventListener('click', async function (e) {
         e.preventDefault();
+
+        await new Promise(resolve => setTimeout(resolve, 700));
 
         const currentCount = $('#scheduleList li').length;
         const period = currentCount + 1;
@@ -4358,8 +4384,6 @@
                         return;
                     }
 
-                } else {
-                    console.warn('ไม่สามารถหาค่าเวลาสิ้นสุดจากช่วงก่อนหน้าได้');
                 }
             }
 
@@ -4697,9 +4721,11 @@
     }
 
     $('#clearSchedules').on('click', function () {
-        $('#scheduleList li').slice(1).remove();
 
-        $('#period').text('1')
+        $('#scheduleList li').slice(1).fadeOut(300, function () {
+            $(this).remove();
+            $('#period').text('1')
+        });
 
         const $firstLi = $('#scheduleList li').first();
 
@@ -4715,11 +4741,17 @@
     });
 
     $('#resetSchedules').on('click', function () {
+
         $('#scheduleAllList li').slice(1).fadeOut(300, function () {
             $(this).remove();
+            $('#periodAll').text('1');
+            const addBtn = $('#addscheduleall')
+            addBtn.prop("disabled", false);
+            addBtn.addClass("btn-success");
+            addBtn.removeClass("btn-secondary")
         });
 
-        $('#period').text('1');
+        updatePeriodNumbersAll()
 
         const $firstLi = $('#scheduleAllList li').first();
 
