@@ -3101,16 +3101,16 @@
     })
 
     function runManualFunction() {
-        // console.log("กำลังทำงานในแท็บ Manual")
+        $('#resetSchedules').addClass('d-none');
     }
 
     let schedultab = true
     let schedultabAll = true
 
     function scheduleAllFunction() {
-
+        
+        $('#resetSchedules').removeClass('d-none')
         if (!schedultabAll) return
-
         const currentCount = $('#scheduleAllList li').length;
         const period = currentCount + 1
 
@@ -3191,6 +3191,15 @@
         $li.fadeIn(function () {
             const $start = $(`#scheduleall_${period}_start`);
             const $end = $(`#scheduleall_${period}_end`);
+
+            $start.on('keydown paste', function (e) {
+                e.preventDefault();
+            });
+
+            $end.on('keydown paste', function (e) {
+                e.preventDefault();
+            });
+
             const prevPeriod = period - 1;
             const nextPeriod = period + 1;
             let previousStart = null;
@@ -3405,7 +3414,7 @@
     document.querySelector('#addscheduleall').addEventListener('click', async function (e) {
         e.preventDefault();
 
-        await new Promise(resolve => setTimeout(resolve, 700));
+        await new Promise(resolve => setTimeout(resolve, 300));
 
         const currentCount = $('#scheduleAllList li').length;
         const periodall = currentCount + 1;
@@ -3578,6 +3587,15 @@
         $li.fadeIn(function () {
             const $start = $(`#scheduleall_${periodall}_start`);
             const $end = $(`#scheduleall_${periodall}_end`);
+
+            $start.on('keydown paste', function (e) {
+                e.preventDefault();
+            });
+
+            $end.on('keydown paste', function (e) {
+                e.preventDefault();
+            });
+
             const prevPeriod = periodall - 1;
             const nextPeriod = periodall + 1;
             let previousStart = null;
@@ -4000,6 +4018,15 @@
         $li.fadeIn(function () {
             const $start = $(`#schedule_${period}_start`);
             const $end = $(`#schedule_${period}_end`);
+
+            $start.on('keydown paste', function (e) {
+                e.preventDefault();
+            });
+
+            $end.on('keydown paste', function (e) {
+                e.preventDefault();
+            });
+
             const prevPeriod = period - 1;
             const nextPeriod = period + 1;
             let previousStart = null;
@@ -4229,7 +4256,7 @@
     document.querySelector('#addschedule').addEventListener('click', async function (e) {
         e.preventDefault();
 
-        await new Promise(resolve => setTimeout(resolve, 700));
+        await new Promise(resolve => setTimeout(resolve, 300));
 
         const currentCount = $('#scheduleList li').length;
         const period = currentCount + 1;
@@ -4333,6 +4360,14 @@
             const $start = $(`#schedule_${period}_start`);
             const $end = $(`#schedule_${period}_end`);
 
+            $start.on('keydown paste', function (e) {
+                e.preventDefault();
+            });
+
+            $end.on('keydown paste', function (e) {
+                e.preventDefault();
+            });
+
             [$start, $end].forEach($el => {
                 $el.datetimepicker({
                     format: "HH:mm",
@@ -4399,6 +4434,15 @@
         $li.fadeIn(function () {
             const $start = $(`#schedule_${period}_start`);
             const $end = $(`#schedule_${period}_end`);
+
+            $start.on('keydown paste', function (e) {
+                e.preventDefault();
+            });
+
+            $end.on('keydown paste', function (e) {
+                e.preventDefault();
+            });
+
             const prevPeriod = period - 1;
             const nextPeriod = period + 1;
             let previousStart = null;
@@ -4729,9 +4773,8 @@
 
         const $firstLi = $('#scheduleList li').first();
 
-        $firstLi.find('input[id^="schedule_"][id$="_start"]').datetimepicker('date', moment('00:00', 'HH:mm'));
-
-        $firstLi.find('input[id^="schedule_"][id$="_end"]').datetimepicker('date', moment('01:00', 'HH:mm'));
+        // $firstLi.find('input[id^="schedule_"][id$="_start"]').datetimepicker('date', moment('00:00', 'HH:mm'));
+        // $firstLi.find('input[id^="schedule_"][id$="_end"]').datetimepicker('date', moment('01:00', 'HH:mm'));
 
         $firstLi.find('input[id^="schedule_"][id$="_controlRangeWarm"]').val(0).trigger('input');
         $firstLi.find('p[id^="schedule_"][id$="_rangeWarm"]').text('0');
@@ -4755,8 +4798,8 @@
 
         const $firstLi = $('#scheduleAllList li').first();
 
-        $firstLi.find('input[id^="scheduleall_"][id$="_start"]').datetimepicker('date', moment('00:00', 'HH:mm'));
-        $firstLi.find('input[id^="scheduleall_"][id$="_end"]').datetimepicker('date', moment('01:00', 'HH:mm'));
+        // $firstLi.find('input[id^="scheduleall_"][id$="_start"]').datetimepicker('date', moment('00:00', 'HH:mm'));
+        // $firstLi.find('input[id^="scheduleall_"][id$="_end"]').datetimepicker('date', moment('01:00', 'HH:mm'));
 
         $firstLi.find('input[id^="scheduleall_"][id$="_controlRangeWarm"]').val(0).trigger('input');
         $firstLi.find('p[id^="scheduleall_"][id$="_rangeWarm"]').text('0');
