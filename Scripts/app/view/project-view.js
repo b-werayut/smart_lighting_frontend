@@ -27,6 +27,11 @@
         if ($("#parentRole").attr("data-valkey") == "1") {
             $("#buttonNewProject").addClass("invisible");
             $("#modal-save-button").addClass("d-none");
+            $("#projectName").prop('disabled', true);
+            $("#projectAddress").prop('disabled', true);
+            $("#province").prop('disabled', true);
+            $("#district").prop('disabled', true);
+            $("#subdistrict").prop('disabled', true);
         }
     }
 
@@ -108,16 +113,16 @@
                     class: "d-flex justify-content-end flex-wrap"
                 }).appendTo(buttonCol);
 
-                let editButton = jQuery("<button></button>", {
-                    type: "button",
-                    class: "btn btn-light btn-icon ml-3"
-                })
-                    .attr("data-valkey", item.projectCode).html("<i class=\"mdi mdi-pencil\"></i>")
-                    .on("click", showInfoModalEditMode)
-                    .appendTo(buttonArea);
-                editButton.tooltip({ title: "แก้ไขข้อมูล", boundary: "window", placement: "left" });
-
                 if ($("#parentRole").attr("data-valkey") != "1") {
+
+                    let editButton = jQuery("<button></button>", {
+                        type: "button",
+                        class: "btn btn-light btn-icon ml-3"
+                    })
+                        .attr("data-valkey", item.projectCode).html("<i class=\"mdi mdi-pencil\"></i>")
+                        .on("click", showInfoModalEditMode)
+                        .appendTo(buttonArea);
+                    editButton.tooltip({ title: "แก้ไขข้อมูล", boundary: "window", placement: "left" });
 
                     let deleteButton = jQuery("<button></button>", {
                         type: "button",
@@ -128,6 +133,15 @@
                         .html("<i class=\"mdi mdi-delete\"></i>")
                         .appendTo(buttonArea);
                     deleteButton.tooltip({ title: "ลบ", boundary: "window", placement: "left" });
+                }else{
+                    let viewButton = jQuery("<button></button>", {
+                        type: "button",
+                        class: "btn btn-light btn-icon ml-3 edit-btn"
+                    })
+                        .attr("data-valkey", item.projectCode).html("<i class=\"mdi mdi-information-outline\"></i>")
+                        .on("click", showInfoModalEditMode)
+                        .appendTo(buttonArea);
+                    viewButton.tooltip({ title: "ดูข้อมูล", boundary: "window", placement: "left" });
                 }
 
                 tableBody.append(tableRow);
@@ -289,8 +303,8 @@
             getSubDistrictData(viewModel.districtCode, viewModel.subDistrictCode)
         );
 
-        $("#lineToken_1").val(viewModel.lineToken1);
-        $("#lineToken_2").val(viewModel.lineToken2);
+        //$("#lineToken_1").val(viewModel.lineToken1);
+        //$("#lineToken_2").val(viewModel.lineToken2);
     };
 
     function validateProjectData() {
@@ -451,8 +465,8 @@
             projectAddress: $("#projectAddress").val(),
             projectType: $("#projectType option:selected").val(),
             subDistrictCode: $("#subdistrict option:selected").val(),
-            lineToken1: $("#lineToken_1").val(),
-            lineToken2: $("#lineToken_2").val(),
+            //lineToken1: $("#lineToken_1").val(),
+            //lineToken2: $("#lineToken_2").val(),
         };
 
         fetch(postToUrl, {
@@ -494,8 +508,8 @@
         $("#projectType").val("");
         $("#projectType").prop("disabled", false);
         $("#province").val("");
-        $("#lineToken_1").val("");
-        $("#lineToken_2").val("");
+        //$("#lineToken_1").val("");
+        //$("#lineToken_2").val("");
         resetDistrictDropDown();
         resetSubDistrictDropDown();
 
@@ -506,8 +520,8 @@
         $("#province").removeClass("is-invalid")
         $("#district").removeClass("is-invalid")
         $("#subdistrict").removeClass("is-invalid")
-        $("#lineToken_1").removeClass("is-invalid")
-        $("#lineToken_2").removeClass("is-invalid")
+        //$("#lineToken_1").removeClass("is-invalid")
+        //$("#lineToken_2").removeClass("is-invalid")
     });
 
     $("#searchText").keypress(function (event) {

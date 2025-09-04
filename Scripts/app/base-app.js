@@ -9,56 +9,56 @@ const MODAL_STATE = {
 };
 
 const ENDPOINT_URL = {
-    ADDRESS_PROVINCE: "/Address/getProvince",
-    ADDRESS_DISTRICT: "/Address/getDistrictByProvinceCode",
-    ADDRESS_SUBDISTRICT: "/Address/getSubDistrictByDistrictCode",
+    ADDRESS_PROVINCE: "/smartlighting/Address/getProvince",
+    ADDRESS_DISTRICT: "/smartlighting/Address/getDistrictByProvinceCode",
+    ADDRESS_SUBDISTRICT: "/smartlighting/Address/getSubDistrictByDistrictCode",
 
-    PROJECT_BY_CUSTOMER: "/Project/getProjectListByCustomer",
-    CONTROLLER_BY_PROJECT: "/Device/getControllerListByProject",
-    LAMP_BY_CONTROLLER: "/Lamp/getLampListByController",
+    PROJECT_BY_CUSTOMER: "/smartlighting/Project/getProjectListByCustomer",
+    CONTROLLER_BY_PROJECT: "/smartlighting/Device/getControllerListByProject",
+    LAMP_BY_CONTROLLER: "/smartlighting/Lamp/getLampListByController",
 
-    LOGIN: "/Login/Index",
+    LOGIN: "/smartlighting/Login/Index",
 
-    DASHBOARD_LAMP: "/Home/getLampStatusDashboardData",
-    DASHBOARD_JOB: "/Home/getJobStatusDashboardData",
-    DASHBOARD_EMM: "/Home/getEMMStatusDashboardData",
-    DASHBOARD_WEATHER: "/Home/getWeatherDashboardData",
+    DASHBOARD_LAMP: "/smartlighting/Home/getLampStatusDashboardData",
+    DASHBOARD_JOB: "/smartlighting/Home/getJobStatusDashboardData",
+    DASHBOARD_EMM: "/smartlighting/Home/getEMMStatusDashboardData",
+    DASHBOARD_WEATHER: "/smartlighting/Home/getWeatherDashboardData",
 
-    USER_CREATE: "/User/Create",
-    USER_UPDATE: "/User/Update",
-    USER_INFO: "/User/Info",
-    USER_DELETE: "/User/Delete",
-    USER_LIST: "/User/getUserOnPagedList",
+    USER_CREATE: "/smartlighting/User/Create",
+    USER_UPDATE: "/smartlighting/User/Update",
+    USER_INFO: "/smartlighting/User/Info",
+    USER_DELETE: "/smartlighting/User/Delete",
+    USER_LIST: "/smartlighting/User/getUserOnPagedList",
 
-    PROJECT_CREATE: "/Project/Create",
-    PROJECT_UPDATE: "/Project/Update",
-    PROJECT_INFO: "/Project/Info",
-    PROJECT_DELETE: "/Project/Delete",
-    PROJECT_LIST: "/Project/getProjectOnPagedList",
+    PROJECT_CREATE: "/smartlighting/Project/Create",
+    PROJECT_UPDATE: "/smartlighting/Project/Update",
+    PROJECT_INFO: "/smartlighting/Project/Info",
+    PROJECT_DELETE: "/smartlighting/Project/Delete",
+    PROJECT_LIST: "/smartlighting/Project/getProjectOnPagedList",
 
-    CONTROLLER_CREATE: "/Device/Create",
-    CONTROLLER_UPDATE: "/Device/Update",
-    CONTROLLER_INFO: "/Device/Info",
-    CONTROLLER_DELETE: "/Device/Delete",
-    CONTROLLER_LIST: "/Device/getControllerOnPagedList",
+    CONTROLLER_CREATE: "/smartlighting/Device/Create",
+    CONTROLLER_UPDATE: "/smartlighting/Device/Update",
+    CONTROLLER_INFO: "/smartlighting/Device/Info",
+    CONTROLLER_DELETE: "/smartlighting/Device/Delete",
+    CONTROLLER_LIST: "/smartlighting/Device/getControllerOnPagedList",
 
-    LAMP_CREATE: "/Lamp/Create",
-    LAMP_UPDATE: "/Lamp/Update",
-    LAMP_INFO: "/Lamp/Info",
-    LAMP_DELETE: "/Lamp/Delete",
-    LAMP_LIST: "/Lamp/getLampOnPagedList",
-    LAMP_STATUS: "/Lamp/getLampStatus",
-    LAMP_GroupList:"/Lamp/getLampGroupList",
+    LAMP_CREATE: "/smartlighting/Lamp/Create",
+    LAMP_UPDATE: "/smartlighting/Lamp/Update",
+    LAMP_INFO: "/smartlighting/Lamp/Info",
+    LAMP_DELETE: "/smartlighting/Lamp/Delete",
+    LAMP_LIST: "/smartlighting/Lamp/getLampOnPagedList",
+    LAMP_STATUS: "/smartlighting/Lamp/getLampStatus",
+    LAMP_GroupList:"/smartlighting/Lamp/getLampGroupList",
 
-    JOB_CREATE: "/Job/Create",
-    JOB_UPDATE: "/Job/Update",
-    JOB_INFO: "/Job/Info",
-    JOB_DELETE: "/Job/Delete",
-    JOB_LIST: "/Job/getJobOnPagedList",
+    JOB_CREATE: "/smartlighting/Job/Create",
+    JOB_UPDATE: "/smartlighting/Job/Update",
+    JOB_INFO: "/smartlighting/Job/Info",
+    JOB_DELETE: "/smartlighting/Job/Delete",
+    JOB_LIST: "/smartlighting/Job/getJobOnPagedList",
 
-    DATA_FOR_MAPS: "/Maps/getDataToPaintOnMaps",
+    DATA_FOR_MAPS: "/smartlighting/Maps/getDataToPaintOnMaps",
 
-    MQTTCLIENT_ENDPOINT: "/Config/getMqttPublisherEndpoint"
+    MQTTCLIENT_ENDPOINT: "/smartlighting/Config/getMqttPublisherEndpoint"
    
 };
 

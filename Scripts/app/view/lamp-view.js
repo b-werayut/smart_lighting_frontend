@@ -1,12 +1,36 @@
 ﻿$(document).ready(function () {
     let firstloadmanual = true;
     let firstloadauto = true;
-    let firstloadall = true
+    let firstloadall = true;
     let isInternalChange = false;
     let isInitializing = false;
     let dataTableInstance;
 
     bindButtonByPermission();
+
+    function modalPermission() {
+
+        if ($("#parentRole").attr("data-valkey") == "1") {
+            $("#control-send-manual").addClass("d-none");
+            $("#control-send-schedule").addClass("d-none");
+            $("#controlActionList").prop("disabled", true);
+            $("#controlRelayState").prop("disabled", true);
+            $("#controlRangeWarm").prop("disabled", true);
+            $("#controlRangeCool").prop("disabled", true);
+            $("#addschedule").prop("disabled", true);
+            $("#addschedule").removeClass("btn-success");
+            $("#addschedule").addClass("btn-secondary");
+
+            for (let i = 0; i < 5; i++) {
+                let index = i + 1;
+                $(`#schedule_${index}_start`).prop('disabled', true);
+                $(`#schedule_${index}_end`).prop('disabled', true);
+                $(`#schedule_${index}_controlRangeWarm`).prop('disabled', true);
+                $(`#schedule_${index}_controlRangeCool`).prop('disabled', true);
+            }
+        }
+
+    };
 
     //-----------------------------------------------
 
@@ -16,7 +40,13 @@
 
     var defaultPagingOptions = {
         onPageClick: function (e, page) {
-            getLampData($("#controllerCode option:selected").val(), page, $("#lampTextSearch").val(), $("#groupDevices").val());
+            getLampData(
+                $("#projectCode option:selected").val(),
+                $("#controllerCode option:selected").val(),
+                page,
+                $("#lampTextSearch").val(),
+                //    $("#groupDevices").val()
+            );
         }
     };
 
@@ -27,21 +57,52 @@
             $("#buttonNewLamp").addClass("invisible");
             $("#modal-save-button").addClass("d-none");
             $("#control-send-button").addClass("d-none");
+            $("#controlAllRelayState").addClass("invisible");
         }
     }
 
     bindingChangeModeListDropDown();
 
-    $("#schedule_1_start").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
-    $("#schedule_1_end").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
-    $("#schedule_2_start").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
-    $("#schedule_2_end").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
-    $("#schedule_3_start").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
-    $("#schedule_3_end").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
-    $("#schedule_4_start").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
-    $("#schedule_4_end").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
-    $("#schedule_5_start").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
-    $("#schedule_5_end").datetimepicker({ format: "HH:mm", buttons: { showToday: true, showClose: true } });
+    $("#schedule_1_start").datetimepicker({
+        format: "HH:mm",
+        buttons: { showToday: true, showClose: true },
+    });
+    $("#schedule_1_end").datetimepicker({
+        format: "HH:mm",
+        buttons: { showToday: true, showClose: true },
+    });
+    $("#schedule_2_start").datetimepicker({
+        format: "HH:mm",
+        buttons: { showToday: true, showClose: true },
+    });
+    $("#schedule_2_end").datetimepicker({
+        format: "HH:mm",
+        buttons: { showToday: true, showClose: true },
+    });
+    $("#schedule_3_start").datetimepicker({
+        format: "HH:mm",
+        buttons: { showToday: true, showClose: true },
+    });
+    $("#schedule_3_end").datetimepicker({
+        format: "HH:mm",
+        buttons: { showToday: true, showClose: true },
+    });
+    $("#schedule_4_start").datetimepicker({
+        format: "HH:mm",
+        buttons: { showToday: true, showClose: true },
+    });
+    $("#schedule_4_end").datetimepicker({
+        format: "HH:mm",
+        buttons: { showToday: true, showClose: true },
+    });
+    $("#schedule_5_start").datetimepicker({
+        format: "HH:mm",
+        buttons: { showToday: true, showClose: true },
+    });
+    $("#schedule_5_end").datetimepicker({
+        format: "HH:mm",
+        buttons: { showToday: true, showClose: true },
+    });
 
     //$("#schedule_1_duration").datetimepicker({ format: "HH:mm" });
     //$("#schedule_2_duration").datetimepicker({ format: "HH:mm" });
@@ -66,10 +127,20 @@
 
     setInterval(function () {
         if ($("#isAutoRefresh").is(":checked")) {
-            if (!($("#lampInfoModal").data('bs.modal') || {})._isShown && !($("#controlInfoModal").data('bs.modal') || {})._isShown && !($("#controlAllRelayStateModal").data('bs.modal') || {})._isShown) {
+            if (
+                !($("#lampInfoModal").data("bs.modal") || {})._isShown &&
+                !($("#controlInfoModal").data("bs.modal") || {})._isShown &&
+                !($("#controlAllRelayStateModal").data("bs.modal") || {})._isShown
+            ) {
                 if ($("#projectCode option:selected").attr("data-valkey") != "2") {
                     console.log("interval activate !");
-                    getLampData($("#controllerCode option:selected").val(), $("#bottomPagination").twbsPagination("getCurrentPage"), $("#lampTextSearch").val(), $("#groupDevices").val());
+                    getLampData(
+                        $("#projectCode option:selected").val(),
+                        $("#controllerCode option:selected").val(),
+                        $("#bottomPagination").twbsPagination("getCurrentPage"),
+                        $("#lampTextSearch").val(),
+                        //    $("#groupDevices").val()
+                    );
                 }
             }
         }
@@ -78,13 +149,26 @@
     async function fromDevicePageWithAsync(queryString) {
         await getProjectData(queryString["projectCode"]);
 
-        $("#projectCode").val(queryString["projectCode"]).change(
-            getControllerData(queryString["projectCode"], queryString["controllerCode"])
-        );
+        $("#projectCode")
+            .val(queryString["projectCode"])
+            .change(
+                getControllerData(
+                    queryString["projectCode"],
+                    queryString["controllerCode"]
+                )
+            );
 
-        $("#controllerCode").val(queryString["projectCode"]).change(
-            getLampData(queryString["controllerCode"], 1, "", $("#groupDevices").val())
-        );
+        $("#controllerCode")
+            .val(queryString["projectCode"])
+            .change(
+                getLampData(
+                    queryString["projectCode"],
+                    queryString["controllerCode"],
+                    1,
+                    "",
+                    //    $("#groupDevices").val()
+                )
+            );
 
         bindingAddButtonState();
     }
@@ -95,17 +179,17 @@
         let isValid = true;
 
         if (!$("#lampSerialNo").val().trim()) {
-            $("#lampSerialNo").addClass("is-invalid")
+            $("#lampSerialNo").addClass("is-invalid");
             isValid = false;
         }
 
         if (!$("#lampName").val().trim()) {
-            $("#lampName").addClass("is-invalid")
+            $("#lampName").addClass("is-invalid");
             isValid = false;
         }
 
         return isValid;
-    };
+    }
 
     async function getProjectData(selectProjectCode) {
         $("#projectCode").LoadingOverlay("show");
@@ -113,58 +197,81 @@
         await fetch(ENDPOINT_URL.PROJECT_BY_CUSTOMER, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json; charset=utf-8"
-            }
-        }).then(response => {
-            $("#projectCode").LoadingOverlay("hide");
-            return response.json();
-        }).then(result => {
-            let viewModel = JSON.parse(JSON.stringify(result));
+                "Content-Type": "application/json; charset=utf-8",
+            },
+        })
+            .then((response) => {
+                $("#projectCode").LoadingOverlay("hide");
+                return response.json();
+            })
+            .then((result) => {
+                let viewModel = JSON.parse(JSON.stringify(result));
 
-            if (viewModel.state == "success") {
-                bindingProjectDropdown(viewModel.data);
+                if (viewModel.state == "success") {
+                    bindingProjectDropdown(viewModel.data);
 
-                if (viewModel.data.length > 0) {
-                    if (selectProjectCode.trim().length > 0) {
-                        $("#projectCode").val(selectProjectCode);
-                    } else {
-                        $("#projectCode").prop('selectedIndex', 0).change();
+                    if (viewModel.data.length > 0) {
+                        if (selectProjectCode.trim().length > 0) {
+                            $("#projectCode").val(selectProjectCode);
+                        } else {
+                            $("#projectCode").prop("selectedIndex", 0).change();
+                        }
                     }
+                } else {
+                    showDialog(viewModel.state, viewModel.title, viewModel.message);
                 }
-            } else {
-                showDialog(viewModel.state, viewModel.title, viewModel.message);
-            }
-        }).catch(error => {
-            console.log(error.message);
-            showDialog("error", "เกิดข้อผิดพลาด", "กรุณาติดต่อผู้ดูแลระบบ");
-        });
-    };
+            })
+            .catch((error) => {
+                console.log(error.message);
+                showDialog("error", "เกิดข้อผิดพลาด", "กรุณาติดต่อผู้ดูแลระบบ");
+            });
+    }
 
     function bindingChangeModeListDropDown() {
-        $("#controlChangeModeList").append("<option value='1'>กำหนดการทำงานด้วยตนเอง</option>");
-        $("#controlChangeModeList").append("<option value='2'>ตั้งเวลาทำงานอัตโนมัติ</option>");
+        $("#controlChangeModeList").append(
+            "<option value='1'>กำหนดการทำงานด้วยตนเอง</option>"
+        );
+        $("#controlChangeModeList").append(
+            "<option value='2'>ตั้งเวลาทำงานอัตโนมัติ</option>"
+        );
 
         if ($("#parentRole").attr("data-valkey") != "1") {
             $("#controlChangeModeList").append("<option value='-1'>DEBUG</option>");
             $("#controlChangeModeList").append("<option value='0'>CONFIG</option>");
-            $("#controlChangeModeList").append("<option value='3'>AMBIENT_LIGHT</option>");
-            $("#controlChangeModeList").append("<option value='4'>SCHEDULER_WITH_AMBIENT_LIGHT</option>");
+            $("#controlChangeModeList").append(
+                "<option value='3'>AMBIENT_LIGHT</option>"
+            );
+            $("#controlChangeModeList").append(
+                "<option value='4'>SCHEDULER_WITH_AMBIENT_LIGHT</option>"
+            );
         }
-    };
+    }
 
     function bindingProjectDropdown(jsonProject) {
         if (jsonProject.length > 0) {
             $.each(jsonProject, function (_, item) {
-                $("#projectCode").append($("<option value=" + item.projectCode + " data-valkey=" + item.projectType + ">" + item.projectName + "</option>"));
+                $("#projectCode").append(
+                    $(
+                        "<option value=" +
+                        item.projectCode +
+                        " data-valkey=" +
+                        item.projectType +
+                        ">" +
+                        item.projectName +
+                        "</option>"
+                    )
+                );
             });
         } else {
-            $("#projectCode").append("<option selected disabled value=''>ไม่มีข้อมูล</option>");
+            $("#projectCode").append(
+                "<option selected disabled value=''>ไม่มีข้อมูล</option>"
+            );
 
             if (!$("#buttonNewLamp").hasClass("invisible")) {
                 $("#buttonNewLamp").addClass("invisible");
             }
         }
-    };
+    }
 
     function bindingAddButtonState() {
         if ($("#projectCode option:selected").attr("data-valkey") == "2") {
@@ -173,11 +280,11 @@
             }
 
             if ($("#EMMProjectWarning").hasClass("d-none")) {
-                $("#EMMProjectWarning").removeClass("d-none")
+                $("#EMMProjectWarning").removeClass("d-none");
             }
 
             if (!$("#no-more-tables").hasClass("d-none")) {
-                $("#no-more-tables").addClass("d-none")
+                $("#no-more-tables").addClass("d-none");
             }
         } else {
             if ($("#buttonNewLamp").hasClass("invisible")) {
@@ -185,11 +292,11 @@
             }
 
             if (!$("#EMMProjectWarning").hasClass("d-none")) {
-                $("#EMMProjectWarning").addClass("d-none")
+                $("#EMMProjectWarning").addClass("d-none");
             }
 
             if ($("#no-more-tables").hasClass("d-none")) {
-                $("#no-more-tables").removeClass("d-none")
+                $("#no-more-tables").removeClass("d-none");
             }
         }
 
@@ -215,56 +322,87 @@
         fetch(ENDPOINT_URL.CONTROLLER_BY_PROJECT, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json; charset=utf-8"
+                "Content-Type": "application/json; charset=utf-8",
             },
-            body: JSON.stringify(projectData)
-        }).then(response => {
-            $("#controllerCode").LoadingOverlay("hide");
-            return response.json();
-        }).then(result => {
-            let viewModel = JSON.parse(JSON.stringify(result));
+            body: JSON.stringify(projectData),
+        })
+            .then((response) => {
+                $("#controllerCode").LoadingOverlay("hide");
+                return response.json();
+            })
+            .then((result) => {
+                let viewModel = JSON.parse(JSON.stringify(result));
 
-            if (viewModel.state == "success") {
-                resetControllerDropDown();
-                bindingControllerDropdown(viewModel.data);
+                if (viewModel.state == "success") {
+                    resetControllerDropDown();
+                    bindingControllerDropdown(viewModel.data);
 
-                if (selectControllerCode.trim().length > 0) {
-                    $("#controllerCode").val(selectControllerCode);
+                    if (selectControllerCode.trim().length > 0) {
+                        $("#controllerCode").val(selectControllerCode);
+                    } else {
+                        $("#controllerCode").prop("selectedIndex", 0).change();
+                    }
                 } else {
-                    $("#controllerCode").prop('selectedIndex', 0).change();
+                    showDialog(viewModel.state, viewModel.title, viewModel.message);
                 }
-            } else {
-                showDialog(viewModel.state, viewModel.title, viewModel.message);
-            }
-        }).catch(error => {
-            console.log(error.message);
-            showDialog("error", "เกิดข้อผิดพลาด", "กรุณาติดต่อผู้ดูแลระบบ");
-        });
-    };
+            })
+            .catch((error) => {
+                console.log(error.message);
+                showDialog("error", "เกิดข้อผิดพลาด", "กรุณาติดต่อผู้ดูแลระบบ");
+            });
+    }
 
     function bindingControllerDropdown(jsonController) {
         if (jsonController.length > 0) {
+            $("#controllerCode").append(
+                $(
+                    '<option value = "0">All</option>'
+                )
+            );
             $.each(jsonController, function (_, item) {
-                $("#controllerCode").append($("<option value=" + item.controllerCode + ">" + item.controllerName + "</option>"));
+                $("#controllerCode").append(
+                    $(
+                        "<option value=" +
+                        item.controllerCode +
+                        ">" +
+                        item.controllerName +
+                        "</option>"
+                    )
+                );
             });
         } else {
-            $("#controllerCode").append("<option selected disabled value=''>ไม่มีข้อมูล</option>");
+            $("#controllerCode").append(
+                "<option selected disabled value=''>ไม่มีข้อมูล</option>"
+            );
         }
-    };
+    }
 
     function resetControllerDropDown() {
         $("#controllerCode").empty();
-    };
+    }
 
     $("#controllerCode").change(function (e) {
-        getLampData($("#controllerCode option:selected").val(), 1, "", $("#groupDevices").val());
+        getLampData(
+            $("#projectCode option:selected").val(),
+            $("#controllerCode option:selected").val(),
+            1,
+            "",
+            //    $("#groupDevices").val()
+        );
+        getGroupDevices();
     });
 
     $("#groupDevices").change(function (e) {
-        getLampData($("#controllerCode option:selected").val(), 1, "", $("#groupDevices").val());
+        getLampData(
+            $("#projectCode option:selected").val(),
+            $("#controllerCode option:selected").val(),
+            1,
+            "",
+            //    $("#groupDevices").val()
+        );
     });
 
-    function getLampData(controllerCode, currentPage, searchText, groupCode) {
+    function getLampData(projectCode, controllerCode, currentPage, searchText) {
         if ($("#projectCode option:selected").attr("data-valkey") != "2") {
             // $("#no-more-tables").LoadingOverlay("show");
             // console.log("controllerCode", controllerCode);
@@ -273,40 +411,47 @@
             currentPage = typeof currentPage == "number" ? currentPage : 1;
 
             let lampData = {
+                projectCode: projectCode,
                 controllerCode: controllerCode,
                 page: currentPage,
                 searchText: searchText,
-                groupCode: groupCode
             };
 
             fetch(ENDPOINT_URL.LAMP_LIST, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json; charset=utf-8"
+                    "Content-Type": "application/json; charset=utf-8",
                 },
-                body: JSON.stringify(lampData)
-            }).then(response => {
-                $("#no-more-tables").LoadingOverlay("hide");
-                return response.json();
-            }).then(result => {
-                let viewModel = JSON.parse(JSON.stringify(result));
+                body: JSON.stringify(lampData),
+            })
+                .then((response) => {
+                    $("#no-more-tables").LoadingOverlay("hide");
+                    return response.json();
+                })
+                .then((result) => {
+                    let viewModel = JSON.parse(JSON.stringify(result));
 
-                if (viewModel.state == "success") {
-                    if (currentPage > viewModel.pagingTotalPage) {
-                        currentPage = viewModel.pagingTotalPage;
+                    if (viewModel.state == "success") {
+                        if (currentPage > viewModel.pagingTotalPage) {
+                            currentPage = viewModel.pagingTotalPage;
+                        }
+
+                        bindingLampTable(
+                            viewModel.data,
+                            viewModel.pagingTotalPage,
+                            currentPage
+                        );
+                    } else {
+                        showDialog(viewModel.state, viewModel.title, viewModel.message);
                     }
-
-                    bindingLampTable(viewModel.data, viewModel.pagingTotalPage, currentPage);
-                } else {
-                    showDialog(viewModel.state, viewModel.title, viewModel.message);
-                }
-            }).catch(error => {
-                console.log(error.message);
-                showDialog("error", "เกิดข้อผิดพลาด", "กรุณาติดต่อผู้ดูแลระบบ");
-            });
+                })
+                .catch((error) => {
+                    console.log(error.message);
+                    showDialog("error", "เกิดข้อผิดพลาด", "กรุณาติดต่อผู้ดูแลระบบ");
+                });
         } else {
             if ($("#EMMProjectWarning").hasClass("d-none")) {
-                $("#EMMProjectWarning").removeClass("d-none")
+                $("#EMMProjectWarning").removeClass("d-none");
             }
 
             $("#no-more-tables tbody").empty();
@@ -314,7 +459,7 @@
 
             return;
         }
-    };
+    }
 
     function bindingLampTable(data, totalPage, currentPage) {
         if ($("#no-more-tables").hasClass("d-none")) {
@@ -326,12 +471,20 @@
 
         let colSize = 4;
         if (data.length == 0) {
-            tableBody.append("<tr><td colspan='" + colSize.toString() + "'>ไม่มีข้อมูล</td></tr>");
+            tableBody.append(
+                "<tr><td colspan='" + colSize.toString() + "'>ไม่มีข้อมูล</td></tr>"
+            );
         } else {
             $.each(data, function (_, item) {
                 let tableRow = jQuery("<tr></tr>");
-                let serialNoCol = jQuery("<td></td>").attr("data-title", "Mac Address").html(item.lampCode).appendTo(tableRow);
-                let lampNameCol = jQuery("<td></td>").attr("data-title", "ชื่อหลอดไฟ").html(item.lampName).appendTo(tableRow);
+                let serialNoCol = jQuery("<td></td>")
+                    .attr("data-title", "Mac Address")
+                    .html(item.lampCode)
+                    .appendTo(tableRow);
+                let lampNameCol = jQuery("<td></td>")
+                    .attr("data-title", "ชื่อหลอดไฟ")
+                    .html(item.lampName)
+                    .appendTo(tableRow);
 
                 let statusBadge;
                 switch (item.lampStatus) {
@@ -345,44 +498,81 @@
                         statusBadge = "badge-danger";
                         break;
                 }
-                let badgeHtml = "<span class=\"badge badge-pill " + statusBadge + "\">" + item.lampStatusText + "</span>";
-                let lampStatusCol = jQuery("<td></td>").attr("data-title", "สถานะ").html(badgeHtml).appendTo(tableRow);
+                let badgeHtml =
+                    '<span class="badge badge-pill ' +
+                    statusBadge +
+                    '">' +
+                    item.lampStatusText +
+                    "</span>";
+                let lampStatusCol = jQuery("<td></td>")
+                    .attr("data-title", "สถานะ")
+                    .html(badgeHtml)
+                    .appendTo(tableRow);
 
                 let buttonCol = jQuery("<td></td>").appendTo(tableRow);
 
                 let buttonArea = jQuery("<div></div>", {
-                    class: "d-flex justify-content-end flex-wrap"
+                    class: "d-flex justify-content-end flex-wrap",
                 }).appendTo(buttonCol);
 
-                let controlButton = jQuery("<button></button>", {
-                    type: "button",
-                    class: "btn btn-light btn-icon"
-                })
-                    .attr("data-valkey", item.lampCode).html("<i class=\"mdi mdi-tune-vertical\"></i>")
-                    .attr("data-status", item.lampStatus)
-                    .on("click", showControlModal)
-                    .appendTo(buttonArea);
-                controlButton.tooltip({ title: "แผงควบคุม", boundary: "window", placement: "left" });
-
-                let editButton = jQuery("<button></button>", {
-                    type: "button",
-                    class: "btn btn-light btn-icon ml-3"
-                })
-                // .attr("data-valkey", item.lampCode).html("<i class=\"mdi mdi-pencil\"></i>")
-                // .on("click", showLampModalInEditMode)
-                // .appendTo(buttonArea);
-                editButton.tooltip({ title: "แก้ไขข้อมูล", boundary: "window", placement: "left" });
-
                 if ($("#parentRole").attr("data-valkey") != "1") {
-                    let deleteButton = jQuery("<button></button>", {
+
+                    let controlButton = jQuery("<button></button>", {
                         type: "button",
-                        class: "btn btn-light btn-icon ml-3"
+                        class: "btn btn-light btn-icon",
                     })
                         .attr("data-valkey", item.lampCode)
-                        .on("click", promptDeleteLamp)
-                        .html("<i class=\"mdi mdi-delete\"></i>")
+                        .html('<i class="mdi mdi-pencil"></i>')
+                        .attr("data-status", item.lampStatus)
+                        .on("click", showControlModal)
                         .appendTo(buttonArea);
-                    deleteButton.tooltip({ title: "ลบ", boundary: "window", placement: "left" });
+                    controlButton.tooltip({
+                        title: "แผงควบคุม",
+                        boundary: "window",
+                        placement: "left",
+                    });
+    
+                    let editButton = jQuery("<button></button>", {
+                        type: "button",
+                        class: "btn btn-light btn-icon ml-3",
+                    });
+                    // .attr("data-valkey", item.lampCode).html("<i class=\"mdi mdi-pencil\"></i>")
+                    // .on("click", showLampModalInEditMode)
+                    // .appendTo(buttonArea);
+                    editButton.tooltip({
+                        title: "แก้ไขข้อมูล",
+                        boundary: "window",
+                        placement: "left",
+                    });
+
+                    let deleteButton = jQuery("<button></button>", {
+                        type: "button",
+                        class: "btn btn-light btn-icon ml-3",
+                    })
+                    // .attr("data-valkey", item.lampCode)
+                    // .on("click", promptDeleteLamp)
+                    // .html('<i class="mdi mdi-delete"></i>')
+                    // .appendTo(buttonArea);
+                    deleteButton.tooltip({
+                        title: "ลบ",
+                        boundary: "window",
+                        placement: "left",
+                    });
+                }else{
+                    let viewButton = jQuery("<button></button>", {
+                        type: "button",
+                        class: "btn btn-light btn-icon",
+                    })
+                        .attr("data-valkey", item.lampCode)
+                        .html('<i class="mdi mdi-information-outline"></i>')
+                        .attr("data-status", item.lampStatus)
+                        .on("click", showControlModal)
+                        .appendTo(buttonArea);
+                    viewButton.tooltip({
+                        title: "แผงควบคุม",
+                        boundary: "window",
+                        placement: "left",
+                    });
                 }
 
                 tableBody.append(tableRow);
@@ -390,17 +580,19 @@
         }
 
         destroyPaging();
-        $("#bottomPagination").twbsPagination($.extend({}, defaultPagingOptions, {
-            startPage: currentPage <= totalPage ? currentPage : totalPage,
-            totalPages: totalPage
-        }));
-    };
+        $("#bottomPagination").twbsPagination(
+            $.extend({}, defaultPagingOptions, {
+                startPage: currentPage <= totalPage ? currentPage : totalPage,
+                totalPages: totalPage,
+            })
+        );
+    }
 
     function destroyPaging() {
         if ($("#bottomPagination").data("twbs-pagination")) {
             $("#bottomPagination").twbsPagination("destroy");
         }
-    };
+    }
 
     // function showControlModal() {
     //     firstLoad = true;
@@ -439,25 +631,31 @@
     //     });
     // }
 
-    function showControlModal() {
-        firstloadmanual = true
-        firstloadauto = true
-        const macaddress = $(this).attr("data-valkey")
-        const endpoint = `http://85.204.247.82:3002/api/getmacdatas/${macaddress}`
+    async function showControlModal() {
+        firstloadmanual = true;
+        firstloadauto = true;
+        schedultab = true
+
+        await $('#scheduleList li').remove();
+
+        const macaddress = $(this).attr("data-valkey");
+        const endpoint = `https://85.204.247.82:3002/api/getmacdatas/${macaddress}`;
         const options = {
-            method: "GET"
-        }
+            method: "GET",
+        };
+
+        clearInput();
 
         if ($(this).attr("data-status") == "2") {
             Swal.fire({
                 title: "เกิดข้อผิดพลาด",
-                html: `ไม่สามารถเชื่อมต่อหลอดไฟ <strong>"${$(this).attr("data-valkey")}"</strong> ได้`,
-                icon: "error"
+                html: `ไม่สามารถเชื่อมต่อหลอดไฟ <strong>"${$(this).attr(
+                    "data-valkey"
+                )}"</strong> ได้`,
+                icon: "error",
             });
             return;
         }
-
-        scheduleFunction()
 
         //     Swal.fire({
         //         title: '🔄 กำลังดึงข้อมูล...',
@@ -478,7 +676,7 @@
 
         // setTimeout(() => {
         fetch(endpoint, options)
-            .then(res => {
+            .then((res) => {
                 $("#controlInfoModal").LoadingOverlay("hide");
                 //                     Swal.fire({
                 //                         position: "center",
@@ -491,8 +689,9 @@
                 //                         timer: 1500
                 //                     })
                 return res.json();
-            }).then(result => {
-                let obj = result
+            })
+            .then((result) => {
+                let obj = result;
 
                 clearControlModalInput();
                 bindControlPanelViewModelToModal(obj);
@@ -508,20 +707,22 @@
                 // } else {
                 //     showDialog(viewModel.state, viewModel.title, viewModel.message);
                 // }
-            }).catch(error => {
+
+                modalPermission();
+            })
+            .catch((error) => {
                 console.log(error.message);
                 Swal.fire({
                     position: "center",
-                    icon: 'error',
+                    icon: "error",
                     title: "ผิดพลาด!",
                     html: `ดึงข้อมูลอุปกรณ์ <b>${macaddress}</b> ไม่สำเร็จ`,
                     showConfirmButton: false,
-                    timer: 1500
-                })
+                    timer: 1500,
+                });
             });
         // }, 1000)
     }
-
 
     function showLampModalInEditMode() {
         modalState = MODAL_STATE.UPDATE;
@@ -532,38 +733,41 @@
         fetch(ENDPOINT_URL.LAMP_INFO, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json; charset=utf-8"
+                "Content-Type": "application/json; charset=utf-8",
             },
-            body: JSON.stringify({ "lampCode": $(this).attr("data-valkey") })
-        }).then(response => {
-            $("#lampInfoModal").LoadingOverlay("hide");
-            return response.json();
-        }).then(result => {
-            let viewModel = JSON.parse(JSON.stringify(result));
+            body: JSON.stringify({ lampCode: $(this).attr("data-valkey") }),
+        })
+            .then((response) => {
+                $("#lampInfoModal").LoadingOverlay("hide");
+                return response.json();
+            })
+            .then((result) => {
+                let viewModel = JSON.parse(JSON.stringify(result));
 
-            if (viewModel.state == "success") {
-                bindLampViewModelToModal(viewModel.data);
-                $("#lampInfoModal").modal("show");
-            } else {
-                showDialog(viewModel.state, viewModel.title, viewModel.message);
-            }
-        }).catch(error => {
-            console.log(error.message);
-            showDialog("error", "เกิดข้อผิดพลาด", "กรุณาติดต่อผู้ดูแลระบบ");
-        });
-    };
+                if (viewModel.state == "success") {
+                    bindLampViewModelToModal(viewModel.data);
+                    $("#lampInfoModal").modal("show");
+                } else {
+                    showDialog(viewModel.state, viewModel.title, viewModel.message);
+                }
+            })
+            .catch((error) => {
+                console.log(error.message);
+                showDialog("error", "เกิดข้อผิดพลาด", "กรุณาติดต่อผู้ดูแลระบบ");
+            });
+    }
 
     function promptDeleteLamp() {
         const mac = $(this).attr("data-valkey");
         Swal.fire({
             title: "ยืนยันรายการ",
-            text: "ลบหลอดไฟ \"" + $(this).attr("data-valkey") + "\" ออกจากระบบ?",
+            text: 'ลบหลอดไฟ "' + $(this).attr("data-valkey") + '" ออกจากระบบ?',
             icon: "question",
             confirmButtonColor: "#3085d6",
             confirmButtonText: "ลบ",
             showCancelButton: true,
             cancelButtonColor: "#d33",
-            cancelButtonText: "ยกเลิก"
+            cancelButtonText: "ยกเลิก",
         }).then((result) => {
             if (result.isConfirmed) {
                 $.LoadingOverlay("show");
@@ -571,34 +775,43 @@
                 fetch(ENDPOINT_URL.LAMP_DELETE, {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json; charset=utf-8"
+                        "Content-Type": "application/json; charset=utf-8",
                     },
-                    body: JSON.stringify({ "lampCode": $(this).attr("data-valkey") })
-                }).then(response => {
-                    $.LoadingOverlay("hide");
-                    return response.json();
-                }).then(result => {
-                    let viewModel = JSON.parse(JSON.stringify(result));
+                    body: JSON.stringify({ lampCode: $(this).attr("data-valkey") }),
+                })
+                    .then((response) => {
+                        $.LoadingOverlay("hide");
+                        return response.json();
+                    })
+                    .then((result) => {
+                        let viewModel = JSON.parse(JSON.stringify(result));
 
-                    if (viewModel.state == "success") {
-                        deleteDevices(mac)
-                        Swal.fire({
-                            title: viewModel.title,
-                            text: viewModel.message,
-                            icon: viewModel.state,
-                            confirmButtonColor: "#3085d6"
-                        }).then((result) => {
-                            if (viewModel.state == "success") {
-                                getLampData($("#controllerCode option:selected").val(), $("#bottomPagination").twbsPagination("getCurrentPage"), $("#lampTextSearch").val(), $("#groupDevices").val());
-                            }
-                        });
-                    } else {
-                        showDialog(viewModel.state, viewModel.title, viewModel.message);
-                    }
-                }).catch(error => {
-                    console.log(error.message);
-                    showDialog("error", "เกิดข้อผิดพลาด", "กรุณาติดต่อผู้ดูแลระบบ");
-                });
+                        if (viewModel.state == "success") {
+                            deleteDevices(mac);
+                            Swal.fire({
+                                title: viewModel.title,
+                                text: viewModel.message,
+                                icon: viewModel.state,
+                                confirmButtonColor: "#3085d6",
+                            }).then((result) => {
+                                if (viewModel.state == "success") {
+                                    getLampData(
+                                        $("#projectCode option:selected").val(),
+                                        $("#controllerCode option:selected").val(),
+                                        $("#bottomPagination").twbsPagination("getCurrentPage"),
+                                        $("#lampTextSearch").val(),
+                                        //    $("#groupDevices").val()
+                                    );
+                                }
+                            });
+                        } else {
+                            showDialog(viewModel.state, viewModel.title, viewModel.message);
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error.message);
+                        showDialog("error", "เกิดข้อผิดพลาด", "กรุณาติดต่อผู้ดูแลระบบ");
+                    });
             }
         });
     };
@@ -634,7 +847,7 @@
             case MODAL_STATE.UPDATE:
                 postToUrl = ENDPOINT_URL.LAMP_UPDATE;
                 break;
-        };
+        }
 
         let controllerData = {
             lampCode: $("#lampSerialNo").val(),
@@ -651,33 +864,42 @@
         fetch(postToUrl, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json; charset=utf-8"
+                "Content-Type": "application/json; charset=utf-8",
             },
-            body: JSON.stringify(controllerData)
-        }).then(response => {
-            $("#lampInfoModal").LoadingOverlay("hide");
-            return response.json();
-        }).then(result => {
-            let viewModel = JSON.parse(JSON.stringify(result));
+            body: JSON.stringify(controllerData),
+        })
+            .then((response) => {
+                $("#lampInfoModal").LoadingOverlay("hide");
+                return response.json();
+            })
+            .then((result) => {
+                let viewModel = JSON.parse(JSON.stringify(result));
 
-            if (viewModel.state == "success") {
-                $("#lampInfoModal").modal("hide");
-            }
-
-            Swal.fire({
-                title: viewModel.title,
-                text: viewModel.message,
-                icon: viewModel.state,
-                confirmButtonColor: "#3085d6"
-            }).then((result) => {
                 if (viewModel.state == "success") {
-                    getLampData($("#controllerCode option:selected").val(), $("#bottomPagination").twbsPagination("getCurrentPage"), $("#lampTextSearch").val(), $("#groupDevices").val());
+                    $("#lampInfoModal").modal("hide");
                 }
+
+                Swal.fire({
+                    title: viewModel.title,
+                    text: viewModel.message,
+                    icon: viewModel.state,
+                    confirmButtonColor: "#3085d6",
+                }).then((result) => {
+                    if (viewModel.state == "success") {
+                        getLampData(
+                            $("#projectCode option:selected").val(),
+                            $("#controllerCode option:selected").val(),
+                            $("#bottomPagination").twbsPagination("getCurrentPage"),
+                            $("#lampTextSearch").val(),
+                            //    $("#groupDevices").val()
+                        );
+                    }
+                });
+            })
+            .catch((error) => {
+                console.log(error.message);
+                showDialog("error", "เกิดข้อผิดพลาด", "กรุณาติดต่อผู้ดูแลระบบ");
             });
-        }).catch(error => {
-            console.log(error.message);
-            showDialog("error", "เกิดข้อผิดพลาด", "กรุณาติดต่อผู้ดูแลระบบ");
-        });
     });
 
     $("#lampInfoModal").on("hidden.bs.modal", function (e) {
@@ -690,20 +912,25 @@
         $("#lampLong").val("");
         $("#isWarning").prop("checked", true);
 
-        $("#lampSerialNo").removeClass("is-invalid")
-        $("#lampName").removeClass("is-invalid")
-
+        $("#lampSerialNo").removeClass("is-invalid");
+        $("#lampName").removeClass("is-invalid");
     });
 
     $("#lampTextSearch").keypress(function (event) {
-        var keycode = (event.keyCode ? event.keyCode : event.which);
-        if (keycode == '13') {
+        var keycode = event.keyCode ? event.keyCode : event.which;
+        if (keycode == "13") {
             $("#lampSearchSubmit").click();
         }
     });
 
     $("#lampSearchSubmit").on("click", function (e) {
-        getLampData($("#controllerCode option:selected").val(), 1, $("#lampTextSearch").val(), $("#groupDevices").val());
+        getLampData(
+            $("#projectCode option:selected").val(),
+            $("#controllerCode option:selected").val(),
+            1,
+            $("#lampTextSearch").val(),
+            //    $("#groupDevices").val()
+        );
     });
 
     // function bindControlPanelViewModelToModal(viewModel) {
@@ -738,21 +965,21 @@
 
     function bindControlPanelViewModelToModal(obj) {
         isInitializing = true;
-        let relay = obj.data[0]?.relay
-        let workmode = obj.data[0]?.workmode
+        let relay = obj.data[0]?.relay;
+        let workmode = obj.data[0]?.workmode;
 
         const relayMap = {
             ON: "เปิด",
-            OFF: "ปิด"
+            OFF: "ปิด",
         };
 
         const workmodeMap = {
             MANUAL: "กำหนดการทำงานด้วยตนเอง",
-            SCHEDULE: "ตั้งเวลาทำงานอัตโนมัติ"
+            SCHEDULE: "ตั้งเวลาทำงานอัตโนมัติ",
         };
 
-        relay = relayMap[relay] || relay
-        workmode = workmodeMap[workmode] || workmode
+        relay = relayMap[relay] || relay;
+        workmode = workmodeMap[workmode] || workmode;
 
         // $("#controlMode").val(viewModel.mode);
         // $("#controlProjectType").val(viewModel.projectType);
@@ -775,28 +1002,28 @@
         $("#rangeCool").text(obj.data[0]?.pwm2);
 
         if (obj.data[0]?.workmode === "MANUAL") {
-            console.log("MANUAL")
+            console.log("MANUAL");
             $("#controlActionList").val(obj.data[0]?.workmode).trigger("change");
-            $('#control-send-manual').removeClass('d-none')
-            $('#control-send-schedule').addClass('d-none')
-            $("#manual").fadeIn()
-            $("#schedule").fadeOut()
-            $("#pills-tabContent").fadeIn()
-            $("#pills-tabContent").removeClass("d-none")
-            $("#schedule").removeClass("active show")
-            $("#manual").addClass("active show")
-            $("#schedule-tab").removeClass("active")
-            $("#schedule-tab").addClass("disabled")
-            $("#manual-tab").addClass("active")
-            $(".n-pills").removeClass("d-none")
-
+            $("#control-send-manual").removeClass("d-none");
+            $("#control-send-schedule").addClass("d-none");
+            $("#manual").fadeIn();
+            $("#schedule").fadeOut();
+            $("#pills-tabContent").fadeIn();
+            $("#pills-tabContent").removeClass("d-none");
+            $("#schedule").removeClass("active show");
+            $("#manual").addClass("active show");
+            $("#schedule-tab").removeClass("active");
+            $("#schedule-tab").addClass("disabled");
+            $("#manual-tab").addClass("active");
+            $(".n-pills").removeClass("d-none");
         } else if (obj.data[0]?.workmode === "SCHEDULE") {
             // console.log("SCHEDULE")
-            let mode = obj.data[0]?.workmode
+            let mode = obj.data[0]?.workmode;
             if (mode === "SCHEDULE") {
-                mode = "SET_SCHEDULE"
+                mode = "SET_SCHEDULE";
             }
-
+            scheduleFunction(obj);
+            updatePeriodNumbers();
             // //startTime
             // const schTimeStart = {
             //     schStartTime1: obj.data[0]?.schStartTime1,
@@ -853,27 +1080,26 @@
             //     $(`#schedule_${i}_rangeCool`).text(item)
             // })
 
-            $('#control-send-schedule').removeClass('d-none')
-            $('#control-send-manual').addClass('d-none')
+            $("#control-send-schedule").removeClass("d-none");
+            $("#control-send-manual").addClass("d-none");
             $("#controlActionList").val(mode).trigger("change");
-            $("#schedule").fadeIn()
-            $("#manual").fadeOut()
-            $("#pills-tabContent").fadeIn()
-            $("#pills-tabContent").removeClass("d-none")
-            $("#manual").removeClass("active show")
-            $("#schedule").addClass("active show")
-            $("#manual-tab").removeClass("active")
-            $("#schedule-tab").addClass("active")
-            $("#manual-tab").addClass("disabled")
-            $(".n-pills").removeClass("d-none")
+            $("#schedule").fadeIn();
+            $("#manual").fadeOut();
+            $("#pills-tabContent").fadeIn();
+            $("#pills-tabContent").removeClass("d-none");
+            $("#manual").removeClass("active show");
+            $("#schedule").addClass("active show");
+            $("#manual-tab").removeClass("active");
+            $("#schedule-tab").addClass("active");
+            $("#manual-tab").addClass("disabled");
+            $(".n-pills").removeClass("d-none");
         }
 
-        toggleStatus(obj.data[0]?.relay)
-        toggleStatus2(obj.data[0]?.relay)
+        toggleStatus(obj.data[0]?.relay);
+        toggleStatus2(obj.data[0]?.relay);
 
-
-        firstloadmanual = false
-        firstloadauto = false
+        firstloadmanual = false;
+        firstloadauto = false;
         isInitializing = false;
 
         // $("#rangeWarm").text(viewModel.pwm1);
@@ -881,7 +1107,8 @@
         // $("#rangeCool").text(viewModel.pwm2);
         // $("#controlRangeCool").val(viewModel.pwm2);
         // $("#controlUpdatedAt").text(`ข้อมูลอัพเดทล่าสุดเมื่อ ${obj.data[0]?.datetime}`);
-    };
+
+    }
 
     // function hideControlActionList() {
     //     if (!$("#controlActionModeChange").hasClass("d-none")) {
@@ -1036,7 +1263,7 @@
         // $("#scheduleall_5_controlRangeWarm").val("0");
         // $("#scheduleall_5_rangeCool").text("0");
         // $("#scheduleall_5_controlRangeCool").val("0");
-    };
+    }
 
     // $("#controlInfoModal").on("hidden.bs.modal", function (e) {
     //     $("#controlEndpoint").attr("data-mqtt-url", "");
@@ -1223,48 +1450,47 @@
     //     }
     // });
 
-    $('.numberInputValidate').keypress(function (e) {
+    $(".numberInputValidate").keypress(function (e) {
         return numberInputValidate(e);
     });
 
-    $('.numberInputValidate').blur(function (e) {
+    $(".numberInputValidate").blur(function (e) {
         if (e.currentTarget.value == "") {
             e.currentTarget.value = "0";
         }
     });
 
     function toggleLight() {
-        const checkbox = document.getElementById('toggle');
-        const light = document.getElementById('light');
+        const checkbox = document.getElementById("toggle");
+        const light = document.getElementById("light");
 
         if (checkbox.checked) {
-            light.classList.add('on');
+            light.classList.add("on");
         } else {
-            light.classList.remove('on');
+            light.classList.remove("on");
         }
     }
 
-    $('.md-close').on('click', function () {
-        $("#pills-tabContent").fadeOut()
-        $('#controlActionList').val('0')
-        $("#manual-tab").addClass("disabled")
-        $("#schedule-tab").addClass("disabled")
-        $(".n-pills").fadeOut()
-        $(".n-pills").addClass("d-none")
-
+    $(".md-close").on("click", function () {
+        $("#pills-tabContent").fadeOut();
+        $("#controlActionList").val("0");
+        $("#manual-tab").addClass("disabled");
+        $("#schedule-tab").addClass("disabled");
+        $(".n-pills").fadeOut();
+        $(".n-pills").addClass("d-none");
     });
 
-    $('#controlActionList').change(function () {
-
+    $("#controlActionList").change(function () {
         if (isInitializing) return;
 
         const macAddress = $("#controlLampSerialNo").val();
-        const endpoint_updatemode = "http://85.204.247.82:3002/api/updateMode"
-        const endpoint_off = "http://85.204.247.82:3002/api/turnofflight"
-        const transbox = $('#transbox')
-        const subtransbox = $('#subtransbox')
-        const btnswitchmanual = $('#controlRelayState')
-        const btnswitchauto = $('#controlRelayState2')
+        const endpoint_updatemode = "https://85.204.247.82:3002/api/updateMode";
+        const endpoint_off = "https://85.204.247.82:3002/api/turnofflight";
+        const group = $('#controlGroup').val();
+        const transbox = $("#transbox");
+        const subtransbox = $("#subtransbox");
+        const btnswitchmanual = $("#controlRelayState");
+        const btnswitchauto = $("#controlRelayState2");
         let mode = $(this).val();
         // $('.mn').fadeOut()
         // $('.mn2').fadeOut()
@@ -1274,15 +1500,14 @@
         }
 
         const dataoff = {
-            macAddress
-        }
+            macAddress,
+        };
 
         const dataupdate = {
+            group,
             macAddress,
-            mode
-        }
-
-
+            mode,
+        };
 
         if ($(this).val() === "MANUAL") {
             Swal.fire({
@@ -1293,7 +1518,7 @@
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
                 confirmButtonText: "ตกลง",
-                cancelButtonText: "ยกเลิก"
+                cancelButtonText: "ยกเลิก",
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
@@ -1310,103 +1535,107 @@
                         showConfirmButton: false,
                         didOpen: () => {
                             Swal.showLoading();
-                        }
+                        },
                     });
 
                     setTimeout(() => {
                         fetch(endpoint_off, {
                             method: "POST",
                             headers: {
-                                "Content-Type": "application/json; charset=utf-8"
+                                "Content-Type": "application/json; charset=utf-8",
                             },
-                            body: JSON.stringify(dataoff)
-                        }).then(response => {
-                            firstloadmanual = true
-                            btnswitchmanual.bootstrapToggle('off')
-                            return response.json();
-                        }).then(result => {
-                            console.log('result', result)
-                        }).catch(err => {
-                            console.error("เกิดข้อผิดพลาด:", err);
-                            Swal.fire({
-                                position: "center",
-                                icon: 'error',
-                                title: "❌ ผิดพลาด!",
-                                html: `
+                            body: JSON.stringify(dataoff),
+                        })
+                            .then((response) => {
+                                firstloadmanual = true;
+                                btnswitchmanual.bootstrapToggle("off");
+                                return response.json();
+                            })
+                            .then((result) => {
+                                console.log("result", result);
+                            })
+                            .catch((err) => {
+                                console.error("เกิดข้อผิดพลาด:", err);
+                                Swal.fire({
+                                    position: "center",
+                                    icon: "error",
+                                    title: "❌ ผิดพลาด!",
+                                    html: `
         <div style="font-size: 16px; color: #b71c1c;">
             🚫 <strong>เกิดข้อผิดพลาด กรุณาติดต่อผู้ดูแลระบบ</strong>
         </div>
     `,
-                                showConfirmButton: false,
-                                timer: 2000
-                            })
-                        })
-                    }, 500)
+                                    showConfirmButton: false,
+                                    timer: 2000,
+                                });
+                            });
+                    }, 500);
 
                     setTimeout(() => {
                         fetch(endpoint_updatemode, {
                             method: "POST",
                             headers: {
-                                "Content-Type": "application/json; charset=utf-8"
+                                "Content-Type": "application/json; charset=utf-8",
                             },
-                            body: JSON.stringify(dataupdate)
-                        }).then(response =>
-                            response.json()
-                        ).then(result => {
-                            let res = JSON.parse(JSON.stringify(result));
-                            if (res.msg === "OK") {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "🎉 สำเร็จ!",
-                                    html: `
+                            body: JSON.stringify(dataupdate),
+                        })
+                            .then((response) => response.json())
+                            .then((result) => {
+                                let res = JSON.parse(JSON.stringify(result));
+                                if (res.msg === "OK") {
+                                    Swal.fire({
+                                        icon: "success",
+                                        title: "🎉 สำเร็จ!",
+                                        html: `
         <div style="font-size: 16px; color: #2e7d32;">
             เปลี่ยน <strong>${macAddress}</strong> เป็น <strong>Mode Manual</strong> สำเร็จ
         </div>
     `,
-                                    showConfirmButton: false,
-                                    timer: 2000
-                                });
-                            } else if (res.msg === "Error") {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "❌ ไม่สำเร็จ!",
-                                    html: `
+                                        showConfirmButton: false,
+                                        timer: 2000,
+                                    });
+                                } else if (res.msg === "Error") {
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "❌ ไม่สำเร็จ!",
+                                        html: `
         <div style="font-size: 16px; color: #b71c1c;">
             ไม่สามารถเปลี่ยน <strong>${macAddress}</strong> เป็น <strong>Mode Manual</strong> ได้
         </div>
-    `
-                                })
-                            }
-                            $('#control-send-manual').removeClass('d-none')
-                            $('#control-send-schedule').addClass('d-none')
-                            $("#manual").fadeIn()
-                            $("#schedule").fadeOut()
-                            $("#pills-tabContent").fadeIn()
-                            $("#pills-tabContent").removeClass("d-none")
-                            $("#schedule").removeClass("active show")
-                            $("#manual").addClass("active show")
-                            $("#schedule-tab").removeClass("active")
-                            $("#schedule-tab").addClass("disabled")
-                            $("#manual-tab").addClass("active")
-                            $(".n-pills").removeClass("d-none")
-                        }).catch(error => {
-                            console.error("เกิดข้อผิดพลาด:", err);
-                            Swal.fire({
-                                position: "center",
-                                icon: 'error',
-                                title: "❌ ผิดพลาด!",
-                                html: `
+    `,
+                                    });
+                                }
+                                $("#control-send-manual").removeClass("d-none");
+                                $("#control-send-schedule").addClass("d-none");
+                                $("#manual").fadeIn();
+                                $("#schedule").fadeOut();
+                                $("#pills-tabContent").fadeIn();
+                                $("#pills-tabContent").removeClass("d-none");
+                                $("#schedule").removeClass("active show");
+                                $("#manual").addClass("active show");
+                                $("#schedule-tab").removeClass("active");
+                                $("#schedule-tab").addClass("disabled");
+                                $("#manual-tab").addClass("active");
+                                $(".n-pills").removeClass("d-none");
+                            })
+                            .catch((error) => {
+                                console.error("เกิดข้อผิดพลาด:", err);
+                                Swal.fire({
+                                    position: "center",
+                                    icon: "error",
+                                    title: "❌ ผิดพลาด!",
+                                    html: `
         <div style="font-size: 16px; color: #b71c1c;">
             🚫 <strong>เกิดข้อผิดพลาด กรุณาติดต่อผู้ดูแลระบบ</strong>
         </div>
     `,
-                                showConfirmButton: false,
-                                timer: 2000
-                            })
-                        })
-                    }, 500)
+                                    showConfirmButton: false,
+                                    timer: 2000,
+                                });
+                            });
+                    }, 500);
                 } else {
-                    $('#controlActionList').val('0')
+                    $("#controlActionList").val("0");
                 }
             });
         } else if ($(this).val() === "SET_SCHEDULE") {
@@ -1418,7 +1647,7 @@
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
                 confirmButtonText: "ตกลง",
-                cancelButtonText: "ยกเลิก"
+                cancelButtonText: "ยกเลิก",
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
@@ -1435,130 +1664,135 @@
                         showConfirmButton: false,
                         didOpen: () => {
                             Swal.showLoading();
-                        }
+                        },
                     });
 
                     setTimeout(() => {
                         fetch(endpoint_off, {
                             method: "POST",
                             headers: {
-                                "Content-Type": "application/json; charset=utf-8"
+                                "Content-Type": "application/json; charset=utf-8",
                             },
-                            body: JSON.stringify(dataoff)
-                        }).then(response => {
-                            firstloadauto = true
-                            btnswitchauto.bootstrapToggle('off')
-                            // if (!btnswitchauto.prop('checked')) {
-                            //     $('.mn2').fadeOut()
-                            // }
-                            return response.json();
-                        }).then(result => {
-                            console.log('result', result)
-                        }).catch(err => {
-                            console.error("เกิดข้อผิดพลาด:", err);
-                            Swal.fire({
-                                position: "center",
-                                icon: 'error',
-                                title: "❌ ผิดพลาด!",
-                                html: `
+                            body: JSON.stringify(dataoff),
+                        })
+                            .then((response) => {
+                                firstloadauto = true;
+                                btnswitchauto.bootstrapToggle("off");
+                                // if (!btnswitchauto.prop('checked')) {
+                                //     $('.mn2').fadeOut()
+                                // }
+                                return response.json();
+                            })
+                            .then((result) => {
+                                console.log("result", result);
+                            })
+                            .catch((err) => {
+                                console.error("เกิดข้อผิดพลาด:", err);
+                                Swal.fire({
+                                    position: "center",
+                                    icon: "error",
+                                    title: "❌ ผิดพลาด!",
+                                    html: `
         <div style="font-size: 16px; color: #b71c1c;">
             🚫 <strong>เกิดข้อผิดพลาด กรุณาติดต่อผู้ดูแลระบบ</strong>
         </div>
     `,
-                                showConfirmButton: false,
-                                timer: 2000
-                            })
-                        })
+                                    showConfirmButton: false,
+                                    timer: 2000,
+                                });
+                            });
                     }, 1000);
 
                     setTimeout(() => {
                         fetch(endpoint_updatemode, {
                             method: "POST",
                             headers: {
-                                "Content-Type": "application/json; charset=utf-8"
+                                "Content-Type": "application/json; charset=utf-8",
                             },
-                            body: JSON.stringify(dataupdate)
-                        }).then(response => {
-                            return response.json();
-                        }).then(result => {
-                            let res = JSON.parse(JSON.stringify(result));
+                            body: JSON.stringify(dataupdate),
+                        })
+                            .then((response) => {
+                                return response.json();
+                            })
+                            .then((result) => {
+                                let res = JSON.parse(JSON.stringify(result));
 
-                            if (res.msg === "OK") {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "🎉 สำเร็จ!",
-                                    html: `
+                                if (res.msg === "OK") {
+                                    Swal.fire({
+                                        icon: "success",
+                                        title: "🎉 สำเร็จ!",
+                                        html: `
         <div style="font-size: 16px; color: #2e7d32;">
             เปลี่ยน <strong>${macAddress}</strong> เป็น <strong>Mode Schedule</strong> สำเร็จ
         </div>
     `,
-                                    showConfirmButton: false,
-                                    timer: 1800
-                                })
-                                // btnswitchauto.bootstrapToggle('on')
-                            } else if (res.msg === "Error") {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "❌ ไม่สำเร็จ!",
-                                    html: `
+                                        showConfirmButton: false,
+                                        timer: 1800,
+                                    });
+                                    // btnswitchauto.bootstrapToggle('on')
+                                } else if (res.msg === "Error") {
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "❌ ไม่สำเร็จ!",
+                                        html: `
         <div style="font-size: 16px; color: #b71c1c;">
             ไม่สามารถเปลี่ยน <strong>${macAddress}</strong> เป็น <strong>Mode Schedule</strong> ได้
         </div>
-    `
-                                });
-
-                            }
-                            $('#control-send-schedule').removeClass('d-none')
-                            $('#control-send-manual').addClass('d-none')
-                            $("#schedule").fadeIn()
-                            $("#manual").fadeOut()
-                            $("#pills-tabContent").fadeIn()
-                            $("#pills-tabContent").removeClass("d-none")
-                            $("#manual").removeClass("active show")
-                            $("#schedule").addClass("active show")
-                            $("#manual-tab").removeClass("active")
-                            $("#schedule-tab").addClass("active")
-                            $("#manual-tab").addClass("disabled")
-                            $(".n-pills").removeClass("d-none")
-                        }).catch(error => {
-                            console.log(error.message);
-                            console.error("เกิดข้อผิดพลาด:", err);
-                            Swal.fire({
-                                position: "center",
-                                icon: 'error',
-                                title: "❌ ผิดพลาด!",
-                                html: `
+    `,
+                                    });
+                                }
+                                $("#control-send-schedule").removeClass("d-none");
+                                $("#control-send-manual").addClass("d-none");
+                                $("#schedule").fadeIn();
+                                $("#manual").fadeOut();
+                                $("#pills-tabContent").fadeIn();
+                                $("#pills-tabContent").removeClass("d-none");
+                                $("#manual").removeClass("active show");
+                                $("#schedule").addClass("active show");
+                                $("#manual-tab").removeClass("active");
+                                $("#schedule-tab").addClass("active");
+                                $("#manual-tab").addClass("disabled");
+                                $(".n-pills").removeClass("d-none");
+                            })
+                            .catch((error) => {
+                                console.log(error.message);
+                                console.error("เกิดข้อผิดพลาด:", err);
+                                Swal.fire({
+                                    position: "center",
+                                    icon: "error",
+                                    title: "❌ ผิดพลาด!",
+                                    html: `
         <div style="font-size: 16px; color: #b71c1c;">
             🚫 <strong>เกิดข้อผิดพลาด กรุณาติดต่อผู้ดูแลระบบ</strong>
         </div>
     `,
-                                showConfirmButton: false,
-                                timer: 2000
-                            })
-                        })
-                    }, 500)
+                                    showConfirmButton: false,
+                                    timer: 2000,
+                                });
+                            });
+                    }, 500);
                 } else {
-                    $('#controlActionList').val('0')
+                    $("#controlActionList").val("0");
                 }
-            })
+            });
         } else if ($(this).val() === "0") {
             Swal.fire({
                 title: "⚠️ คุณไม่ได้เลือก Mode",
                 text: "กรุณาเลือก Mode การทำงาน",
                 icon: "warning",
                 confirmButtonColor: "#3085d6",
-                confirmButtonText: "ตกลง"
+                confirmButtonText: "ตกลง",
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $("#pills-tabContent").fadeOut()
-                    $("#manual-tab").addClass("disabled")
-                    $("#schedule-tab").addClass("disabled")
-                    $(".n-pills").fadeOut()
-                    $(".n-pills").addClass("d-none")
+                    $("#pills-tabContent").fadeOut();
+                    $("#manual-tab").addClass("disabled");
+                    $("#schedule-tab").addClass("disabled");
+                    $(".n-pills").fadeOut();
+                    $(".n-pills").addClass("d-none");
                 } else {
-                    $('#controlActionList').val('0')
+                    $("#controlActionList").val("0");
                 }
-            })
+            });
         }
     });
 
@@ -1575,8 +1809,8 @@
 
     //         const controlRelay = $("#controlRelayState");
     //         const macAddress = $('#controlLampSerialNo').val()
-    //         const endpointon = "http://85.204.247.82:3002/api/turnonlight"
-    //         const endpointoff = "http://85.204.247.82:3002/api/turnofflight"
+    //         const endpointon = "https://85.204.247.82:3002/api/turnonlight"
+    //         const endpointoff = "https://85.204.247.82:3002/api/turnofflight"
     //         const transbox = $('#transbox')
     //         const subtransbox = $('#subtransbox')
     //         const datas = {
@@ -1773,8 +2007,8 @@
 
     //         const controlRelay = $("#controlRelayState2");
     //         const macAddress = $('#controlLampSerialNo').val()
-    //         const endpointon = "http://85.204.247.82:3002/api/turnonlight"
-    //         const endpointoff = "http://85.204.247.82:3002/api/turnofflight"
+    //         const endpointon = "https://85.204.247.82:3002/api/turnonlight"
+    //         const endpointoff = "https://85.204.247.82:3002/api/turnofflight"
     //         const datas = {
     //             macAddress
     //         }
@@ -1956,9 +2190,9 @@
     //     });
 
     $('#controlAllRelayState').click(function () {
-        const groupval = $('#groupDevices').val()
-        const endpoint = `http://85.204.247.82:3002/api/getgroupdevices/${groupval}`
-        const endpointAllDevices = `http://85.204.247.82:3002/api/getalldevices?v=${Date.now()}`
+        const groupval = $('#controllerCode').val()
+        const endpoint = `https://85.204.247.82:3002/api/getgroupdevices/${groupval}`
+        const endpointAllDevices = `https://85.204.247.82:3002/api/getalldevices?v=${Date.now()}`
         const table = $('#alldevice');
         const tableBody = document.querySelector("#alldevice tbody")
         const transbox = $('#tb')
@@ -1993,7 +2227,6 @@
         //         }
         //     });
 
-
         // setTimeout(() => {
         fetch(endpoint, options)
             .then(res => res.json())
@@ -2011,9 +2244,8 @@
                 //                     timer: 2000
                 //                 });
 
-
                 // setTimeout(() => {
-                obj.forEach(item => {
+                obj.forEach((item) => {
                     const row = tableBody.insertRow();
                     row.insertCell().textContent = item?.macAddress;
                     row.insertCell().textContent = item?.tag;
@@ -2044,39 +2276,39 @@
                 });
 
                 table.DataTable({
+                    searching: false,
                     language: {
                         search: "ค้นหา:",
                         lengthMenu: "แสดง _MENU_ รายการต่อหน้า",
                         zeroRecords: "ไม่พบข้อมูล",
                         info: "แสดง _START_ ถึง _END_ จาก _TOTAL_ รายการ",
                         infoEmpty: "แสดง 0 ถึง 0 จาก 0 รายการ",
-                        infoFiltered: "(กรองจากทั้งหมด _MAX_ รายการ)"
+                        infoFiltered: "(กรองจากทั้งหมด _MAX_ รายการ)",
                     },
                     initComplete: function () {
                         addDropdown().then(async () => {
-                            const groupselect = $('#groupSelect');
+                            const groupselect = $("#groupSelect");
                             const getGroup = await fetch(endpointAllDevices);
                             const result = await getGroup.json();
 
-                            const mids = [...new Set(result.devices.map(item => item.mid))];
+                            const mids = [...new Set(result.devices.map((item) => item.mid))];
 
-                            mids.forEach(mid => {
+                            mids.forEach((mid) => {
                                 let group = $(`<option value="${mid}">กลุ่ม ${mid}</option>`);
                                 group.appendTo(groupselect);
-                            })
+                            });
 
-                            groupselect.selectpicker('refresh')
-                            groupselect.val(groupval)
-                            groupselect.selectpicker('render')
-                        })
+                            groupselect.selectpicker("refresh");
+                            groupselect.val(groupval);
+                            groupselect.selectpicker("render");
+                        });
+                    },
+                });
 
-                    }
-                })
-
-                $('#controlAllRelayStateModal').modal('show');
+                $("#controlAllRelayStateModal").modal("show");
 
                 // if (parseInt(statarr.length) !== parseInt(obj.length)) {
-                //     const endpointoff = "http://85.204.247.82:3002/api/turnoffalllight"
+                //     const endpointoff = "https://85.204.247.82:3002/api/turnoffalllight"
                 //     const options = {
                 //         method: "POST"
                 //     }
@@ -2133,11 +2365,11 @@
 
                 // }, 1500);
             })
-            .catch(err => {
+            .catch((err) => {
                 console.error("เกิดข้อผิดพลาด:", err);
                 Swal.fire({
                     position: "center",
-                    icon: 'error',
+                    icon: "error",
                     title: "❌ ผิดพลาด!",
                     html: `
         <div style="font-size: 16px; color: #b71c1c;">
@@ -2146,9 +2378,8 @@
         </div>
     `,
                     showConfirmButton: false,
-                    timer: 2000
+                    timer: 2000,
                 });
-
             });
         // }, 500);
     });
@@ -2164,8 +2395,8 @@
     //         return;
     //     }
 
-    //     const endpointon = "http://85.204.247.82:3002/api/turnonalllight"
-    //     const endpointoff = "http://85.204.247.82:3002/api/turnoffalllight"
+    //     const endpointon = "https://85.204.247.82:3002/api/turnonalllight"
+    //     const endpointoff = "https://85.204.247.82:3002/api/turnoffalllight"
     //     const controlRelay = $("#controlAllRelayStatebtn");
     //     const transbox = $('#tb')
     //     const subtransbox = $('#stb')
@@ -2362,37 +2593,39 @@
     //     }
     // })
 
-    $('#control-send-manual').click(function () {
-        const macAddress = $('#controlLampSerialNo').val()
-        const switchbtn = $('#controlRelayState')
-        const endpoint = "http://85.204.247.82:3002/api/turnonlightval"
-        const warmVal = $('#controlRangeWarm').val()
-        const coolVal = $('#controlRangeCool').val()
-        let relay
+    $("#control-send-manual").click(function () {
+        const macAddress = $("#controlLampSerialNo").val();
+        const switchbtn = $("#controlRelayState");
+        const group = $('#controlGroup').val();
+        const endpoint = "https://85.204.247.82:3002/api/turnonlightval";
+        const warmVal = $("#controlRangeWarm").val();
+        const coolVal = $("#controlRangeCool").val();
+        let relay;
 
-        if (switchbtn.prop('checked')) {
-            relay = 'ON'
+        if (switchbtn.prop("checked")) {
+            relay = "ON";
         } else {
-            relay = 'OFF'
+            relay = "OFF";
         }
 
         const datas = {
+            group,
             macAddress,
             relay,
             warmVal,
             coolVal,
-        }
+        };
 
         const options = {
             method: "POST",
             headers: {
-                "Content-Type": "application/json; charset=utf-8"
+                "Content-Type": "application/json; charset=utf-8",
             },
-            body: JSON.stringify(datas)
-        }
+            body: JSON.stringify(datas),
+        };
 
         Swal.fire({
-            title: '🔄 กำลังส่งคำสั่ง...',
+            title: "🔄 กำลังส่งคำสั่ง...",
             html: `
                     <div style="font-size: 16px; color: #555;">
                         กำลังส่งคำสั่งให้อุปกรณ์ <strong>${macAddress}</strong><br>
@@ -2405,37 +2638,43 @@
             timerProgressBar: true,
             didOpen: () => {
                 Swal.showLoading();
-            }
+            },
         });
 
         setTimeout(() => {
             fetch(endpoint, options)
-                .then(resp => resp.json())
-                .then(obj => {
-                    getLampData($("#controllerCode option:selected").val(), $("#bottomPagination").twbsPagination("getCurrentPage"), $("#lampTextSearch").val(), $("#groupDevices").val());
+                .then((resp) => resp.json())
+                .then((obj) => {
+                    getLampData(
+                        $("#projectCode option:selected").val(),
+                        $("#controllerCode option:selected").val(),
+                        $("#bottomPagination").twbsPagination("getCurrentPage"),
+                        $("#lampTextSearch").val(),
+                        //    $("#groupDevices").val()
+                    );
                     Swal.fire({
                         position: "center",
-                        icon: 'success',
+                        icon: "success",
                         title: "สำเร็จ",
                         html: `<div style="padding: 12px; background-color: #e6f4ea; border: 1px solid #a3d9a5; border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2e7d32;">
               ✅ ส่งคำสั่งอุปกรณ์ <strong style="color: #1b5e20;">${macAddress}</strong> สำเร็จ
             </div>`,
                         showConfirmButton: false,
-                        timer: 1500
-                    })
+                        timer: 1500,
+                    });
                     // setTimeout(() => {
                     //     $('#controlInfoModal').modal('hide')
                     // }, 1500);
-                    $(this).prop('disabled', true);
+                    $(this).prop("disabled", true);
                     setTimeout(() => {
-                        $(this).prop('disabled', false);
+                        $(this).prop("disabled", false);
                     }, 7000);
                 })
-                .catch(err => {
+                .catch((err) => {
                     console.error("เกิดข้อผิดพลาด:", err);
                     Swal.fire({
                         position: "center",
-                        icon: 'error',
+                        icon: "error",
                         title: "❌ ผิดพลาด!",
                         html: `
                     <div style="font-size: 16px; color: #b71c1c;">
@@ -2443,23 +2682,23 @@
                     </div>
                 `,
                         showConfirmButton: false,
-                        timer: 1500
+                        timer: 1500,
                     });
-                    $('#controlInfoModal').modal('hide')
-                })
-        }, 500)
-    })
+                    $("#controlInfoModal").modal("hide");
+                });
+        }, 500);
+    });
 
     //sendsingle
-    $('#control-send-schedule').click(async function () {
-        const macAddress = $('#controlLampSerialNo').val();
-        const endpoint = "http://85.204.247.82:3002/api/setschedule";
-        const group = $('#controlGroup').val()
-        const mac = macAddress
+    $("#control-send-schedule").click(async function () {
+        const macAddress = $("#controlLampSerialNo").val();
+        const group = $('#controlGroup').val();
+        const endpoint = "https://85.204.247.82:3002/api/setschedule";
+        const mac = macAddress;
         let schedulDatas = [];
         let filledCount = 0;
 
-        const totalActiveSlots = $('#scheduleList li').length;
+        const totalActiveSlots = $("#scheduleList li").length;
 
         for (let i = 1; i <= 5; i++) {
             let starttime = ($(`#schedule_${i}_start`).val() ?? "").trim();
@@ -2482,7 +2721,7 @@
                 starttime: starttime || "00:00",
                 endtime: endtime || "00:00",
                 warmval: warmval || "0",
-                coolval: coolval || "0"
+                coolval: coolval || "0",
             });
         }
 
@@ -2515,31 +2754,30 @@
         });
 
         try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise((resolve) => setTimeout(resolve, 1000));
 
             const resp = await fetch(endpoint, options);
             const obj = await resp.json();
 
             Swal.fire({
                 position: "center",
-                icon: 'success',
+                icon: "success",
                 title: "สำเร็จ",
                 html: `<div style="padding: 12px; background-color: #e6f4ea; border: 1px solid #a3d9a5; border-radius: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2e7d32;">
           ✅ ส่งคำสั่งสำเร็จ <strong style="color: #1b5e20;">${macAddress}</strong> สำเร็จ
         </div>`,
                 showConfirmButton: false,
-                timer: 1500
-            })
-            $(this).prop('disabled', true);
+                timer: 1500,
+            });
+            $(this).prop("disabled", true);
             setTimeout(() => {
-                $(this).prop('disabled', false);
+                $(this).prop("disabled", false);
             }, 7000);
-
         } catch (err) {
             console.error("เกิดข้อผิดพลาด:", err);
             Swal.fire({
                 position: "center",
-                icon: 'error',
+                icon: "error",
                 title: "❌ ผิดพลาด!",
                 html: `
                 <div style="font-size: 16px; color: #b71c1c;">
@@ -2547,20 +2785,33 @@
                 </div>
             `,
                 showConfirmButton: false,
-                timer: 1500
+                timer: 1500,
             });
         }
-    })
+    });
 
     //sendall
-    $('#control-send-all-schedule').click(async function () {
-        let group = $('#groupSelect').val()
-        let endpoint = `http://85.204.247.82:3002/api/setallschedule?v=${Date.now()}`
+    $("#control-send-all-schedule").click(async function () {
+        let group = $("#groupSelect").val();
+        //const endpointAllDevices = `https://85.204.247.82:3002/api/getalldevices`;
+        //const res = await fetch(endpointAllDevices);
+        //const data = await res.json();
+        //const mids = [...new Set(data.devices.map((item) => parseInt(item.mid, 10)))];
+        //let finalValue = [];
+        //// console.log(group);
+        //if (group == 0) {
+        //    finalValue = mids;
+        //} else {
+        //    finalValue = [parseInt(group, 10)];
+        //}
+
+        //console.log('Final value to be sent:', finalValue);
+        let endpoint = `https://85.204.247.82:3002/api/setallschedule?v=${Date.now()}`
 
         let schedulData = [];
         let filledCount = 0;
 
-        const totalActiveSlots = $('#scheduleAllList li').length;
+        const totalActiveSlots = $("#scheduleAllList li").length;
 
         for (let i = 1; i <= 5; i++) {
             let starttime = ($(`#scheduleall_${i}_start`).val() ?? "").trim();
@@ -2583,7 +2834,7 @@
                 starttime: starttime || "00:00",
                 endtime: endtime || "00:00",
                 warmval: warmval || "0",
-                coolval: coolval || "0"
+                coolval: coolval || "0",
             });
         }
 
@@ -2601,8 +2852,11 @@
 
             if (!Array.isArray(group)) {
                 group = [group];
-                // endpoint = `http://85.204.247.82:3002/api/setallgroupschedule?v=${Date.now()}`
+                // endpoint = `https://85.204.247.82:3002/api/setallgroupschedule?v=${Date.now()}`
             }
+        }
+        else {
+            group = [parseInt(group, 10)]
         }
 
         const payload = { group: group, schedule: schedulData }
@@ -2615,13 +2869,13 @@
         const options = {
             method: "POST",
             headers: {
-                "Content-Type": "application/json; charset=utf-8"
+                "Content-Type": "application/json; charset=utf-8",
             },
-            body: JSON.stringify(payload)
-        }
+            body: JSON.stringify(payload),
+        };
 
         Swal.fire({
-            title: '<span>🔄 กำลังดำเนินการ...</span>',
+            title: "<span>🔄 กำลังดำเนินการ...</span>",
             html: `
             <div style="font-size: 16px; color: #555;">
                 กำลังส่งคำสั่งทุกอุปกรณ์<br>
@@ -2634,8 +2888,8 @@
             showConfirmButton: false,
             didOpen: () => {
                 Swal.showLoading();
-            }
-        })
+            },
+        });
 
         try {
             const resp = await fetch(endpoint, options);
@@ -2659,12 +2913,11 @@
             setTimeout(() => {
                 $(this).prop('disabled', false);
             }, 15000);
-
         } catch (err) {
             console.error("เกิดข้อผิดพลาด:", err);
             Swal.fire({
                 position: "center",
-                icon: 'error',
+                icon: "error",
                 title: "❌ ผิดพลาด!",
                 html: `
                     <div style="font-size: 16px; color: #b71c1c;">
@@ -2672,14 +2925,13 @@
                     </div>
                 `,
                 showConfirmButton: false,
-                timer: 1500
+                timer: 1500,
             });
         }
-
-    })
+    });
 
     $('#control-send-all-manual').click(function () {
-        const endpoint = "http://85.204.247.82:3002/api/turnonalllightval"
+        const endpoint = "https://85.204.247.82:3002/api/turnonalllightval"
         const warmVal = $('#controlAllRangeWarm').val()
         const coolVal = $('#controlAllRangeCool').val()
         const relaybtn = $('#controlAllRelayStatebtn')
@@ -2721,13 +2973,13 @@
         const options = {
             method: "POST",
             headers: {
-                "Content-Type": "application/json; charset=utf-8"
+                "Content-Type": "application/json; charset=utf-8",
             },
             body: JSON.stringify(payload)
         }
 
         Swal.fire({
-            title: '<span>🔄 กำลังดำเนินการ...</span>',
+            title: "<span>🔄 กำลังดำเนินการ...</span>",
             html: `
         <div style="font-size: 16px; color: #555;">
             กำลังส่งคำสั่งทุกอุปกรณ์<br>
@@ -2740,17 +2992,17 @@
             showConfirmButton: false,
             didOpen: () => {
                 Swal.showLoading();
-            }
-        })
+            },
+        });
 
         // setTimeout(() => {
         fetch(endpoint, options)
-            .then(resp => resp.json())
-            .then(obj => {
+            .then((resp) => resp.json())
+            .then((obj) => {
                 Swal.fire({
                     position: "center",
-                    icon: 'success',
-                    title: '✅ สำเร็จ!',
+                    icon: "success",
+                    title: "✅ สำเร็จ!",
                     html: `
         <div style="font-size: 16px; color: #2e7d32;">
             ส่งคำสั่งไปยังทุกอุปกรณ์ <strong>สำเร็จ</strong>
@@ -2781,22 +3033,22 @@
         </div>
     `,
                     showConfirmButton: false,
-                    timer: 2000
+                    timer: 2000,
                 });
 
-                $('#controlAllRelayStateModal').modal('hide')
-            })
+                $("#controlAllRelayStateModal").modal("hide");
+            });
         // }, 5000)
-    })
+    });
 
     const toggleStatus = (relay) => {
         const controlRelay = $("#controlRelayState");
-        const transbox = $('#transbox')
-        const subtransbox = $('#subtransbox')
+        const transbox = $("#transbox");
+        const subtransbox = $("#subtransbox");
 
-        controlRelay.val(relay)
+        controlRelay.val(relay);
         if (relay === "OFF") {
-            const btn = $('#control-send-manual')
+            const btn = $("#control-send-manual");
 
             // subtransbox.removeClass('move-left')
             // transbox.addClass('justify-content-center')
@@ -2806,26 +3058,26 @@
             // btn.removeClass('btn-success');
             // btn.addClass('btn-secondary');
             // $(".mn").fadeOut();
-            controlRelay.bootstrapToggle('off');
+            controlRelay.bootstrapToggle("off");
             $("#controlActionManual").fadeOut();
         } else if (relay === "ON") {
-            const btn = $('#control-send-manual')
+            const btn = $("#control-send-manual");
 
             // subtransbox.addClass('move-left')
             // transbox.removeClass('justify-content-center')
             // subtransbox.removeClass('col-md-12')
             // subtransbox.addClass('col-md-3')
-            btn.removeClass('btn-secondary');
-            btn.addClass('btn-success');
-            btn.removeAttr('disabled');
+            btn.removeClass("btn-secondary");
+            btn.addClass("btn-success");
+            btn.removeAttr("disabled");
             // $(".mn").fadeIn();
-            controlRelay.bootstrapToggle('on');
+            controlRelay.bootstrapToggle("on");
         }
-    }
+    };
 
     const toggleStatus2 = (relay) => {
         const controlRelay = $("#controlRelayState2");
-        controlRelay.val(relay)
+        controlRelay.val(relay);
         if (relay === "OFF") {
             // const btn = $('#control-send-schedule')
             // btn.attr('disabled', true);
@@ -2833,51 +3085,51 @@
             // btn.addClass('btn-secondary');
             // $(".mn2").fadeOut();
             // $("#controlActionManual").fadeOut();
-            controlRelay.bootstrapToggle('off');
+            controlRelay.bootstrapToggle("off");
         } else if (relay === "ON") {
             // const btn = $('#control-send-schedule')
             // btn.removeClass('btn-secondary');
             // btn.addClass('btn-success');
             // btn.removeAttr('disabled');
             // $(".mn2").fadeIn();
-            controlRelay.bootstrapToggle('on');
+            controlRelay.bootstrapToggle("on");
         }
-    }
+    };
 
-    const bulb = $('#bulbIcon');
-    const bulb2 = $('#bulbIcon2');
-    const bulbIconmanual = $('#bulbIconmanual');
-    const toggle = $('#controlRelayState');
-    const toggle2 = $('#controlRelayState2');
-    const toggle3 = $('#controlAllRelayStatebtn');
+    const bulb = $("#bulbIcon");
+    const bulb2 = $("#bulbIcon2");
+    const bulbIconmanual = $("#bulbIconmanual");
+    const toggle = $("#controlRelayState");
+    const toggle2 = $("#controlRelayState2");
+    const toggle3 = $("#controlAllRelayStatebtn");
 
     function updateBulbStatus(isOn) {
         if (isOn) {
-            bulb.removeClass('light-off');
-            bulb.addClass('light-on');
-            bulb2.removeClass('light-off');
-            bulb2.addClass('light-on');
-            bulbIconmanual.removeClass('light-off');
-            bulbIconmanual.addClass('light-on');
+            bulb.removeClass("light-off");
+            bulb.addClass("light-on");
+            bulb2.removeClass("light-off");
+            bulb2.addClass("light-on");
+            bulbIconmanual.removeClass("light-off");
+            bulbIconmanual.addClass("light-on");
         } else {
-            bulb.removeClass('light-on');
-            bulb.addClass('light-off');
-            bulb2.removeClass('light-on');
-            bulb2.addClass('light-off');
-            bulbIconmanual.removeClass('light-on');
-            bulbIconmanual.addClass('light-off');
+            bulb.removeClass("light-on");
+            bulb.addClass("light-off");
+            bulb2.removeClass("light-on");
+            bulb2.addClass("light-off");
+            bulbIconmanual.removeClass("light-on");
+            bulbIconmanual.addClass("light-off");
         }
     }
 
-    toggle.on('change', function () {
+    toggle.on("change", function () {
         updateBulbStatus(this.checked);
     });
 
-    toggle2.on('change', function () {
+    toggle2.on("change", function () {
         updateBulbStatus(this.checked);
     });
 
-    toggle3.on('change', function () {
+    toggle3.on("change", function () {
         updateBulbStatus(this.checked);
     });
 
@@ -2885,163 +3137,179 @@
     updateBulbStatus(toggle2.checked);
     updateBulbStatus(toggle3.checked);
 
-    $('#controllerCode').on('change', function () {
-        const alldevicesbtn = $('#controlAllRelayState')
-        const groupDevies = $('#groupDeviceslebel')
-        const groupdropdown = $('.groupDevices')
-        let value = $(this).val()
-        let text = $(this).find('option:selected').text()
-        if (value !== 'CTL25-00002') {
-            groupDevies.addClass('d-none')
-            groupDevies.removeClass('d-flex')
-            alldevicesbtn.addClass('d-none')
-            alldevicesbtn.removeClass('d-flex')
-            groupdropdown.addClass('d-none')
-            $('#groupDevices').val("");
-        } else {
-            alldevicesbtn.fadeIn()
-            alldevicesbtn.addClass('d-flex')
-            groupDevies.fadeIn()
-            groupDevies.addClass('d-flex')
-            groupdropdown.removeClass('d-none')
-        }
-    });
+    //$("#controllerCode").on("change", function () {
+    //  const alldevicesbtn = $("#controlAllRelayState");
+    //  const groupDevies = $("#groupDeviceslebel");
+    //  const groupdropdown = $(".groupDevices");
+    //  let value = $(this).val();
+    //  let text = $(this).find("option:selected").text();
+    //  if (value !== "CTL25-00002") {
+    //    groupDevies.addClass("d-none");
+    //    groupDevies.removeClass("d-flex");
+    //    alldevicesbtn.addClass("d-none");
+    //    alldevicesbtn.removeClass("d-flex");
+    //    groupdropdown.addClass("d-none");
+    //    $("#groupDevices").val("");
+    //  } else {
+    //    alldevicesbtn.fadeIn();
+    //    alldevicesbtn.addClass("d-flex");
+    //    groupDevies.fadeIn();
+    //    groupDevies.addClass("d-flex");
+    //    groupdropdown.removeClass("d-none");
+    //  }
+    //});
 
     const getLampOnClick = async () => {
-        const ctrlcode = $('#controllerCode option:selected').val()
-        const paging = $("#bottomPagination").twbsPagination("getCurrentPage")
-        const textsearch = $("#lampTextSearch").val()
-        const groupCode = $("#groupDevices").val()
-        getLampData(ctrlcode, paging, textsearch, groupCode);
-    }
+        const prjCode = $("#projectCode option:selected").val();
+        const ctrlcode = $("#controllerCode option:selected").val();
+        const paging = $("#bottomPagination").twbsPagination("getCurrentPage");
+        const textsearch = $("#lampTextSearch").val();
+        //const groupCode = $("#groupDevices").val();
+        getLampData(prjCode, ctrlcode, paging, textsearch);
+    };
 
-    $('.md-close').on('click', getLampOnClick);
+    $(".md-close").on("click", getLampOnClick);
 
     const deleteDevices = async (mac) => {
-        const endpoint = "http://85.204.247.82:3002/api/deletedevices"
+        const endpoint = "https://85.204.247.82:3002/api/deletedevices";
         const datas = {
-            macAddress: mac
-        }
+            macAddress: mac,
+        };
         const options = {
             method: "DELETE",
             headers: {
-                "Content-Type": "application/json; charset=utf-8"
+                "Content-Type": "application/json; charset=utf-8",
             },
-            body: JSON.stringify(datas)
-        }
+            body: JSON.stringify(datas),
+        };
 
         try {
             fetch(endpoint, options)
-                .then(resp => resp.json())
-                .then(result => {
-                    console.log(result?.status) //Devices F412FA49E9B9 is Delete
-                })
+                .then((resp) => resp.json())
+                .then((result) => {
+                    console.log(result?.status); //Devices F412FA49E9B9 is Delete
+                });
         } catch (err) {
-            console.error("Error", err)
+            console.error("Error", err);
         }
-    }
+    };
 
     const getGroupDevices = async () => {
-        const inputGroup = $("#groupDevices")
-        const inputGroup_addmodal = $("#groupDevices_addmodal")
-        //const endpoint = "http://85.204.247.82:3002/api/getalldevices"
-        const endpoint = ENDPOINT_URL.LAMP_GroupList
-        const checkArr = new Set()
+        const inputGroup = $("#groupDevices");
+        const inputGroup_addmodal = $("#groupDevices_addmodal");
+        //const endpoint = "https://85.204.247.82:3002/api/getalldevices"
+        const endpoint = ENDPOINT_URL.LAMP_GroupList;
+        const checkArr = new Set();
+        const ctrlcode = $("#controllerCode option:selected").val();
+        let body = { ctrlCode: ctrlcode };
         //const options = { method: "GET" }
-        const options = { method: "POST" }
-
-        try {
-            const response = await fetch(endpoint, options)
-            const result = await response.json()
-            $(`<option value="0">ALL</option>`).appendTo(inputGroup)
-            result?.data?.forEach(item => {
-                const group = item
-                //const group = item?.mid
-                if (!group || checkArr.has(group)) return
-
-                checkArr.add(group)
-                $(`<option value="${group}">${group}</option>`).appendTo(inputGroup)
-                $(`<option value="${group}">${group}</option>`).appendTo(inputGroup_addmodal)
-            })
-        } catch (error) {
-            console.error("Error fetching group devices:", error)
+        const options = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+            },
+            body: JSON.stringify(body),
         }
-    }
-    getGroupDevices()
+        try {
+            const response = await fetch(endpoint, options);
+            const result = await response.json();
+            inputGroup.empty();
+            $(`<option value="0">ALL</option>`).appendTo(inputGroup);
+            result?.data?.forEach((item) => {
+                const group = item;
+                //const group = item?.mid
+                if (!group || checkArr.has(group)) return;
+
+                checkArr.add(group);
+                $(`<option value="${group}">${group}</option>`).appendTo(inputGroup);
+                $(`<option value="${group}">${group}</option>`).appendTo(
+                    inputGroup_addmodal
+                );
+            });
+        } catch (error) {
+            console.error("Error fetching group devices:", error);
+        }
+    };
+    getGroupDevices();
 
     const addDropdown = async () => {
-        if ($('#groupSelect').length > 0) return;
+        if ($("#groupSelect").length > 0) return;
 
-        const headtable = $('.dt-layout-start').first();
+        const headtable = $(".dt-layout-start").first();
 
         const dropdown = $(`
         <div class="col-md-3 d-flex align-items-center justify-content-center groupSelect">
             <select id="groupSelect" class="selectpicker form-control border-secondary text-dark" data-live-search="true" title="เลือกกลุ่ม" style="min-width: 200px; border: 1px solid;">
-                <option value="0" selected>เลือกทั้งหมด</option>
+                <option value="0">เลือกทั้งหมด</option>
             </select>
         </div>
     `);
 
         headtable.after(dropdown);
-        $('#groupSelect').selectpicker();
-    }
-
+        $("#groupSelect").selectpicker({
+            liveSearch: true,
+        });
+    };
 
     const selectGroupDevices = async (group) => {
-        const table = $('#alldevice')
-        const endpointgetgroupdatas = `http://85.204.247.82:3002/api/getgroupdevices/${group}`
+        const table = $("#alldevice");
+        const endpointgetgroupdatas = `https://85.204.247.82:3002/api/getgroupdevices/${group}`;
         const tableBody = document.querySelector("#alldevice tbody");
         tableBody.innerHTML = "";
-        const groupselect = $('.groupSelect')
+        const groupselect = $(".groupSelect");
         try {
-            const response = await fetch(endpointgetgroupdatas)
-            const obj = await response.json()
+            const response = await fetch(endpointgetgroupdatas);
+            const obj = await response.json();
 
-            // console.log('obj', obj)
+            console.log("obj", obj);
 
-            obj.forEach(item => {
+            obj.forEach((item) => {
                 const row = tableBody.insertRow();
-                row.insertCell().textContent = item?.macAddress
-                row.insertCell().textContent = item?.tag
-                row.insertCell().textContent = item?.relay
-                row.insertCell().textContent = item?.pwm_freq
-                row.insertCell().textContent = item?.mid
-                row.insertCell().textContent = item?.workmode
+                row.insertCell().textContent = item?.macAddress;
+                row.insertCell().textContent = item?.tag;
+                row.insertCell().textContent = item?.relay;
+                row.insertCell().textContent = item?.pwm_freq;
+                row.insertCell().textContent = item?.mid;
+                row.insertCell().textContent = item?.workmode;
             });
 
             if ($.fn.DataTable.isDataTable(table)) {
-                table.DataTable().clear().destroy()
+                table.DataTable().clear().destroy();
             }
 
-            obj.forEach(item => {
+            obj.forEach((item) => {
                 const row = $("<tr>");
-                row.append(`<td>${item?.macAddress}</td>`)
-                row.append(`<td>${item?.tag}</td>`)
-                row.append(`<td>${item?.relay}</td>`)
-                row.append(`<td>${item?.pwm_freq}</td>`)
-                row.append(`<td>${item?.mid}</td>`)
-                row.append(`<td>${item?.workmode}</td>`)
+                row.append(`<td>${item?.macAddress}</td>`);
+                row.append(`<td>${item?.tag}</td>`);
+                row.append(`<td>${item?.relay}</td>`);
+                row.append(`<td>${item?.pwm_freq}</td>`);
+                row.append(`<td>${item?.mid}</td>`);
+                row.append(`<td>${item?.workmode}</td>`);
                 table.find("tbody").append(row);
             });
 
-            table.removeClass("animate__fadeOut").addClass("animate__animated animate__fadeIn");
-            groupselect.removeClass("animate__fadeOut").addClass("animate__animated animate__fadeIn");
-
+            table
+                .removeClass("animate__fadeOut")
+                .addClass("animate__animated animate__fadeIn");
+            groupselect
+                .removeClass("animate__fadeOut")
+                .addClass("animate__animated animate__fadeIn");
 
             table.DataTable({
+                searching: false,
                 language: {
                     search: "ค้นหา:",
                     lengthMenu: "แสดง _MENU_ รายการต่อหน้า",
                     zeroRecords: "ไม่พบข้อมูล",
                     info: "แสดง _START_ ถึง _END_ จาก _TOTAL_ รายการ",
                     infoEmpty: "แสดง 0 ถึง 0 จาก 0 รายการ",
-                    infoFiltered: "(กรองจากทั้งหมด _MAX_ รายการ)"
-                }
+                    infoFiltered: "(กรองจากทั้งหมด _MAX_ รายการ)",
+                },
             });
-            await addDropdown(group)
-            await loadGroupDropdown(group)
+            await addDropdown(group);
+            await loadGroupDropdown(group);
         } catch (error) {
-            console.error("Error loading group devices", error)
+            console.error("Error loading group devices", error);
         }
     };
 
@@ -3052,26 +3320,25 @@
     })
 
     const loadGroupDropdown = async (selectedGroup) => {
-        const groupselect = $('#groupSelect');
-        groupselect.empty()
+        const groupselect = $("#groupSelect");
+        groupselect.empty();
 
         try {
-            const res = await fetch("http://85.204.247.82:3002/api/getalldevices")
+            const res = await fetch("https://85.204.247.82:3002/api/getalldevices");
             const data = await res.json();
-            const mids = [...new Set(data.devices.map(item => item.mid))]
+            const mids = [...new Set(data.devices.map((item) => item.mid))];
 
-            await groupselect.append(`<option value="0">เลือกทั้งหมด</option>`)
-            mids.forEach(mid => {
-                groupselect.append(`<option value="${mid}">กลุ่ม ${mid}</option>`)
+            await groupselect.append(`<option value="0">เลือกทั้งหมด</option>`);
+            mids.forEach((mid) => {
+                groupselect.append(`<option value="${mid}">กลุ่ม ${mid}</option>`);
             });
 
-            groupselect.selectpicker('refresh')
-            groupselect.val(selectedGroup)
-            groupselect.selectpicker('refresh')
-            groupselect.selectpicker('render')
-
+            groupselect.selectpicker("refresh");
+            groupselect.val(selectedGroup);
+            groupselect.selectpicker("refresh");
+            groupselect.selectpicker("render");
         } catch (err) {
-            console.error("โหลด groupSelect ล้มเหลว:", err)
+            console.error("โหลด groupSelect ล้มเหลว:", err);
         }
     };
 
@@ -3083,32 +3350,32 @@
     //     }
     // })
 
-    $('#pills-tab-all a[data-toggle="pill"]').on('shown.bs.tab', function (e) {
-        let targetTabId = $(e.target).attr('id')
-        const manualbtn = $('#control-send-all-manual')
-        const manualauto = $('#control-send-all-schedule')
+    $('#pills-tab-all a[data-toggle="pill"]').on("shown.bs.tab", function (e) {
+        let targetTabId = $(e.target).attr("id");
+        const manualbtn = $("#control-send-all-manual");
+        const manualauto = $("#control-send-all-schedule");
 
-        if (targetTabId === 'manualAll-tab') {
+        if (targetTabId === "manualAll-tab") {
             // console.log("กำลังทำงานในแท็บ Manual")
-            manualbtn.removeClass('d-none')
-            manualauto.addClass('d-none')
-            runManualFunction()
-        } else if (targetTabId === 'scheduleAll-tab') {
-            manualbtn.addClass('d-none')
-            manualauto.removeClass('d-none')
-            scheduleAllFunction()
+            manualbtn.removeClass("d-none");
+            manualauto.addClass("d-none");
+            runManualFunction();
+        } else if (targetTabId === "scheduleAll-tab") {
+            manualbtn.addClass("d-none");
+            manualauto.removeClass("d-none");
+            scheduleAllFunction();
         }
-    })
+    });
 
     function runManualFunction() {
         $('#resetSchedules').addClass('d-none');
     }
 
-    let schedultab = true
-    let schedultabAll = true
+    let schedultab = true;
+    let schedultabAll = true;
 
     function scheduleAllFunction() {
-        
+
         $('#resetSchedules').removeClass('d-none')
         if (!schedultabAll) return
         const currentCount = $('#scheduleAllList li').length;
@@ -3187,7 +3454,7 @@
     </li>
   `);
 
-        $('#scheduleAllList').append($li);
+        $("#scheduleAllList").append($li);
         $li.fadeIn(function () {
             const $start = $(`#scheduleall_${period}_start`);
             const $end = $(`#scheduleall_${period}_end`);
@@ -3205,36 +3472,36 @@
             let previousStart = null;
             let previousDuration = null;
 
-            [$start, $end].forEach($el => {
+            [$start, $end].forEach(($el) => {
                 $el.datetimepicker({
                     format: "HH:mm",
                     icons: {
-                        time: 'fa fa-clock',
-                        date: 'fa fa-calendar',
-                        up: 'fa fa-chevron-up',
-                        down: 'fa fa-chevron-down',
-                        previous: 'fa fa-chevron-left',
-                        next: 'fa fa-chevron-right',
-                        today: 'fa fa-calendar-check',
-                        clear: 'fa fa-trash',
-                        close: 'fa fa-times'
-                    }
+                        time: "fa fa-clock",
+                        date: "fa fa-calendar",
+                        up: "fa fa-chevron-up",
+                        down: "fa fa-chevron-down",
+                        previous: "fa fa-chevron-left",
+                        next: "fa fa-chevron-right",
+                        today: "fa fa-calendar-check",
+                        clear: "fa fa-trash",
+                        close: "fa fa-times",
+                    },
                 });
             });
 
             if (period > 1) {
                 const prevEndVal = $(`#scheduleall_${prevPeriod}_end`).val();
                 if (prevEndVal) {
-                    const startMoment = moment(prevEndVal, 'HH:mm');
-                    $start.datetimepicker('date', startMoment);
-                    $end.datetimepicker('date', startMoment.clone().add(1, 'hours'));
+                    const startMoment = moment(prevEndVal, "HH:mm");
+                    $start.datetimepicker("date", startMoment);
+                    $end.datetimepicker("date", startMoment.clone().add(1, "hours"));
                 } else {
-                    $start.datetimepicker('date', moment('00:00', 'HH:mm'));
-                    $end.datetimepicker('date', moment('01:00', 'HH:mm'));
+                    $start.datetimepicker("date", moment("00:00", "HH:mm"));
+                    $end.datetimepicker("date", moment("01:00", "HH:mm"));
                 }
             } else {
-                $start.datetimepicker('date', moment('00:00', 'HH:mm'));
-                $end.datetimepicker('date', moment('01:00', 'HH:mm'));
+                $start.datetimepicker("date", moment("00:00", "HH:mm"));
+                $end.datetimepicker("date", moment("01:00", "HH:mm"));
             }
 
             $(`#scheduleall_${period}_rangeWarm`).text("0");
@@ -3243,34 +3510,40 @@
             $(`#scheduleall_${period}_controlRangeCool`).val("0");
 
             $start.on("show.datetimepicker", function () {
-                const start = moment($start.val(), 'HH:mm');
-                const end = moment($end.val(), 'HH:mm');
+                const start = moment($start.val(), "HH:mm");
+                const end = moment($end.val(), "HH:mm");
                 if (start.isValid() && end.isValid() && end.isAfter(start)) {
-                    previousStart = start.format('HH:mm');
+                    previousStart = start.format("HH:mm");
                     previousDuration = moment.duration(end.diff(start));
                 }
             });
 
             $start.on("change.datetimepicker", function (e) {
-                const start = moment(e.date, 'HH:mm');
-                const firstStartVal = $('#scheduleall_1_start').val();
-                const firstStart = moment(firstStartVal, 'HH:mm');
+                const start = moment(e.date, "HH:mm");
 
-                if (!start.isValid() || start.isSameOrAfter(moment('23:00', 'HH:mm')) || start.hour() >= 23 || firstStart.isBefore(moment('00:00', 'HH:mm'))) {
+                const firstStartVal = $("#scheduleall_1_start").val();
+                const firstStart = moment(firstStartVal, "HH:mm");
+
+                if (
+                    !start.isValid() ||
+                    start.isSameOrAfter(moment("23:00", "HH:mm")) ||
+                    start.hour() >= 23 ||
+                    firstStart.isBefore(moment("00:00", "HH:mm"))
+                ) {
                     Swal.fire({
-                        title: 'แจ้งเตือน',
+                        title: "แจ้งเตือน",
                         html: '<h4 style="color:#333;font-weight:normal;">เป็นเวลาของวันที่แล้ว ไม่สามารถเลือกได้</h4>',
-                        icon: 'warning',
-                        confirmButtonText: 'ตกลง',
-                        confirmButtonColor: '#d33',
-                        background: '#fff',
+                        icon: "warning",
+                        confirmButtonText: "ตกลง",
+                        confirmButtonColor: "#d33",
+                        background: "#fff",
                         customClass: {
-                            popup: 'swal2-modern-popup',
-                            title: 'swal2-modern-title',
-                            content: 'swal2-modern-content'
-                        }
+                            popup: "swal2-modern-popup",
+                            title: "swal2-modern-title",
+                            content: "swal2-modern-content",
+                        },
                     }).then(() => {
-                        $start.datetimepicker('date', moment('00:00', 'HH:mm'));
+                        $start.datetimepicker("date", moment("00:00", "HH:mm"));
                     });
                     return;
                 }
@@ -3376,19 +3649,19 @@
                     if (prevEndVal) {
                         const prevEnd = moment(prevEndVal, 'HH:mm');
                         if (end.isBefore(prevEnd)) {
-                            Swal.fire({
-                                title: 'แจ้งเตือน',
-                                html: `<h4 style="color:#333;font-weight:normal;">ช่วงเวลาที่ ${period} ต้องสิ้นสุดหลังจากช่วงเวลาที่ ${i}</h4>`,
-                                icon: 'warning',
-                                confirmButtonText: 'ตกลง',
-                                confirmButtonColor: '#d33',
-                                background: '#fff',
-                                customClass: {
-                                    popup: 'swal2-modern-popup',
-                                    title: 'swal2-modern-title',
-                                    content: 'swal2-modern-content'
-                                }
-                            });
+                            // Swal.fire({
+                            //     title: 'แจ้งเตือน',
+                            //     html: `<h4 style="color:#333;font-weight:normal;">ช่วงเวลาที่ ${period} ต้องสิ้นสุดหลังจากช่วงเวลาที่ ${i}</h4>`,
+                            //     icon: 'warning',
+                            //     confirmButtonText: 'ตกลง',
+                            //     confirmButtonColor: '#d33',
+                            //     background: '#fff',
+                            //     customClass: {
+                            //         popup: 'swal2-modern-popup',
+                            //         title: 'swal2-modern-title',
+                            //         content: 'swal2-modern-content'
+                            //     }
+                            // });
 
                             $(`#scheduleall_${period}_end`).datetimepicker('date', prevEnd); // <<< ใช้ prevEnd
                             return;
@@ -3934,12 +4207,47 @@
         $firstLi.find('p[id^="scheduleall_"][id$="_rangeCool"]').text('0');
     });
 
-    function scheduleFunction() {
+    function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function scheduleFunction(obj) {
 
         if (!schedultab) return
 
+        delay(2000);
+
         const currentCount = $('#scheduleList li').length;
-        const period = currentCount + 1
+        const period = currentCount + 1;
+
+        $('#scheduleList li').fadeOut(300, function () {
+            $(this).remove();
+            $('#period').text('1')
+        });
+
+        if (obj) {
+            const resp = obj.data[0]
+            const filteredSchedules = [];
+
+            for (let i = 1; i <= 5; i++) {
+                if (resp[`schActive${i}`] === "true") {
+                    filteredSchedules.push({
+                        startTime: resp[`schStartTime${i}`],
+                        endTime: resp[`schEndTime${i}`],
+                        pwm1: resp[`schPwm1${i}`],
+                        pwm2: resp[`schPwm2${i}`],
+                        active: resp[`schActive${i}`]
+                    });
+                }
+            }
+
+            for (let i = 0; i < filteredSchedules.length; i++) {
+                createScheduleLi(i + 1, filteredSchedules[i]);
+            }
+            // schedultab = false
+            return
+        }
+
 
         const $li = $(`
     <li class="col-md-12 mb-3" style="display: none;">
@@ -4250,7 +4558,338 @@
             });
         });
 
+        $li.find('.remove-btn').on('click', function () {
+
+            if (periodall <= 1) return
+
+            $li.fadeOut(function () {
+                $li.remove();
+                updatePeriodNumbersAll();
+            });
+        });
+        // schedultab = false;
+    }
+
+    function createScheduleLi(period, scheduleData) {
+
+        const $li = $(`
+    <li class="col-md-12 mb-3" style="display: none;">
+      <div class="config-box">
+      <div class="col-md-12 d-flex justify-content-center align-items-center">
+      <div class="col-md-4">
+        <div class="col-md-12">
+        <div class="mb-3">
+  <h2 class="text-center">🕒 ช่วงเวลาที่ ${period} </h2>
+  <input type="hidden" id="no" value="${period}">
+</div>
+<hr>
+        <div class="form-group">
+          <label for="schedule_${period}_start">ตั้งแต่เวลา</label>
+          <input type="text" class="form-control datetimepicker-input" id="schedule_${period}_start" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_${period}_start"/>
+        </div>
+
+        <div class="form-group">
+        <label for="schedule_${period}_end">ถึงเวลา</label>
+          <input type="text" class="form-control datetimepicker-input" id="schedule_${period}_end" data-toggle="datetimepicker" autocomplete="off" data-target="#schedule_${period}_end" />
+        </div>
+        </div>
+        </div>
+
+        <div class="col-md-8">
+        <div class="sliders-wrapper">
+          <div class="slider-box">
+            <label>แสงอุ่น</label>
+            <input type="range" min="0" max="100" value="0" class="brightness-slider-warm py-2" id="schedule_${period}_controlRangeWarm" onInput="$('#schedule_${period}_rangeWarm').html($(this).val())">
+            <div class="slider-marks">
+              <div class="slider-mark"><div>|</div><div>0</div></div>
+              <div class="slider-mark"><div>|</div><div>20</div></div>
+              <div class="slider-mark"><div>|</div><div>40</div></div>
+              <div class="slider-mark"><div>|</div><div>60</div></div>
+              <div class="slider-mark"><div>|</div><div>80</div></div>
+              <div class="slider-mark"><div>|</div><div>100</div></div>
+            </div>
+            <div class="light-info-box-warm">
+              <p class="label">กำหนดค่าแสงอุ่น</p>
+              <hr>
+              <p class="value" id="schedule_${period}_rangeWarm">0</p>
+            </div>
+          </div>
+
+          <div class="slider-box">
+            <label>แสงเย็น</label>
+            <input type="range" min="0" max="100" value="0" class="brightness-slider-cool py-2" id="schedule_${period}_controlRangeCool" onInput="$('#schedule_${period}_rangeCool').html($(this).val())">
+            <div class="slider-marks">
+              <div class="slider-mark"><div>|</div><div>0</div></div>
+              <div class="slider-mark"><div>|</div><div>20</div></div>
+              <div class="slider-mark"><div>|</div><div>40</div></div>
+              <div class="slider-mark"><div>|</div><div>60</div></div>
+              <div class="slider-mark"><div>|</div><div>80</div></div>
+              <div class="slider-mark"><div>|</div><div>100</div></div>
+            </div>
+            <div class="light-info-box-cool">
+              <p class="label">กำหนดค่าแสงเย็น</p>
+              <hr>
+              <p class="value" id="schedule_${period}_rangeCool">0</p>
+            </div>
+          </div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-end mt-4">
+          <button type="button" class="btn btn-danger btn-sm remove-btn" title="ลบ">
+            <i class="fa fa-trash"></i>
+          </button>
+        </div>
+        </div>
+        </div>
+      </div>
+    </li>
+  `);
+
+        $('#scheduleList').append($li);
+        $li.fadeIn(function () {
+            const $start = $(`#schedule_${period}_start`);
+            const $end = $(`#schedule_${period}_end`);
+
+            $start.on('keydown paste', function (e) {
+                e.preventDefault();
+            });
+
+            $end.on('keydown paste', function (e) {
+                e.preventDefault();
+            });
+
+            const prevPeriod = period - 1;
+            const nextPeriod = period + 1;
+            let previousStart = null;
+            let previousDuration = null;
+
+            [$start, $end].forEach($el => {
+                $el.datetimepicker({
+                    format: "HH:mm",
+                    icons: {
+                        time: 'fa fa-clock',
+                        date: 'fa fa-calendar',
+                        up: 'fa fa-chevron-up',
+                        down: 'fa fa-chevron-down',
+                        previous: 'fa fa-chevron-left',
+                        next: 'fa fa-chevron-right',
+                        today: 'fa fa-calendar-check',
+                        clear: 'fa fa-trash',
+                        close: 'fa fa-times'
+                    }
+                });
+            });
+
+            if (period > 1) {
+                const prevEndVal = $(`#schedule_${prevPeriod}_end`).val();
+                if (prevEndVal) {
+                    const startMoment = moment(prevEndVal, 'HH:mm');
+                    $start.datetimepicker('date', startMoment);
+                    $end.datetimepicker('date', startMoment.clone().add(1, 'hours'));
+                } else {
+                    $start.datetimepicker('date', moment('00:00', 'HH:mm'));
+                    $end.datetimepicker('date', moment('01:00', 'HH:mm'));
+                }
+            } else {
+                $start.datetimepicker('date', moment('00:00', 'HH:mm'));
+                $end.datetimepicker('date', moment('01:00', 'HH:mm'));
+            }
+
+            $(`#schedule_${period}_rangeWarm`).text("0");
+            $(`#schedule_${period}_controlRangeWarm`).val("0");
+            $(`#schedule_${period}_rangeCool`).text("0");
+            $(`#schedule_${period}_controlRangeCool`).val("0");
+
+            $start.on("show.datetimepicker", function () {
+                const start = moment($start.val(), 'HH:mm');
+                const end = moment($end.val(), 'HH:mm');
+                if (start.isValid() && end.isValid() && end.isAfter(start)) {
+                    previousStart = start.format('HH:mm');
+                    previousDuration = moment.duration(end.diff(start));
+                }
+            });
+
+            $start.on("change.datetimepicker", function (e) {
+                const start = moment(e.date, 'HH:mm');
+
+                const firstStartVal = $('#schedule_1_start').val();
+                const firstStart = moment(firstStartVal, 'HH:mm');
+
+                if (!start.isValid() || start.isSameOrAfter(moment('23:00', 'HH:mm')) || start.hour() >= 23 || firstStart.isBefore(moment('00:00', 'HH:mm'))) {
+                    Swal.fire({
+                        title: 'แจ้งเตือน',
+                        html: '<h4 style="color:#333;font-weight:normal;">เป็นเวลาของวันที่แล้ว ไม่สามารถเลือกได้</h4>',
+                        icon: 'warning',
+                        confirmButtonText: 'ตกลง',
+                        confirmButtonColor: '#d33',
+                        background: '#fff',
+                        customClass: {
+                            popup: 'swal2-modern-popup',
+                            title: 'swal2-modern-title',
+                            content: 'swal2-modern-content'
+                        }
+                    }).then(() => {
+                        $start.datetimepicker('date', moment('00:00', 'HH:mm'));
+                    });
+                    return;
+                }
+
+                // for (let i = 1; i < period; i++) {
+                //     const prevEndVal = $(`#schedule_${i}_end`).val();
+                //     if (prevEndVal && start.isBefore(moment(prevEndVal, 'HH:mm'))) {
+                //         Swal.fire({
+                //             title: 'แจ้งเตือน',
+                //             html: `<h4 style="color:#333;font-weight:normal;">ช่วงเวลาที่ ${period} ต้องไม่เริ่มก่อนช่วงเวลาที่ ${i}</h4>`,
+                //             icon: 'warning',
+                //             confirmButtonText: 'ตกลง',
+                //             confirmButtonColor: '#d33',
+                //             background: '#fff',
+                //             customClass: {
+                //                 popup: 'swal2-modern-popup',
+                //                 title: 'swal2-modern-title',
+                //                 content: 'swal2-modern-content'
+                //             }
+                //         });
+                //         if (previousStart) {
+                //             $start.datetimepicker('date', moment(previousStart, 'HH:mm'));
+                //         }
+                //         return;
+                //     }
+                // }
+
+                const newEnd = previousDuration
+                    ? moment(start).add(previousDuration)
+                    : moment(start).add(1, 'hours');
+                $end.datetimepicker('date', newEnd);
+
+                const $nextStart = $(`#schedule_${nextPeriod}_start`);
+                const $nextEnd = $(`#schedule_${nextPeriod}_end`);
+                if ($nextStart.length && $nextEnd.length) {
+                    const nextStartVal = $nextStart.val();
+                    const nextEndVal = $nextEnd.val();
+                    let nextDuration = moment.duration(1, 'hours'); // default
+
+                    if (nextStartVal && nextEndVal) {
+                        const nextStart = moment(nextStartVal, 'HH:mm');
+                        const nextEnd = moment(nextEndVal, 'HH:mm');
+                        if (nextEnd.isAfter(nextStart)) {
+                            nextDuration = moment.duration(nextEnd.diff(nextStart));
+                        }
+                    }
+
+                    $nextStart.datetimepicker('date', newEnd);
+                    $nextEnd.datetimepicker('date', moment(newEnd).add(nextDuration));
+                }
+
+            });
+
+            let previousEnd = null;
+
+            $(`#schedule_${period}_end`).on("show.datetimepicker", function () {
+                previousEnd = $(`#schedule_${period}_end`).val();
+            });
+
+            $(`#schedule_${period}_end`).on("change.datetimepicker", function (e) {
+                const end = moment(e.date, 'HH:mm');
+                const startVal = $(`#schedule_${period}_start`).val();
+                const limitMoment = moment('23:59', 'HH:mm');
+
+                if (startVal) {
+                    const start = moment(startVal, 'HH:mm');
+
+                    if (period === 1 && end.isSameOrAfter(limitMoment)) {
+                        Swal.fire({
+                            title: 'แจ้งเตือน',
+                            html: `<h4 style="color:#333;font-weight:normal;">เวลาสิ้นสุดต้องไม่เกินเที่ยงคืนหรือเท่ากับ 23:59 </h4>`,
+                            icon: 'warning',
+                            confirmButtonText: 'ตกลง',
+                            confirmButtonColor: '#d33',
+                            background: '#fff',
+                            customClass: {
+                                popup: 'swal2-modern-popup',
+                                title: 'swal2-modern-title',
+                                content: 'swal2-modern-content'
+                            }
+                        });
+
+                        const startVal = $(`#schedule_${period}_start`).val();
+                        if (startVal) {
+                            const newEnd = moment(startVal, 'HH:mm').add(1, 'hours');
+                            $(`#schedule_${period}_end`).datetimepicker('date', newEnd);
+                        }
+                        return;
+                    }
+
+                    if (period === 1 && end.isBefore(start)) {
+                        Swal.fire({
+                            title: 'แจ้งเตือน',
+                            html: `<h4 style="color:#333;font-weight:normal;">เวลาสิ้นสุดต้องมากกว่าเวลาเริ่มต้น</h4>`,
+                            icon: 'warning',
+                            confirmButtonText: 'ตกลง',
+                            confirmButtonColor: '#d33',
+                            background: '#fff',
+                            customClass: {
+                                popup: 'swal2-modern-popup',
+                                title: 'swal2-modern-title',
+                                content: 'swal2-modern-content'
+                            }
+                        });
+
+                        const startVal = $(`#schedule_${period}_start`).val();
+                        if (startVal) {
+                            const newEnd = moment(startVal, 'HH:mm').add(1, 'hours');
+                            $(`#schedule_${period}_end`).datetimepicker('date', newEnd);
+                        }
+                        return;
+                    }
+                }
+
+                for (let i = 1; i < period; i++) {
+                    const prevEndVal = $(`#schedule_${i}_end`).val();
+                    if (prevEndVal) {
+                        const prevEnd = moment(prevEndVal, 'HH:mm');
+                        if (end.isBefore(prevEnd)) {
+                            Swal.fire({
+                                title: 'แจ้งเตือน',
+                                html: `<h4 style="color:#333;font-weight:normal;">ช่วงเวลาที่ ${period} ต้องสิ้นสุดหลังจากช่วงเวลาที่ ${i}</h4>`,
+                                icon: 'warning',
+                                confirmButtonText: 'ตกลง',
+                                confirmButtonColor: '#d33',
+                                background: '#fff',
+                                customClass: {
+                                    popup: 'swal2-modern-popup',
+                                    title: 'swal2-modern-title',
+                                    content: 'swal2-modern-content'
+                                }
+                            });
+
+                            $(`#schedule_${period}_end`).datetimepicker('date', prevEnd); // <<< ใช้ prevEnd
+                            return;
+                        }
+                    }
+                }
+
+                const nextPeriod = period + 1;
+                const $nextStart = $(`#schedule_${nextPeriod}_start`);
+                if ($nextStart.length) {
+                    const nextStartVal = $nextStart.val();
+                    if (!nextStartVal || moment(nextStartVal, 'HH:mm').isBefore(end)) {
+                        $nextStart.datetimepicker('date', end);
+                    }
+                }
+
+            });
+        });
+
         schedultab = false
+
+        $li.fadeIn(function () {
+            $(`#schedule_${period}_start`).val(scheduleData.startTime);
+            $(`#schedule_${period}_end`).val(scheduleData.endTime);
+            $(`#schedule_${period}_controlRangeWarm`).val(scheduleData.pwm1).trigger('input');
+            $(`#schedule_${period}_controlRangeCool`).val(scheduleData.pwm2).trigger('input');
+        });
+
     }
 
     document.querySelector('#addschedule').addEventListener('click', async function (e) {
@@ -4765,23 +5404,37 @@
     }
 
     $('#clearSchedules').on('click', function () {
-
+        document.activeElement.blur();
+        document.getElementById("lampInfoModal").setAttribute("aria-hidden", "true");
         $('#scheduleList li').slice(1).fadeOut(300, function () {
             $(this).remove();
             $('#period').text('1')
         });
 
-        const $firstLi = $('#scheduleList li').first();
+        // const $firstLi = $('#scheduleList li').first();
 
         // $firstLi.find('input[id^="schedule_"][id$="_start"]').datetimepicker('date', moment('00:00', 'HH:mm'));
         // $firstLi.find('input[id^="schedule_"][id$="_end"]').datetimepicker('date', moment('01:00', 'HH:mm'));
+
+        // $firstLi.find('input[id^="schedule_"][id$="_controlRangeWarm"]').val(0).trigger('input');
+        // $firstLi.find('p[id^="schedule_"][id$="_rangeWarm"]').text('0');
+
+        // $firstLi.find('input[id^="schedule_"][id$="_controlRangeCool"]').val(0).trigger('input');
+        // $firstLi.find('p[id^="schedule_"][id$="_rangeCool"]').text('0');
+    });
+
+    function clearInput() {
+        const $firstLi = $('#scheduleList li');
+
+        $firstLi.find('input[id^="schedule_"][id$="_start"]').datetimepicker('date', moment('00:00', 'HH:mm'));
+        $firstLi.find('input[id^="schedule_"][id$="_end"]').datetimepicker('date', moment('01:00', 'HH:mm'));
 
         $firstLi.find('input[id^="schedule_"][id$="_controlRangeWarm"]').val(0).trigger('input');
         $firstLi.find('p[id^="schedule_"][id$="_rangeWarm"]').text('0');
 
         $firstLi.find('input[id^="schedule_"][id$="_controlRangeCool"]').val(0).trigger('input');
         $firstLi.find('p[id^="schedule_"][id$="_rangeCool"]').text('0');
-    });
+    }
 
     $('#resetSchedules').on('click', function () {
 
@@ -4796,16 +5449,16 @@
 
         updatePeriodNumbersAll()
 
-        const $firstLi = $('#scheduleAllList li').first();
+        // const $firstLi = $('#scheduleAllList li').first();
 
         // $firstLi.find('input[id^="scheduleall_"][id$="_start"]').datetimepicker('date', moment('00:00', 'HH:mm'));
         // $firstLi.find('input[id^="scheduleall_"][id$="_end"]').datetimepicker('date', moment('01:00', 'HH:mm'));
 
-        $firstLi.find('input[id^="scheduleall_"][id$="_controlRangeWarm"]').val(0).trigger('input');
-        $firstLi.find('p[id^="scheduleall_"][id$="_rangeWarm"]').text('0');
+        // $firstLi.find('input[id^="scheduleall_"][id$="_controlRangeWarm"]').val(0).trigger('input');
+        // $firstLi.find('p[id^="scheduleall_"][id$="_rangeWarm"]').text('0');
 
-        $firstLi.find('input[id^="schedule_"][id$="_controlRangeCool"]').val(0).trigger('input');
-        $firstLi.find('p[id^="scheduleall_"][id$="_rangeCool"]').text('0');
+        // $firstLi.find('input[id^="schedule_"][id$="_controlRangeCool"]').val(0).trigger('input');
+        // $firstLi.find('p[id^="scheduleall_"][id$="_rangeCool"]').text('0');
     });
 
 

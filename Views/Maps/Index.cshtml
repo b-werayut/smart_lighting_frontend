@@ -5,6 +5,12 @@
 
 @section css {
     <link href="~/Content/app/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 }
 
 <div id="map-container">
@@ -33,8 +39,7 @@
     <div id="map"></div>
 </div>
 
-<div class="modal fade" id="controlInfoModal" tabindex="-1" role="dialog" aria-labelledby="controlInfoModalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-sm-down" role="document">
+    <!-- <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-sm-down" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="controlInfoModalLongTitle">แผงควบคุม</h5>
@@ -361,12 +366,290 @@
             </div>
         </div>
     </div>
+</div>  -->
+
+<div class="modal fade" id="controlInfoModal" tabindex="-1" role="dialog" aria-labelledby="controlInfoModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-sm-down" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="controlInfoModalLongTitle">แผงควบคุม</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body" id="controlEndpoint">
+                <div class="row d-none">
+                    <input type="text" class="form-control" id="controlMode" disabled />
+                    <input type="text" class="form-control" id="controlProjectType" disabled />
+                    <input type="text" class="form-control" id="controlControllerCode" disabled />
+                </div>
+                <div class="row">
+                    <label class="form-group col-md-12 has-float-label" for="controlLampSerialNo">
+                        <input type="text" class="form-control" id="controlLampSerialNo" disabled />
+                        <span>Mac Address</span>
+                    </label>
+                </div>
+                <div class="row">
+                    <label class="form-group col-md-12 has-float-label" for="controlLampName">
+                        <input type="text" class="form-control" id="controlLampName" disabled />
+                        <span>ชื่อหลอดไฟ</span>
+                    </label>
+                </div>
+                <div class="row">
+                    <label class="form-group col-md-6 has-float-label" for="controlStaRelay">
+                        <input type="text" class="form-control" id="controlStaRelay" disabled />
+                        <span>สถานะ</span>
+                    </label>
+                    <label class="form-group col-md-6 has-float-label" for="controlStaMode">
+                        <input type="text" class="form-control" id="controlStaMode" disabled />
+                        <span>โหมดการทำงาน</span>
+                    </label>
+                </div>
+                <div class="row">
+                    <label class="form-group col-md-6 has-float-label" for="controlStaCurrent">
+                        <input type="text" class="form-control" id="controlStaCurrent" disabled />
+                        <span>ค่ากระแส</span>
+                    </label>
+                    <label class="form-group col-md-6 has-float-label" for="controlStaAmLight">
+                        <input type="text" class="form-control" id="datetimeSta" disabled />
+                        <span>ข้อมูลอัพเดทล่าสุดเมื่อ</span>
+                    </label>
+                </div>
+                <div class="row">
+                    <label class="form-group col-md-6 has-float-label" for="controlGroup">
+                        <input type="text" class="form-control" id="controlGroup" disabled />
+                        <span>กลุ่ม</span>
+                    </label>
+                </div>
+                <!-- <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="controlStaPWM1_rangeWarm">ค่าแสงอุ่น <p id="controlStaPWM1_Text"></p></label>
+                        <input type="range" class="form-control-range" id="controlStaPWM1_rangeWarm" disabled>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="controlStaPWM2_rangeCool">ค่าแสงเย็น <p id="controlStaPWM2_Text"></p></label>
+                        <input type="range" class="form-control-range" id="controlStaPWM2_rangeCool" disabled>
+                    </div>
+                </div> -->
+                <hr />
+                <br />
+                <div class="row">
+                    <label class="form-group col-md-12 has-float-label" for="controlActionList">
+                        <select id="controlActionList" class="form-control">
+                            <option value="0">เลือกโหมดการทำงาน</option>
+                            <!-- <option value="MODE_CHANGE">เปลี่ยนโหมดการทำงาน</option> -->
+                            <option value="MANUAL">กำหนดการทำงานด้วยตนเอง(Manual)</option>
+                            <option value="SET_SCHEDULE">ตั้งเวลาทำงานอัตโนมัติ(Schedule)</option>
+                        </select>
+                        <span>คำสั่ง</span>
+                    </label>
+                </div>
+
+                <div id="controlActionModeChange" class="d-none">
+                    <div class="row">
+                        <label class="form-group col-md-12 has-float-label" for="controlChangeModeList">
+                            <select id="controlChangeModeList" class="form-control">
+                                <option selected disabled value="">...</option>
+                            </select>
+                            <span>โหมดการทำงาน</span>
+                        </label>
+                    </div>
+                </div>
+
+
+                <!-- <nav>
+                  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    <a class="nav-item nav-link active disabled" id="manual-tab" style="border-radius: 7px 7px 0px 0px;" data-toggle="tab" href="#manual" role="tab" aria-controls="manual" aria-selected="true">กำหนดการทำงานด้วยตนเอง</a>
+                <a class="nav-item nav-link disabled" id="auto-tab" style="border-radius: 7px 7px 0px 0px;" data-toggle="tab" href="#auto" role="tab" aria-controls="auto" aria-selected="false">ตั้งเวลาทำงานอัตโนมัติ</a>
+                  </div>
+                </nav> -->
+
+                <div class="n-pills d-none">
+                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link active" id="manual-tab" data-toggle="pill" data-target="#manual" type="button" role="tab" aria-controls="manual" aria-selected="true">กำหนดการทำงานด้วยตนเอง(Manual)</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="schedule-tab" data-toggle="pill" data-target="#schedule" type="button" role="tab" aria-controls="schedule" aria-selected="false">ตั้งเวลาทำงานอัตโนมัติ(Schedule)</a>
+                        </li>
+                    </ul>
+                    <hr>
+                </div>
+
+                <div class="tab-content p-0 d-none" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="manual" role="tabpanel" aria-labelledby="manual-tab">
+                        <div class="row" style="padding: 1rem;">
+                            <!-- Checked switch -->
+                            <div class="form-check col-md-3 light-status-wrapper m-0 py-3">
+                                <div id="bulbIconmanual" class="light-icon light-on">💡</div>
+                                <label class="light-status-label">สถานะหลอดไฟ</label>
+                                <input type="checkbox"
+                                       data-toggle="toggle"
+                                       data-style="ios"
+                                       data-on="ON"
+                                       data-off="OFF"
+                                       data-onstyle="success"
+                                       data-offstyle="secondary"
+                                       data-width="100"
+                                       id="controlRelayState">
+                            </div>
+
+                            <!--
+                                            <div id="controlActionManual">
+                                                <div class="row">
+                                                    <label class="form-group col-md-12 has-float-label" for="controlRelayState">
+                                                        <select id="controlRelayState" class="form-control">
+                                                            <option selected disabled value="">...</option>
+                                                            <option value="0">ปิดไฟ</option>
+                                                            <option value="1">เปิดไฟ</option>
+                                                        </select>
+                                                        <span>สถานะหลอดไฟ</span>
+                                                    </label>
+                                                </div> -->
+
+
+                            <div class="mn col-md-6" style="margin-top: 30px;">
+                                <div>
+                                    <!-- <div class="form-group col-md-12">
+                                        <label for="controlRangeWarm" class="slider-label">ค่าแสงอุ่น</label> <span id="rangeWarm">50</span>
+                                        <input type="range" class="form-control-range" id="controlRangeWarm" onInput="$('#rangeWarm').html($(this).val())" disabled>
+                                    </div> -->
+
+                                    <div class="px-3">
+                                        <!-- <label for="controlRangeWarm" class="slider-label">ค่าแสงอุ่น</label> <span id="rangeWarm">50</span> -->
+                                        <input type="range" min="0" max="100" value="50" class="brightness-slider-warm py-2" id="controlRangeWarm" onInput="$('#rangeWarm').html($(this).val())">
+
+                                        <ul class="slider-marks list-unstyled d-flex justify-content-between px-1 mt-2">
+                                            <li class="slider-mark text-center">
+                                                <div>|</div>
+                                                <div>0</div>
+                                            </li>
+                                            <li class="slider-mark text-center pl-1">
+                                                <div>|</div>
+                                                <div>20</div>
+                                            </li>
+                                            <li class="slider-mark text-center">
+                                                <div>|</div>
+                                                <div>40</div>
+                                            </li>
+                                            <li class="slider-mark text-center pr-1">
+                                                <div>|</div>
+                                                <div>60</div>
+                                            </li>
+                                            <li class="slider-mark text-center pr-1">
+                                                <div>|</div>
+                                                <div>80</div>
+                                            </li>
+                                            <li class="slider-mark text-center">
+                                                <div>|</div>
+                                                <div>100</div>
+                                            </li>
+                                        </ul>
+
+                                    </div>
+
+                                    <div class="col-md-12 px-3">
+                                        <!-- <label for="controlRangeCool" class="slider-label">ค่าแสงอุ่น</label> <span id="rangeCool">50</span> -->
+                                        <input type="range" min="0" max="100" value="50" class="brightness-slider-cool py-2" id="controlRangeCool" onInput="$('#rangeCool').html($(this).val())">
+
+                                        <ul class="slider-marks list-unstyled d-flex justify-content-between px-1 mt-2">
+                                            <li class="slider-mark text-center">
+                                                <div>|</div>
+                                                <div>0</div>
+                                            </li>
+                                            <li class="slider-mark text-center pl-1">
+                                                <div>|</div>
+                                                <div>20</div>
+                                            </li>
+                                            <li class="slider-mark text-center">
+                                                <div>|</div>
+                                                <div>40</div>
+                                            </li>
+                                            <li class="slider-mark text-center pr-1">
+                                                <div>|</div>
+                                                <div>60</div>
+                                            </li>
+                                            <li class="slider-mark text-center pr-1">
+                                                <div>|</div>
+                                                <div>80</div>
+                                            </li>
+                                            <li class="slider-mark text-center">
+                                                <div>|</div>
+                                                <div>100</div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                </div>
+
+                                <div class="mn col-md-3 flex flex-column" style="gap: 15px; display: flex; flex-direction: column;">
+                                    <div class="light-info-box-warm text-center shadow-custom">
+                                        <p class="label">ค่าแสงอุ่น</p>
+                                        <hr>
+                                        <p class="value" id="rangeWarm"></p> 
+                                    </div>
+
+                                    <div class="light-info-box-cool text-center shadow-custom">
+                                        <p class="label">ค่าแสงเย็น</p>
+                                        <hr>
+                                        <p class="value" id="rangeCool"></p> 
+                                    </div>
+                        </div>
+
+                        <div class="row pb-5">
+                            <!-- <div class="form-group col-md-12">
+                                <label for="controlRangeCool">ค่าแสงเย็น</label> <span id="rangeCool">50</span>
+                                <input type="range" min="0" max="100" value="50" class="brightness-slider" id="controlRangeCool" onInput="$('#rangeCool').html($(this).val())" disabled>
+                            </div> -->
+                        </div>
+                    </div>
+                    <!-- shadow -->
+                </div>
+                </div>
+                <div class="tab-pane fade" id="schedule" role="tabpanel" aria-labelledby="schedule-tab">
+                   <div id="controlActionSchedule" class="row g-3">
+                        <div class="col-12 d-flex flex-wrap align-items-center gap-3 mb-3">
+                            <button class="btn btn-success actionbtn rounded-pill d-flex align-items-center gap-2 px-4 py-2" id="addschedule" type="submit">
+                                <i class="mdi mdi-plus"></i>
+                                <span>เพิ่มช่วงเวลา</span>
+                            </button>
+                            <span class="ml-2 badge bg-light text-dark fs-5 px-3 py-2 shadow-sm rounded-pill border">เพิ่มทั้งหมด <a id="period">1</a> ช่วงเวลา
+                            </span>
+                        </div>
+
+                        <div class="col-12">
+                            <ul id="scheduleList" class="list-unstyled d-flex flex-column gap-3">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-end flex-wrap">
+                <div class="flex-fill">
+                    <p id="controlUpdatedAt" class="text-secondary d-none"></p>
+                </div>
+                <button type="button" id="clearSchedules" class="btn btn-outline-secondary btn-sm md-close" data-dismiss="modal">
+                    <i class="mdi mdi-close"></i>
+                </button>
+                <button id="control-send-manual" type="button" class="btn btn-success btn-sm d-none">
+                    <i class="mdi mdi-content-save"></i>
+                </button>
+                <button id="control-send-schedule" type="button" class="btn btn-success btn-sm d-none">
+                    <i class="mdi mdi-content-save"></i>
+                </button>
+            </div>
 </div>
 
 @section scripts {
     <script src="~/Scripts/app/base/moment-with-locales.min.js"></script>
     <script src="~/Scripts/app/base/tempusdominus-bootstrap-4.min.js"></script>
     <script src="~/Scripts/app/view/maps-view.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
     @*<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdnE3rRU1dEs_x_APSdXiPIM28-3ng2dA&v=weekly" async></script>*@
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdnE3rRU1dEs_x_APSdXiPIM28-3ng2dA&callback=initMap&v=weekly" async></script>
+    <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdnE3rRU1dEs_x_APSdXiPIM28-3ng2dA&callback=initMap&v=weekly&libraries=marker"
+    async
+    defer
+    ></script>
 }

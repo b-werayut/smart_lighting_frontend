@@ -10,39 +10,39 @@
 
     $("#weatherImage").LoadingOverlay("show");
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(getWeatherDashboardData);
+        // navigator.geolocation.getCurrentPosition(getWeatherDashboardData);
     } else {
         console.log("Geolocation is not supported by this browser.")
     }
 
-    async function getWeatherDashboardData(position) {
-        $("#weatherDashboardTitle").text("พิกัด " + position.coords.latitude.toString() + ", " + position.coords.longitude.toString());
+    // async function getWeatherDashboardData(position) {
+    //     $("#weatherDashboardTitle").text("พิกัด " + position.coords.latitude.toString() + ", " + position.coords.longitude.toString());
 
-        data = {
-            latitude: position.coords.latitude.toString(),
-            longitude: position.coords.longitude.toString(),
-        }
+    //     data = {
+    //         latitude: position.coords.latitude.toString(),
+    //         longitude: position.coords.longitude.toString(),
+    //     }
 
-        await fetch(ENDPOINT_URL.DASHBOARD_WEATHER, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json; charset=utf-8"
-            },
-            body: JSON.stringify({ "location": data })
-        }).then(response => {
-            $("#weatherImage").LoadingOverlay("hide");
-            return response.json();
-        }).then(result => {
-            if (!result.error) {
-                let weatherData = JSON.parse(JSON.stringify(result));
-                bindingWeatherData(weatherData.data);
-            } else {
-                showError(result.error);
-            }
-        }).catch(error => {
-            showError(error.message);
-        });
-    }
+    //     await fetch(ENDPOINT_URL.DASHBOARD_WEATHER, {
+    //         method: "POST",
+    //         headers: {
+    //             "Content-Type": "application/json; charset=utf-8"
+    //         },
+    //         body: JSON.stringify({ "location": data })
+    //     }).then(response => {
+    //         $("#weatherImage").LoadingOverlay("hide");
+    //         return response.json();
+    //     }).then(result => {
+    //         if (!result.error) {
+    //             let weatherData = JSON.parse(JSON.stringify(result));
+    //             bindingWeatherData(weatherData.data);
+    //         } else {
+    //             showError(result.error);
+    //         }
+    //     }).catch(error => {
+    //         showError(error.message);
+    //     });
+    // }
 
     async function getLampStatusDashboardData(projectCode) {
         try {

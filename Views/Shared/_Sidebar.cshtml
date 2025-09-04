@@ -1,19 +1,69 @@
-﻿<nav class="sidebar sidebar-offcanvas" id="sidebar">
+﻿@{
+    var sessionModel = Session[NWL_AdAm_SPL.Variables.USER_PROFILE] as NWL_AdAm_DML.Model.SessionModel;
+}
+
+<nav class="sidebar sidebar-offcanvas" id="sidebar">
     <ul class="nav">
         <li class="nav-item nav-search d-sm-block d-lg-none disabled">
             <div class="nav-link">
-                @((Session[NWL_AdAm_SPL.Variables.USER_PROFILE] as NWL_AdAm_DML.Model.SessionModel).customerName)
+                @(sessionModel?.customerName)
             </div>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="~/Home">
-                <i class="mdi mdi-view-dashboard menu-icon"></i>
-                <span class="menu-title">ภาพรวม</span>
-            </a>
-        </li>
-        @if ((Session[NWL_AdAm_SPL.Variables.USER_PROFILE] as NWL_AdAm_DML.Model.SessionModel).role != "3")
+
+        @if (sessionModel?.role == "1")
         {
             <li class="nav-item">
+                <a class="nav-link" href="~/Home">
+                    <i class="mdi mdi-view-dashboard menu-icon"></i>
+                    <span class="menu-title">ภาพรวม</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="~/Project">
+                    <i class="mdi mdi-folder menu-icon"></i>
+                    <span class="menu-title">โครงการ</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="~/Device">
+                    <i class="mdi mdi-remote menu-icon"></i>
+                    <span class="menu-title">กลุ่ม</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="~/Lamp">
+                    <i class="mdi mdi-lightbulb-on menu-icon"></i>
+                    <span class="menu-title">ควบคุมหลอดไฟ</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="~/Option">
+                    <i class="mdi mdi-repeat-once menu-icon"></i>
+                    <span class="menu-title">ข้อมูลหลอดไฟ</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="~/Job">
+                    <i class="mdi mdi-wrench menu-icon"></i>
+                    <span class="menu-title">แจ้งซ่อม</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="~/Maps">
+                    <i class="mdi mdi-map-marker-radius menu-icon"></i>
+                    <span class="menu-title">แผนที่</span>
+                </a>
+            </li>
+        }
+        else if (sessionModel?.role == "2")
+        {
+            <li class="nav-item">
+                <a class="nav-link" href="~/Home">
+                    <i class="mdi mdi-view-dashboard menu-icon"></i>
+                    <span class="menu-title">ภาพรวม</span>
+                </a>
+            </li>
+            <li class="nav-item nav-account">
                 <a class="nav-link" href="~/User">
                     <i class="mdi mdi-account menu-icon"></i>
                     <span class="menu-title">ผู้ใช้</span>
@@ -28,7 +78,34 @@
             <li class="nav-item">
                 <a class="nav-link" href="~/Device">
                     <i class="mdi mdi-remote menu-icon"></i>
-                    <span class="menu-title">กล่องควบคุม</span>
+                    <span class="menu-title">กลุ่ม</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="~/Option">
+                    <i class="mdi mdi-repeat-once menu-icon"></i>
+                    <span class="menu-title">ข้อมูลหลอดไฟ</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="~/Job">
+                    <i class="mdi mdi-wrench menu-icon"></i>
+                    <span class="menu-title">แจ้งซ่อม</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="~/Maps">
+                    <i class="mdi mdi-map-marker-radius menu-icon"></i>
+                    <span class="menu-title">แผนที่</span>
+                </a>
+            </li>
+        }
+        else if (sessionModel?.role == "3")
+        {
+            <li class="nav-item">
+                <a class="nav-link" href="~/Home">
+                    <i class="mdi mdi-view-dashboard menu-icon"></i>
+                    <span class="menu-title">ภาพรวม</span>
                 </a>
             </li>
             <li class="nav-item">
@@ -38,23 +115,17 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="~/Option">
-                    <i class="mdi mdi-repeat-once menu-icon"></i>
-                    <span class="menu-title">ปรับปรุงข้อมูลหลอดไฟ</span>
+                <a class="nav-link" href="~/Job">
+                    <i class="mdi mdi-wrench menu-icon"></i>
+                    <span class="menu-title">แจ้งซ่อม</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="~/Maps">
+                    <i class="mdi mdi-map-marker-radius menu-icon"></i>
+                    <span class="menu-title">แผนที่</span>
                 </a>
             </li>
         }
-        <li class="nav-item">
-            <a class="nav-link" href="~/Job">
-                <i class="mdi mdi-wrench menu-icon"></i>
-                <span class="menu-title">แจ้งซ่อม</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="~/Maps">
-                <i class="mdi mdi-map-marker-radius menu-icon"></i>
-                <span class="menu-title">แผนที่</span>
-            </a>
-        </li>
     </ul>
 </nav>

@@ -19,6 +19,17 @@
         if ($("#parentRole").attr("data-valkey") == "1") {
             $("#buttonNewController").addClass("invisible");
             $("#modal-save-button").addClass("d-none");
+            $("#controllerName").prop('disabled', true);
+            $("#controllerDescription").prop('disabled', true);
+            $("#controllerLat").prop('disabled', true);
+            $("#controllerLong").prop('disabled', true);
+            $("#controllerPhone").prop('disabled', true);
+            $("#lampQty").prop('disabled', true);
+            $("#ampMin").prop('disabled', true);
+            $("#ampMax").prop('disabled', true);
+            $("#boxNo").prop('disabled', true);
+            $("#boxKmFrom").prop('disabled', true);
+            $("#boxKmTo").prop('disabled', true);
         }
     }
 
@@ -95,23 +106,23 @@
     };
 
     function bindingAddButtonState() {
-        if ($("#projectCode option:selected").attr("data-valkey") == "3") {
-            if (!$("#buttonNewController").hasClass("invisible")) {
-                $("#buttonNewController").addClass("invisible");
-            }
+        //if ($("#projectCode option:selected").attr("data-valkey") == "3") {
+        //    if (!$("#buttonNewController").hasClass("invisible")) {
+        //        $("#buttonNewController").addClass("invisible");
+        //    }
 
-            if ($("#NBNodeProjectWarning").hasClass("d-none")) {
-                $("#NBNodeProjectWarning").removeClass("d-none")
-            }
-        } else {
-            if ($("#buttonNewController").hasClass("invisible")) {
-                $("#buttonNewController").removeClass("invisible");
-            }
+        //    if ($("#NBNodeProjectWarning").hasClass("d-none")) {
+        //        $("#NBNodeProjectWarning").removeClass("d-none")
+        //    }
+        //} else {
+        //    if ($("#buttonNewController").hasClass("invisible")) {
+        //        $("#buttonNewController").removeClass("invisible");
+        //    }
 
-            if (!$("#NBNodeProjectWarning").hasClass("d-none")) {
-                $("#NBNodeProjectWarning").addClass("d-none")
-            }
-        }
+        //    if (!$("#NBNodeProjectWarning").hasClass("d-none")) {
+        //        $("#NBNodeProjectWarning").addClass("d-none")
+        //    }
+        //}
 
         bindButtonByPermission();
     };
@@ -191,8 +202,9 @@
         } else {
             $.each(data, function (_, item) {
                 let tableRow = jQuery("<tr></tr>");
-                let serialNoCol = jQuery("<td></td>").attr("data-title", "S/N").html(item.controllerCode).appendTo(tableRow);
-                let controllerNameCol = jQuery("<td></td>").attr("data-title", "ชื่อกล่องควบคุม").html("<span class='d-inline-block text-truncate' style='max-width:400px;'>" + item.controllerName + "</span>").appendTo(tableRow);
+                let controllerCodeCol = jQuery("<td></td>").attr("data-title", "รหัสกลุ่ม").html(item.controllerCode).appendTo(tableRow);
+                let controllerNameCol = jQuery("<td></td>").attr("data-title", "ชื่อกลุ่ม").html("<span class='d-inline-block text-truncate' style='max-width:400px;'>" + item.controllerSN + "</span>").appendTo(tableRow);
+                let controllerDesCol = jQuery("<td></td>").attr("data-title", "รายละเอียด").html("<span class='d-inline-block text-truncate' style='max-width:400px;'>" + (item.controllerDes ? item.controllerDes : "-") + "</span>").appendTo(tableRow);
 
                 if ($("#projectCode option:selected").attr("data-valkey") != "3") {
                     let statusBadge;
@@ -214,31 +226,40 @@
                     class: "d-flex justify-content-end flex-wrap"
                 }).appendTo(buttonCol);
 
-                if ($("#projectCode option:selected").attr("data-valkey") != "2") {
-                    let lampButton = jQuery("<button></button>", {
-                        type: "button",
-                        class: "btn btn-light btn-icon"
-                    })
-                        .attr("data-valkey", item.controllerCode)
-                        .on("click", showLampModal)
-                        .html("<i class=\"mdi mdi-lightbulb-on\"></i>")
-                        .appendTo(buttonArea);
-                    lampButton.tooltip({ title: "หลอดไฟ", boundary: "window", placement: "left" });
-                }
+                //if ($("#projectCode option:selected").attr("data-valkey") != "2") {
+                // let lampButton = jQuery("<button></button>", {
+                //     type: "button",
+                //     class: "btn btn-light btn-icon"
+                // })
+                //     .attr("data-valkey", item.controllerCode)
+                //     .on("click", showLampModal)
+                //     .html("<i class=\"mdi mdi-lightbulb-on\"></i>")
+                //     .appendTo(buttonArea);
+                // lampButton.tooltip({ title: "หลอดไฟ", boundary: "window", placement: "left" });
+                //}
 
-                if ($("#projectCode option:selected").attr("data-valkey") != "3") {
-                    let editButton = jQuery("<button></button>", {
-                        type: "button",
-                        class: "btn btn-light btn-icon ml-3"
-                    })
-                        .attr("data-valkey", item.controllerCode).html("<i class=\"mdi mdi-pencil\"></i>")
-                        .on("click", showControllerModalInEditMode)
-                        .appendTo(buttonArea);
-                    editButton.tooltip({ title: "แก้ไขข้อมูล", boundary: "window", placement: "left" });
-                }
+                //if ($("#projectCode option:selected").attr("data-valkey") != "3") {
+                // let editButton = jQuery("<button></button>", {
+                //     type: "button",
+                //     class: "btn btn-light btn-icon ml-3"
+                // })
+                //     .attr("data-valkey", item.controllerCode).html("<i class=\"mdi mdi-pencil\"></i>")
+                //     .on("click", showControllerModalInEditMode)
+                //     .appendTo(buttonArea);
+                // editButton.tooltip({ title: "ดูข้อมูล", boundary: "window", placement: "left" });
+                //}
 
                 if ($("#parentRole").attr("data-valkey") != 1) {
-                    if ($("#projectCode option:selected").attr("data-valkey") != "3") {
+                    // if ($("#projectCode option:selected").attr("data-valkey") != "3") {
+                        let editButton = jQuery("<button></button>", {
+                            type: "button",
+                            class: "btn btn-light btn-icon ml-3"
+                        })
+                            .attr("data-valkey", item.controllerCode).html("<i class=\"mdi mdi-pencil\"></i>")
+                            .on("click", showControllerModalInEditMode)
+                            .appendTo(buttonArea);
+                        editButton.tooltip({ title: "ดูข้อมูล", boundary: "window", placement: "left" });
+
                         let deleteButton = jQuery("<button></button>", {
                             type: "button",
                             class: "btn btn-light btn-icon ml-3"
@@ -248,11 +269,20 @@
                             .html("<i class=\"mdi mdi-delete\"></i>")
                             .appendTo(buttonArea);
                         deleteButton.tooltip({ title: "ลบ", boundary: "window", placement: "left" });
+                        // }
+                    } else {
+                        let viewButton = jQuery("<button></button>", {
+                            type: "button",
+                            class: "btn btn-light btn-icon ml-3"
+                        })
+                            .attr("data-valkey", item.controllerCode).html("<i class=\"mdi mdi-information-outline\"></i>")
+                            .on("click", showControllerModalInEditMode)
+                            .appendTo(buttonArea);
+                        viewButton.tooltip({ title: "ดูข้อมูล", boundary: "window", placement: "left" });
                     }
-                }
 
-                tableBody.append(tableRow);
-            });
+                    tableBody.append(tableRow);
+                });
         }
 
         $("#no-more-tables").removeClass("d-none");
@@ -267,10 +297,10 @@
     function validateData() {
         let isValid = true;
 
-        if (!$("#controllerSerialNo").val().trim()) {
-            $("#controllerSerialNo").addClass("is-invalid")
-            isValid = false;
-        }
+        //if (!$("#controllerSerialNo").val().trim()) {
+        //    $("#controllerSerialNo").addClass("is-invalid")
+        //    isValid = false;
+        //}
 
         if (!$("#controllerName").val().trim()) {
             $("#controllerName").addClass("is-invalid")
@@ -282,7 +312,7 @@
 
     function bindControllerViewModelToModal(viewModel) {
         $("#controllerSerialNo").val(viewModel.controllerCode);
-        $("#controllerSerialNo").prop("disabled", true);
+        //$("#controllerSerialNo").prop("disabled", true);
         $("#controllerName").val(viewModel.controllerName);
         $("#controllerDescription").val(viewModel.controllerDescription);
         $("#controllerLat").val(viewModel.latitude);
@@ -298,7 +328,7 @@
 
     $(".modal-state-create").on("click", function (e) {
         modalState = MODAL_STATE.CREATE;
-        $("#deviceInfoModalLongTitle").text("เพิ่มกล่องควบคุมใหม่");
+        $("#deviceInfoModalLongTitle").text("เพิ่มกลุ่มใหม่");
     });
 
     $("#modal-save-button").on("click", function (e) {
@@ -321,9 +351,9 @@
         let controllerData = {
             controllerCode: $("#controllerSerialNo").val(),
             controllerName: $("#controllerName").val(),
+            controllerSerialNo: $("#controllerName").val(),
             controllerDescription: $("#controllerDescription").val(),
             projectCode: $("#projectCode option:selected").val(),
-            controllerSerialNo: $("#controllerSerialNo").val(),
             latitude: $("#controllerLat").val(),
             longitude: $("#controllerLong").val(),
             controllerPhone: $("#controllerPhone").val(),
@@ -369,7 +399,7 @@
 
     $("#deviceInfoModal").on("hidden.bs.modal", function (e) {
         $("#controllerSerialNo").val("");
-        $("#controllerSerialNo").prop("disabled", false);
+        //$("#controllerSerialNo").prop("disabled", false);
 
         $("#controllerName").val("");
         $("#controllerDescription").val("");
@@ -383,7 +413,7 @@
         $("#boxKmFrom").val("");
         $("#boxKmTo").val("");
 
-        $("#controllerSerialNo").removeClass("is-invalid")
+        //$("#controllerSerialNo").removeClass("is-invalid")
         $("#controllerName").removeClass("is-invalid")
 
     });
@@ -391,7 +421,7 @@
     function showControllerModalInEditMode() {
         modalState = MODAL_STATE.UPDATE;
 
-        $("#deviceInfoModalLongTitle").text("ข้อมูลกล่องควบคุม");
+        $("#deviceInfoModalLongTitle").text("ข้อมูลกลุ่ม");
         $("#deviceInfoModal").LoadingOverlay("show");
 
         fetch(ENDPOINT_URL.CONTROLLER_INFO, {
@@ -421,7 +451,7 @@
     function promptDeleteController() {
         Swal.fire({
             title: "ยืนยันรายการ",
-            text: "ข้อมูลหลอดไฟที่ทำงานร่วมกับกล่องควบคุมนี้จะถูกลบทั้งหมด\r\nลบกล่องควบคุม \"" + $(this).attr("data-valkey") + "\" ออกจากระบบ?",
+            text: "ข้อมูลหลอดไฟที่ทำงานร่วมกับกลุ่มนี้จะถูกลบทั้งหมด\r\nลบกลุ่ม \"" + $(this).attr("data-valkey") + "\" ออกจากระบบ?",
             icon: "question",
             confirmButtonColor: "#3085d6",
             confirmButtonText: "ลบ",

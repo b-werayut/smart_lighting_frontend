@@ -37,8 +37,8 @@
         <div class="card">
             <div class="card-body">
                 <div class="card-title">
-                    <div class="d-flex justify-content-between flex-fill">
-                        <button id="buttonNewLamp" class="btn btn-success btn-sm modal-state-create invisible" data-toggle="modal" data-target="#lampInfoModal"><i class="mdi mdi-plus"></i></button>
+                    <div class="d-flex justify-content-end flex-fill">
+                        <button id="buttonNewLamp" class="btn btn-success btn-sm modal-state-create invisible d-none" data-toggle="modal" data-target="#lampInfoModal"><i class="mdi mdi-plus"></i></button>
 
                         <div>
                             <div class="input-group">
@@ -60,14 +60,14 @@
                 <label class="form-group has-float-label" for="controllerCode">
                     <select id="controllerCode" class="form-control">
                     </select>
-                    <span>กล่องควบคุม</span>
+                    <span>กลุ่ม</span>
                 </label>
 
-                <label class="form-group has-float-label" id="groupDeviceslebel" for="groupDevices">
+                @*<label class="form-group has-float-label" id="groupDeviceslebel" for="groupDevices">
                     <select id="groupDevices" class="form-control">
                     </select>
                     <span>กลุ่ม</span>
-                </label>
+                </label>*@
 
                 <div id="EMMProjectWarning" class="alert alert-danger d-none" role="alert">
                     เนื่องจากโครงการนี้ใช้กล่องควบคุมประเภท EMM จึงไม่สามารถเพิ่มหลอดไฟได้

@@ -35,7 +35,7 @@
 
     getFilterProjectData();
     getJobData(1, "", $("#filterProjectCode option:selected").val());
-    
+
     function validateData() {
         let isValid = true;
 
@@ -80,7 +80,7 @@
             searchText: searchText,
             projectCode: projectCode
         };
-     
+
         fetch(ENDPOINT_URL.JOB_LIST, {
             method: "POST",
             headers: {
@@ -89,17 +89,17 @@
             body: JSON.stringify(jobData)
         }).then(response => {
             $("#no-more-tables").LoadingOverlay("hide");
-           
+
             return response.json();
         }).then(result => {
-          
+
             let viewModel = JSON.parse(JSON.stringify(result));
 
             if (viewModel.state == "success") {
                 if (currentPage > viewModel.pagingTotalPage) {
                     currentPage = viewModel.pagingTotalPage;
                 }
-               
+
                 bindingJobTable(viewModel.data, viewModel.pagingTotalPage, currentPage);
             } else {
                 showDialog(viewModel.state, viewModel.title, viewModel.message);
@@ -113,7 +113,7 @@
     async function getDataByAsync(projectCode, controllerCode, lampCode) {
         await getProjectData(projectCode);
         await getControllerData(projectCode, controllerCode)
-        await getLampData(controllerCode, lampCode);
+        await getLampData(projectCode, controllerCode, lampCode);
     }
 
     async function getProjectData(selectProjectCode) {
@@ -128,7 +128,7 @@
             $("#projectCode").LoadingOverlay("hide");
             return response.json();
         }).then(result => {
-           
+
             let viewModel = JSON.parse(JSON.stringify(result));
 
             if (viewModel.state == "success") {
@@ -184,10 +184,11 @@
         });
     };
 
-    async function getLampData(controllerCode, selectLampCode) {
+    async function getLampData(projectCode, controllerCode, selectLampCode) {
         $("#lampCode").LoadingOverlay("show");
 
         let lampData = {
+            projectCode: projectCode,
             controllerCode: controllerCode
         };
 
@@ -245,7 +246,7 @@
     };
 
     function bindingJobTable(jsonJob, totalPage, currentPage) {
-        
+
         let tableBody = $("#no-more-tables tbody")
         tableBody.empty();
 
@@ -253,17 +254,17 @@
         if (jsonJob.length == 0) {
             tableBody.append("<tr><td colspan=\"" + colSpan + "\">ไม่มีข้อมูล</td></tr>");
         } else {
-            
+
             $.each(jsonJob, function (_, item) {
-               
+
                 let tableRow = jQuery("<tr></tr>");
                 let jobDocNo = jQuery("<td></td>").attr("data-title", "เลขที่งาน").html(item.jobDocNo).appendTo(tableRow);
                 let problemTime = jQuery("<td></td>").attr("data-title", "วันที่แจ้งงาน").html(item.problemTime).appendTo(tableRow);
                 let projectName = jQuery("<td></td>").attr("data-title", "โครงการ").html(item.projectName).appendTo(tableRow);
                 let jobProblem = jQuery("<td></td>").attr("data-title", "รายละเอียดปัญหา").html(item.jobProblem).appendTo(tableRow);
                 let jobProblem2 = jQuery("<td></td>").attr("data-title", "วิธีแก้ไข").html(item.jobResolv).appendTo(tableRow);
-             
-              
+
+
 
                 let docStatusBadge;
                 if (item.docStatus == "1") {
@@ -280,16 +281,28 @@
                 let buttonArea = jQuery("<div></div>", {
                     class: "d-flex justify-content-end flex-wrap"
                 }).appendTo(buttonCol);
-               
-                let lampButton = jQuery("<button></button>", {
-                    type: "button",
-                    class: "btn btn-light btn-icon"
-                })
-                    .attr("data-valkey", item.jobDocNo)
-                    .on("click", showJobModalInEditMode)
-                    .html("<i class=\"mdi mdi-comment-processing\"></i>")
-                    .appendTo(buttonArea);
-                lampButton.tooltip({ title: "รายละเอียด", boundary: "window", placement: "left" });
+
+                if ($("#parentRole").attr("data-valkey") != "1") {
+                    let lampButton = jQuery("<button></button>", {
+                        type: "button",
+                        class: "btn btn-light btn-icon"
+                    })
+                        .attr("data-valkey", item.jobDocNo)
+                        .on("click", showJobModalInEditMode)
+                        .html("<i class=\"mdi mdi-comment-processing\"></i>")
+                        .appendTo(buttonArea);
+                    lampButton.tooltip({ title: "รายละเอียด", boundary: "window", placement: "left" });
+                } else {
+                    let viewButton = jQuery("<button></button>", {
+                        type: "button",
+                        class: "btn btn-light btn-icon"
+                    })
+                        .attr("data-valkey", item.jobDocNo)
+                        .on("click", showJobModalInEditMode)
+                        .html("<i class=\"mdi mdi-information-outline\"></i>")
+                        .appendTo(buttonArea);
+                    viewButton.tooltip({ title: "รายละเอียด", boundary: "window", placement: "left" });
+                }
 
                 tableBody.append(tableRow);
             });
@@ -477,7 +490,7 @@
         getProjectData("");
     });
 
-    $("#jobInfoModal").on("shown.bs.modal", function (e) { 
+    $("#jobInfoModal").on("shown.bs.modal", function (e) {
         if (modalState == MODAL_STATE.CREATE) {
             resetControllerDropDown();
             resetLampDropDown();
@@ -583,7 +596,7 @@
         if ($("#modal-save-button").hasClass("d-none")) {
             $("#modal-save-button").removeClass("d-none");
         }
-        
+
         if ($("#docStatus").hasClass("btn-outline-primary")) {
             $("#docStatus").removeClass("btn-outline-primary");
         }
@@ -604,7 +617,7 @@
 
     $("#controllerCode").change(function (e) {
         if ($("#projectCode option:selected").attr("data-valkey") != "2") {
-            getLampData($("#controllerCode option:selected").val(), "");
+            getLampData($("#projectCode option:selected").val(), $("#controllerCode option:selected").val(), "");
         } else {
             $("#lampCode").append("<option selected disabled value=''>เนื่องจากโครงการนี้ใช้กล่องควบคุมประเภท EMM จึงไม่สามารถเลือกหลอดไฟได้</option>");
         }

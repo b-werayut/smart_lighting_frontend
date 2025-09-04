@@ -45,7 +45,7 @@
             let viewModel = JSON.parse(JSON.stringify(result));
 
             if (viewModel.state == "success") {
-                window.location.replace("/Home");
+                window.location.replace("/smartlighting/Home");
             } else {
                 showDialog(viewModel.state, viewModel.title, viewModel.message);
             }
