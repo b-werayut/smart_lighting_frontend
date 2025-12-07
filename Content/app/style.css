@@ -61,6 +61,7 @@
 
 *{
     font-family: Kanit;
+    padding: 0;
 }
 
 @-moz-keyframes flash {
